@@ -1,0 +1,213 @@
+package com.vnsoft.server.actions;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.apache.tomcat.util.net.URL;
+
+import com.vnsoft.server.biz.CompanyBean;
+import com.vnsoft.server.biz.FeedBean;
+import com.vnsoft.server.biz.MenuBean;
+import com.vnsoft.server.biz.NewsBean;
+import com.vnsoft.server.biz.ServiceTypeBean;
+import com.vnsoft.server.biz.VisistorBean;
+import com.vnsoft.server.model.CompanyInfo;
+import com.vnsoft.server.model.Feed;
+import com.vnsoft.server.model.Item;
+import com.vnsoft.server.model.KeyValue;
+import com.vnsoft.server.model.Menu;
+import com.vnsoft.server.model.News;
+
+public class MyPageAction extends BaseAction {
+	private static final int MAX_GET_ITEMS = 100;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6922704335078532732L;
+	private String content;
+	private List<News> news = new ArrayList<>();
+	private List<Item> items = new ArrayList<>();
+	private List<CompanyInfo> suggestComs = new ArrayList<>();
+	private int locationId;
+	private String serviceTypeId;
+	private int selectedCity;
+	private String searchText;
+	private List<CompanyInfo> companies = new ArrayList<>();
+	private List<Feed> feeds = new ArrayList<>();
+	private Logger logger = Logger.getLogger(MyPageAction.class);
+	private List<Item> suggestItems = new ArrayList<>();
+	private List<Menu> menus;
+	private String displayTabs = "";
+
+	public List<CompanyInfo> getCompanies() {
+		return companies;
+	}
+
+	public void setCompanies(List<CompanyInfo> companies) {
+		this.companies = companies;
+	}
+
+	@Override
+	public String execute() {
+		String result = SUCCESS;
+		try {
+			logger.debug("MyPageAction: action=" + getAction() + " serviceTypeId=" + serviceTypeId);
+			System.out.println("MyPageAction: action=" + getAction() + " serviceTypeId=" + serviceTypeId);
+			URL url = new URL(getHttpServletRequest().getRequestURL().toString());
+			String pageName = url.getPath();
+			loadSearchCategories();
+			if ("/home".equals(pageName) || "/".equals(pageName)) {
+				setHotservices(ServiceTypeBean.getInstance().getHotServiceType());
+				if (serviceTypeId == null || serviceTypeId.isEmpty()) {
+					feeds = FeedBean.getInstance().getFeeds(50);
+					result = "feed";
+				} else if (isNumber(serviceTypeId)) {
+					if ("search".equals(getAction())) {
+						setCompanies(CompanyBean.getInstance().getCompanyInfo(selectedCity, locationId, Integer.valueOf(serviceTypeId), searchText));
+						for (CompanyInfo com : companies) {
+							if (com.getDescription() != null && com.getDescription().length() > 400)
+								com.setDescription(com.getDescription().substring(0, 200) + " ... ");
+							if (searchText != null && !searchText.isEmpty())
+								com.setName(com.getName().replaceAll(searchText, "<b>" + searchText + "</b>"));
+						}
+					} else {
+						setCompanies(CompanyBean.getInstance().getCompanyInfo(0, 0, Integer.valueOf(serviceTypeId), null));
+						for (CompanyInfo com : companies) {
+							if (com.getDescription() != null && com.getDescription().length() > 400)
+								com.setDescription(com.getDescription().substring(0, 200) + " ... ");
+							if (searchText != null && !searchText.isEmpty())
+								com.setName(com.getName().replaceAll(searchText, "<b>" + searchText + "</b>"));
+						}
+						trackingVisit("vietpage_home");
+						System.out.println(">>>>>>>>> found " + companies.size());
+					}
+				}
+				String visistorId = getVisistorId();
+				Map<String, List<Integer>> scores = VisistorBean.getInstance().getUserInterestedScores(visistorId);
+				if (scores.get(VisistorBean.TOP3_MOST_INTERESTED_SERVICES).size() > 0) {
+					suggestComs.clear();
+					for (int sid : scores.get(VisistorBean.TOP3_MOST_INTERESTED_SERVICES)) {
+						getSuggestComs().addAll(CompanyBean.getInstance().getCompanyInfoByService(sid, 2));
+					}
+					if (suggestComs.size() > 0) {
+						for (CompanyInfo c : suggestComs) {
+							if (c.getDescription() != null && (c.getDescription().length() > 200)) {
+								c.setDescription(c.getDescription().substring(0, 200) + " ...");
+							}
+						}
+					}
+				}
+			} else {
+				getHttpServletRequest().setAttribute("page", pageName.substring(1, pageName.length()));
+				result = "vietpage";
+			}
+
+		} catch (Exception e) {
+			logger.error("", e);
+		}
+		if (isMobilePhone(getHttpServletRequest())) {
+			return "m_" + result;
+		} else {
+			return result;
+		}
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public List<News> getNews() {
+		return news;
+	}
+
+	public void setNews(List<News> news) {
+		this.news = news;
+	}
+
+	public List<Item> getItems() {
+		return items;
+	}
+
+	public void setItems(List<Item> items) {
+		this.items = items;
+	}
+
+	public String getServiceTypeId() {
+		return serviceTypeId;
+	}
+
+	public void setServiceTypeId(String serviceTypeId) {
+		this.serviceTypeId = serviceTypeId;
+	}
+
+	public int getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(int locationId) {
+		this.locationId = locationId;
+	}
+
+	public int getSelectedCity() {
+		return selectedCity;
+	}
+
+	public void setSelectedCity(int selectedCity) {
+		this.selectedCity = selectedCity;
+	}
+
+	public String getSearchText() {
+		return searchText;
+	}
+
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
+	}
+
+	public List<CompanyInfo> getSuggestComs() {
+		return suggestComs;
+	}
+
+	public void setSuggestComs(List<CompanyInfo> suggestComs) {
+		this.suggestComs = suggestComs;
+	}
+
+	public List<Item> getSuggestItems() {
+		return suggestItems;
+	}
+
+	public void setSuggestItems(List<Item> suggestItems) {
+		this.suggestItems = suggestItems;
+	}
+
+	public List<Menu> getMenus() {
+		return menus;
+	}
+
+	public void setMenus(List<Menu> menus) {
+		this.menus = menus;
+	}
+
+	public String getDisplayTabs() {
+		return displayTabs;
+	}
+
+	public void setDisplayTabs(String displayTabs) {
+		this.displayTabs = displayTabs;
+	}
+
+	public List<Feed> getFeeds() {
+		return feeds;
+	}
+
+	public void setFeeds(List<Feed> feeds) {
+		this.feeds = feeds;
+	}
+}

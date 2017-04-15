@@ -1,0 +1,192 @@
+﻿thông tin DB nè
+[11/20/2013 3:03:04 PM] An Dao: PMA: http://124.158.9.54/pma/
+[11/20/2013 3:03:14 PM] An Dao: IP DB: 124.158.9.55
+https://www.facebook.com/kientrinh.van.568
+
+	
+Vietpage
+App ID: 	382999278501512
+App Secret: 	a70c6de5f0ffc6810dc475143c7d46dd(reset)
+This app is in Sandbox Mode(Only visible to Admins, Developers and Testers)
+
+
+[11/20/2013 3:03:23 PM] An Dao: DB Name: vietpage
+[11/20/2013 3:03:27 PM] An Dao: user: vietpage
+[11/20/2013 3:03:33 PM] An Dao: pass: WluS6ITeN67XG1
+
+sau đó lên DNS, trỏ domain : vietpage.info vào IP sau: 124.158.9.55
+
+svn: http://124.158.9.54:443/svn_vietpage
+user: kientv sktjapkIIlakj52O
+
+app sẽ deploy lên server: 124.158.9.55, port 10010
+
+/zserver/java-projects/vietpage
+
+svn add --force
+
+http://code.vietpage.info/webapps/log/vietpage.log
+http://code.vietpage.info/log/vietpage.log
+
+add host : 124.158.9.55 code.vietpage.info
+[11:25:19 AM] An Dao: hoac anh tao domain vo do nhe
+[11:25:23 AM] An Dao: user: kientv
+[11:25:28 AM] An Dao: pass: vietpage2014
+
+
+ALTER TABLE `vietpage`.`company` ADD COLUMN `pagename` VARCHAR(1000) AFTER `thumb_header_image`;
+
+
+
+http://code.vietpage.info/svn/svn.php
+[4:10:00 PM] An Dao: nếu muốn build version mới: http://code.vietpage.info/svn/svn.php?rev=1005
+[4:12:48 PM] An Dao: 5p co scripts check 1 lan de build
+[4:13:01 PM] An Dao: vào phút thứ 0 - 5 - 10 - 15 ...
+
+
+insert into agency value(2, 'longnh', 'longnh', 'longnh', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f');
+
+shell> mysqldump [options] db_name [tbl_name ...]
+shell> mysqldump [options] --databases db_name ...
+shell> mysqldump [options] --all-databases
+
+
+shell> mysqldump db_name > backup-file.sql
+You can load the dump file back into the server like this:
+
+shell> mysql db_name < backup-file.sql
+Or like this:
+
+shell> mysql -e "source /path-to-backup/backup-file.sql" db_name
+mysqldump is also very useful for populating databases by copying data from one MySQL server to another:
+
+shell> mysqldump --opt db_name | mysql --host=remote_host -C db_name
+It is possible to dump several databases with one command:
+
+shell> mysqldump --databases db_name1 [db_name2 ...] > my_databases.sql
+To dump all databases, use the --all-databases option:
+
+shell> mysqldump --all-databases > all_databases.sql
+For InnoDB tables, mysqldump provides a way of making an online backup:
+
+shell> mysqldump --all-databases --single-transaction > all_databases.sql
+
+
+
+
+insert into users values(65,'eximbankbc','f3f4ad337f4fdb11466e78200f07f082e71d9a309fe741bf3025dcb42ccce1a4','user');
+
+insert into users values(66,'eximbankbt','f3f4ad337f4fdb11466e78200f07f082e71d9a309fe741bf3025dcb42ccce1a4','user');
+
+insert into users values(67,'eximbankbthanh','f3f4ad337f4fdb11466e78200f07f082e71d9a309fe741bf3025dcb42ccce1a4','user');
+
+insert into users values(68,'eximbankcg','f3f4ad337f4fdb11466e78200f07f082e71d9a309fe741bf3025dcb42ccce1a4','user');
+
+insert into users values(69,'eximbankcc','f3f4ad337f4fdb11466e78200f07f082e71d9a309fe741bf3025dcb42ccce1a4','user');
+
+insert into users values(70,'eximbankgv','f3f4ad337f4fdb11466e78200f07f082e71d9a309fe741bf3025dcb42ccce1a4','user');
+
+insert into users values(71,'eximbankhm','f3f4ad337f4fdb11466e78200f07f082e71d9a309fe741bf3025dcb42ccce1a4','user');
+
+insert into users values(72,'eximbanknb','f3f4ad337f4fdb11466e78200f07f082e71d9a309fe741bf3025dcb42ccce1a4','user');
+
+insert into users values(73,'eximbankph','f3f4ad337f4fdb11466e78200f07f082e71d9a309fe741bf3025dcb42ccce1a4','user');
+
+insert into users values(74,'eximbanktp','f3f4ad337f4fdb11466e78200f07f082e71d9a309fe741bf3025dcb42ccce1a4','user');
+
+insert into users values(75,'eximbanktd','f3f4ad337f4fdb11466e78200f07f082e71d9a309fe741bf3025dcb42ccce1a4','user');
+
+69 	EXIMBANK (Q11) 	/vietpage?page=eximbankq11 	/images/69//defaultHeader.jpg 	<span style="background-color: #ffff40;">Các địa c... 	/images/69//defaultContent.jpg 	/images/69/EXIMBANK (Q11)_map_1387127357023.jpg 	14 	20 	1 	1 	2013-12-16 00:09:17 	54 	0 	20 	Tel:(08) 39744300 Fax:(08) 38652892 	31-33 Âu Cơ, P.14, Q.11, TP.HCM (Bấm Trang Chủ để ... 	nomail@yahoo.com 	Ngân hàng 	NULL
+
+
+
+
+insert into menu values(339 ,'Hình khu tiep khách','Hình khu tiep khách', 65);
+insert into menu values(340 ,'Hình khu tiep khách','Hình khu tiep khách', 66);
+insert into menu values(341 ,'Hình khu tiep khách','Hình khu tiep khách', 67);
+insert into menu values(342 ,'Hình khu tiep khách','Hình khu tiep khách', 68);
+insert into menu values(343 ,'Hình khu tiep khách','Hình khu tiep khách', 69);
+insert into menu values(344 ,'Hình khu tiep khách','Hình khu tiep khách', 70);
+insert into menu values(345 ,'Hình khu tiep khách','Hình khu tiep khách', 71);
+insert into menu values(346 ,'Hình khu tiep khách','Hình khu tiep khách', 72);
+insert into menu values(347 ,'Hình khu tiep khách','Hình khu tiep khách', 73);
+insert into menu values(348 ,'Hình khu tiep khách', 'Hình khu tiep khách',74);
+insert into menu values(349 ,'Hình khu tiep khách', 'Hình khu tiep khách',75);
+
+
+insert into menuitem values(364,'Khu tiếp khách 1','Khu tiếp khách 1',0 ,
+'/images/76/defaultItem1.jpg',1,75,NULL,0,0,0,'2013-12-16 00:00:00','2013-12-16 16:19:03',1,0);
+
+insert into menuitem values(365,'Khu tiếp khách 2','Khu tiếp khách 2',0 ,
+'/images/76/defaultItem2.jpg',1,75,NULL,0,0,0,'2013-12-16 00:00:00','2013-12-16 16:19:03',1,0);
+
+insert into menuitem values(366,'Khu tiếp khách 3','Khu tiếp khách 3',0 ,
+'/images/76/defaultItem3.jpg',1,75,NULL,0,0,0,'2013-12-16 00:00:00','2013-12-16 16:19:03',1,0);
+
+insert into menuitem values(367,'Khu tiếp khách 4','Khu tiếp khách 4',0 ,
+'/images/76/defaultItem4.jpg',1,75,NULL,0,0,0,'2013-12-16 00:00:00','2013-12-16 16:19:03',1,0);
+
+insert into menu_menuitem (id,menu_id,menu_item_id)values(585, 	339, 	324);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(541, 	339, 	325);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(542, 	339, 	326);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(543, 	339, 	327);
+
+insert into menu_menuitem (id,menu_id,menu_item_id)values(583, 	340, 	328);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(544, 	340, 	329);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(545, 	340, 	330);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(546, 	340, 	331);
+
+insert into menu_menuitem (id,menu_id,menu_item_id)values(547, 	341, 	332);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(548, 	341, 	333);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(549, 	341, 	334);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(550, 	341, 	335);
+
+insert into menu_menuitem (id,menu_id,menu_item_id)values(551, 	342, 	336);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(552, 	342, 	337);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(553, 	342, 	338);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(554, 	342, 	339);
+
+insert into menu_menuitem (id,menu_id,menu_item_id)values(555, 	343, 	340);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(556, 	343, 	341);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(557, 	343, 	342);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(558, 	343, 	343);
+
+insert into menu_menuitem (id,menu_id,menu_item_id)values(559, 	344, 	344);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(560, 	344, 	345);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(561, 	344, 	346);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(562, 	344, 	347);
+
+insert into menu_menuitem (id,menu_id,menu_item_id)values(563, 	345, 	348);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(564, 	345, 	349);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(565, 	345, 	350);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(566, 	345, 	351);
+
+insert into menu_menuitem (id,menu_id,menu_item_id)values(567, 	346, 	352);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(568, 	346, 	353);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(569, 	346, 	354);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(570, 	346, 	355);
+
+insert into menu_menuitem (id,menu_id,menu_item_id)values(571, 	347, 	356);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(572, 	347, 	357);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(573, 	347, 	358);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(574, 	347, 	359);
+
+insert into menu_menuitem (id,menu_id,menu_item_id)values(575, 	348, 	360);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(576, 	348, 	361);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(577, 	348, 	362);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(578, 	348, 	363);
+
+insert into menu_menuitem (id,menu_id,menu_item_id)values(579, 	349, 	364);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(580, 	349, 	365);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(581, 	349, 	366);
+insert into menu_menuitem (id,menu_id,menu_item_id)values(582, 	349, 	367);
+
+insert into news values('2013-11-23 00:00:00', 'No news',	65);
+
+
+
+ALTER TABLE `vietpage`.`menuitem` ADD COLUMN `menugroupid` INTEGER UNSIGNED DEFAULT 0 AFTER `thumb_item_image`;
+
+update menuitem set menugroupid = (select  menu_id from menu_menuitem where menu_item_id=menuitem.id limit 1) ;
+
+

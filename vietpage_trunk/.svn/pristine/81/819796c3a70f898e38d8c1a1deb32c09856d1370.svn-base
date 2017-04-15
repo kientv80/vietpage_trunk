@@ -1,0 +1,212 @@
+package com.vnsoft.server.actions;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts2.ServletActionContext;
+
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
+import com.vnsoft.server.biz.LocationBean;
+import com.vnsoft.server.biz.ServiceTypeBean;
+import com.vnsoft.server.biz.TrackingBean;
+import com.vnsoft.server.model.Item;
+import com.vnsoft.server.model.KeyValue;
+import com.vnsoft.server.util.IdGeneratorHelper;
+
+public class BaseAction extends ActionSupport {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4820487003426420317L;
+	private String action;
+	protected String errorMessage;
+	private String currentPage;
+	private List<KeyValue> city = new ArrayList<>();
+	private List<KeyValue> location = new ArrayList<>();
+	private List<KeyValue> serviceType = new ArrayList<>();
+	private String searchText;
+	private boolean showLeftSideAds;
+	private boolean showRightSideAds;
+	
+	protected HttpServletRequest getHttpServletRequest() {
+		HttpServletRequest request = (HttpServletRequest) ActionContext.getContext().get(ServletActionContext.HTTP_REQUEST);
+		try {
+			request.setCharacterEncoding("utf-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return request;
+	}
+
+	protected HttpServletResponse getHttpServletResponse() {
+		HttpServletResponse response = (HttpServletResponse) ActionContext.getContext().get(ServletActionContext.HTTP_RESPONSE);
+		response.setCharacterEncoding("utf-8");
+		return response;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public boolean isNumber(String comId) {
+		try {
+			Integer.valueOf(comId);
+			return true;
+		} catch (Exception e) {
+		}
+		return false;
+	}
+
+	public boolean isDouble(String comId) {
+		try {
+			Double.valueOf(comId);
+			return true;
+		} catch (Exception e) {
+		}
+		return false;
+	}
+	public String getVisistorId(){
+		String visistorId = "";
+		visistorId = getCookie("visistor_id");
+		if(visistorId == null || visistorId.isEmpty()){
+			visistorId = IdGeneratorHelper.getGenId()+"";
+			getHttpServletResponse().addCookie(new Cookie("visistor_id", visistorId));
+		}
+		return visistorId;
+	}
+	public String getCookie(String name){
+		String cookie = "";
+		if(getHttpServletRequest().getCookies()!=null && getHttpServletRequest().getCookies().length >0){
+			for(Cookie a : getHttpServletRequest().getCookies()){
+				if(name.equals(a.getName())){
+					cookie = a.getValue();
+					break;
+				}
+			}
+		}
+		return cookie;
+	}
+	
+	public void trackingVisit(String comid) {
+		// if(isNumber(comid)){
+		try {
+			TrackingBean.getInstance().trackingPageVisit(comid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// }
+	}
+	public void loadSearchCategories() throws Exception {
+		city = new ArrayList<>();
+		city.add(new KeyValue("0", "-- Chọn Thành Phố --"));
+		city.addAll(1, LocationBean.getInstance().getCity());
+		location = new ArrayList<>();
+		location.add(new KeyValue("0", "-- Chọn vị trí --"));
+		location.addAll(1, LocationBean.getInstance().getLocation());
+		serviceType = new ArrayList<>();
+		serviceType.add(new KeyValue("0", "-- Chọn dịch vụ --"));
+		serviceType.addAll(1,ServiceTypeBean.getInstance().getServiceType());
+	}
+	public void shottenItemDesc(List<Item> items){
+		if(items == null || items.size() ==0)
+			return;
+		for(Item i:items){
+			String desc = i.getDescription();
+			if(desc != null && desc.length() > 100){
+				desc = desc.substring(0,100)+" ...";
+				i.setDescription(desc);
+			}
+		}
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
+
+	public String getCurrentPage() {
+		return ActionContext.getContext().getName();
+	}
+
+	public void setCurrentPage(String currentPage) {
+		this.currentPage = currentPage;
+	}
+	public List<KeyValue> getCity() {
+		return city;
+	}
+
+
+	public void setCity(List<KeyValue> city) {
+		this.city = city;
+	}
+
+
+	public List<KeyValue> getLocation() {
+		return location;
+	}
+
+
+	public void setLocation(List<KeyValue> location) {
+		this.location = location;
+	}
+	public List<KeyValue> getServiceType() {
+		return serviceType;
+	}
+
+
+	public void setServiceType(List<KeyValue> serviceType) {
+		this.serviceType = serviceType;
+	}
+
+
+	public boolean getShowRightSideAds() {
+		String screenWidth = getCookie("screenWidth");
+		if(screenWidth != null && isNumber(screenWidth)){
+			if(Integer.valueOf(screenWidth) > 1024+160*2){
+				showRightSideAds =  true;
+			}else{
+				showRightSideAds = false;
+			}
+		}else{
+			showRightSideAds = false;
+		}
+		return showRightSideAds;
+	}
+
+	public void setShowRightSideAds(boolean showRightSideAds) {
+		this.showRightSideAds = showRightSideAds;
+	}
+
+	public boolean getShowLeftSideAds() {
+		String screenWidth = getCookie("screenWidth");
+		if(screenWidth != null && isNumber(screenWidth)){
+			if(Integer.valueOf(screenWidth) > 1024+160){
+				showLeftSideAds =  true;
+			}else{
+				showLeftSideAds = false;
+			}
+		}else{
+			showLeftSideAds = false;
+		}
+		return showLeftSideAds;
+	}
+
+	public void setShowLeftSideAds(boolean showLeftSideAds) {
+		this.showLeftSideAds = showLeftSideAds;
+	}
+
+}

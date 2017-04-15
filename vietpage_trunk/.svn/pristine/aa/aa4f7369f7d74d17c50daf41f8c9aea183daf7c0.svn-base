@@ -1,0 +1,21 @@
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+	
+<div style="position: relative;width: 100%;overflow: hidden">
+	<div class="info">
+		<b><s:text name="vietpage.company.name"></s:text> :</b>${companyInfo.name}<br>
+		<b><s:text name="vietpage.company.phone"></s:text>:</b>${companyInfo.phone}<br>
+		<b><ui:rating rating="${companyInfo.companyRating}"></ui:rating></b>
+	</div>
+	<div class="info" style="float: right;">
+		<b><s:text name="vietpage.company.address"></s:text>:</b>${companyInfo.address}
+		<br>
+		<b><s:text name="vietpage.company.location"></s:text>:</b>
+		<a href="#" id="map_image1">
+			<img alt="Map of the shop" src="/images/googlemap.jpg" height="20px" width="20px">
+		</a>
+	</div>
+</div>

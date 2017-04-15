@@ -1,0 +1,36 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+	<form action="/home">
+		<div class="m_search">
+			<div id="selectCity" class="searchcontrol">
+				<s:select cssStyle="height:40px;"  list="city" listValue="value" listKey="key" name="selectedCity" id="selectedCityId" labelposition="top"  onchange="loadLocation('limit');"></s:select>
+			</div>
+			<div id="selectLocation" class="searchcontrol">
+				<s:select cssStyle="height:40px;" list="location" listValue="value" listKey="key" name="locationId" id="selectedLocationId" labelposition="top" ></s:select>
+			</div>
+			<div id="selectService" class="searchcontrol">
+				<s:select cssStyle="height:40px;" list="serviceType" listValue="value" listKey="key" name="serviceTypeId" id="selectedServiceId" labelposition="top" ></s:select>
+			</div>
+			<div id="selectService" class="searchcontrol">
+				<input style="height:40px;" type="text" placeholder="Tên sản phẩm" name="searchText" id="searchText" size="40" style="height: 19px;font-size: 10px;" />
+			</div>
+			<div id="go" class="searchcontrol">
+				<input type="submit" value=" Tìm " class="btn btn-primary  btn-xl">
+			</div>
+			<s:hidden name="action" value="search"></s:hidden>
+		</div>
+	</form>	
+
+<div id="item_mypagecontainer" class="panel panel-primary" style="border: 0px;">
+	<c:if test="${companies != null && companies.size() > 0 && currentPage != 'search' }">
+		<div style="float: left;position: relative;margin-bottom: 60px;">
+			<ui:table contentProvider="com.vnsoft.server.contentprovider.PageSimpleTableContentProvider" headers="Item 1" displayHeader="false" data="${companies }"  params="width=540,height=300,editable=false,callback=m_viewItem3,showView=true,btnPrefix=discount,returnedBtnNames=discount_btns,showDesc=true,showContactInfo=true,showAssessment=false,showRanking=true"></ui:table>
+		</div>
+	</c:if>
+</div>
+

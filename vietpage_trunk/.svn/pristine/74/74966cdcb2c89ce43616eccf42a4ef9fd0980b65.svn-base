@@ -1,0 +1,33 @@
+package com.vnsoft.server.contentprovider;
+
+import java.util.Map;
+
+import javax.servlet.jsp.PageContext;
+
+import com.vnsoft.server.model.Item;
+import com.vnsoft.server.tags.yui.SimpleTableContentProvider;
+import com.vnsoft.server.util.UIHelper;
+
+public class ItemSimpleTableContentProvider implements SimpleTableContentProvider{
+
+	@Override
+	public StringBuilder buildContent(Object data, int colindex, Map params, PageContext pageContext) {
+		String btn = params.get("btnPrefix")+"";
+		String width = params.get("width")+"";
+		String height = params.get("height")+"";
+		String editable = params.get("editable")+"";
+		String callBack = params.get("callback")+"";
+		String showView = params.get("showView")+"";
+		boolean showview = false;
+
+		if("true".equals(showView))
+			showview = true;
+		if("true".equals(editable)){
+			return new StringBuilder(UIHelper.itemToHTML(width, height, (Item)data, true, btn, callBack, showview,pageContext));
+		}else{
+			return new StringBuilder(UIHelper.itemToHTML(width, height, (Item)data, false, btn, callBack, showview,pageContext));
+		}
+		
+	}
+
+}

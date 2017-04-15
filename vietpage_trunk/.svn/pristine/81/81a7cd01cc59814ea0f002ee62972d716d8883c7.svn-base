@@ -1,0 +1,62 @@
+package com.vnsoft.server.cache;
+
+import org.apache.jcs.JCS;
+import org.apache.jcs.access.exception.CacheException;
+
+public class JSCCacheManager {
+	private static JCS companyCache = null;
+	private static JCS hotnewsCache = null;
+	private static JCS newsCache = null;
+	private static JCS allnewsCache = null;
+	private static JCS menuCache = null;
+	private static JCS mainMenuCache = null;
+	private static JCS discountItemsCache = null;
+	private static JCS newItemsCache = null;
+	private static JCS tracking = null;
+	
+	private static JSCCacheManager instance;
+	private JSCCacheManager(){
+		 try {
+			 companyCache = JCS.getInstance("company");
+			 hotnewsCache = JCS.getInstance("hotnews");
+			 newsCache = JCS.getInstance("news");
+			 menuCache = JCS.getInstance("menu");
+			 mainMenuCache = JCS.getInstance("mainmenu");
+			 discountItemsCache = JCS.getInstance("discountItems");
+			 newItemsCache = JCS.getInstance("newItems");
+			 tracking = JCS.getInstance("tracking");
+			 allnewsCache = JCS.getInstance("allnews");
+		} catch (CacheException e) {
+			e.printStackTrace();
+		}
+	}
+	public static JSCCacheManager getInstace(){
+		synchronized (JSCCacheManager.class) {
+			if(instance == null)
+				instance = new JSCCacheManager();
+		}
+		return instance;
+	}
+	public JCS getCache(CacheType type){
+		if(type.equals(CacheType.HOTNEWS)){
+			return hotnewsCache;
+		}else if(type.equals(CacheType.COMPANY)){
+			return companyCache;
+		}else if(type.equals(CacheType.DISCOUNT_ITEMS)){
+			return discountItemsCache;
+		}else if(type.equals(CacheType.NEW_ITEMS)){
+			return newItemsCache;
+		}else if(type.equals(CacheType.MENU)){
+			return menuCache;
+		}else if(type.equals(CacheType.MAIN_MENU)){
+			return mainMenuCache;
+		}else if(type.equals(CacheType.NEWS)){
+			return newsCache;
+		}else if(type.equals(CacheType.TRACKING)){
+			return tracking;
+		}else if(type.equals(CacheType.ALL_NEWS)){
+			return allnewsCache;
+		}
+		return null;
+	}
+}

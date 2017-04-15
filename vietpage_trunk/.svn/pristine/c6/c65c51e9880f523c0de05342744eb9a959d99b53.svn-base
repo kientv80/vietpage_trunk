@@ -1,0 +1,86 @@
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+
+<div class="boder panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title"><s:text name="vietpage.com.news"></s:text></h3>
+	</div>
+	<img alt="" src="/images/note.jpg" width="60px" height="60px" align="left">
+	<b><c:out value="${news.createddate}"></c:out>:</b><c:out value="${news.content}"></c:out>
+	<br><br><br>
+</div>
+
+	
+<div class="note panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title"><s:text name="vietpage.com.contactinfo"></s:text></h3>
+	</div>
+<table>
+	<tr>
+		<td>
+			<b><s:text name="vietpage.company.name"></s:text> :</b>${companyInfo.name}<br>
+			<b><s:text name="vietpage.company.phone"></s:text>:</b>${companyInfo.phone}<br>
+			<b><s:text name="vietpage.company.address"></s:text>:</b>${companyInfo.address}<br>
+			<b><s:text name="vietpage.company.web"></s:text>:</b><a href="${companyInfo.url}">${companyInfo.url}</a><br>
+			<b><s:text name="vietpage.company.location"></s:text>:  </b>
+			<a href="#" id="map_image1">
+				<img alt="Map of the shop" src="/images/googlemap.jpg" height="20px" width="20px">
+			</a>
+			<br><br>
+		</td>
+	</tr>
+</table>
+</div>
+
+<div class="same_companies panel panel-info">
+	<div class="panel-heading">
+		<h3 class="panel-title"><s:text name="vietpage.samecompany"></s:text></h3>
+	</div>
+	<table style="vertical-align: middle;">
+		<c:forEach items="${otherCompanies}" var="lm_comInfo">
+			<tr>
+				<td style="vertical-align: middle;">
+					<img src="${lm_comInfo.contentImage }" width="80px" height="60px">
+				</td>
+				<td style="vertical-align: middle;">
+					<br><a href="#" onclick="window.open('/lookup?comid=${lm_comInfo.id }&webid=${lm_comInfo.id }&redirectUrl=/vietpage?comid=${lm_comInfo.id}');">${lm_comInfo.name} </a><br>
+					<b><s:text name="vietpage.company.phone"></s:text> </b>${lm_comInfo.phone}<br>
+					<b><s:text name="vietpage.company.address"></s:text> </b>${lm_comInfo.address}
+				</td>
+			</tr>
+		</c:forEach>
+	</table>
+</div>
+<c:if test="${suggestItems.size()>0 }">
+<div class="same_companies panel panel-info">
+	<div class="panel-heading">
+		<h3 class="panel-title"><s:text name="vietpage.suggest.items"></s:text></h3>
+	</div>
+	<table>
+		<s:iterator value="suggestItems" var="lm_item">
+			<tr>
+				<td>
+					<table>
+						<ui:item width="250" height="150" item="${lm_item}" edit="false"
+							callBackMethod="viewItem" btnPrefix="btn" showView="false" showShortDesc="true"></ui:item>
+					</table>
+				</td>
+			</tr>
+		</s:iterator>
+	</table>
+</div>
+</c:if>
+<!-- <div class="ads_250x250"> -->
+<!-- </div> -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Private_Ads_250x250_z1 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:250px;height:250px"
+     data-ad-client="ca-pub-1188112679279302"
+     data-ad-slot="8719470473"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>

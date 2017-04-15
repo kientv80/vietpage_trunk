@@ -1,0 +1,5 @@
+package com.vnsoft.server.plugin.social;
+
+public class FaceBookFeed {
+
+}

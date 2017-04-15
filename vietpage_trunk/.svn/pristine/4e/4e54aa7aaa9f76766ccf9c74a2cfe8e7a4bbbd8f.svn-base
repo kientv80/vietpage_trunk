@@ -1,0 +1,154 @@
+package com.vnsoft.server.actions;
+
+import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.name.Rename;
+
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.biz.CompanyBean;
+import com.vnsoft.server.biz.FeedBean;
+import com.vnsoft.server.biz.JDBCConnection;
+import com.vnsoft.server.biz.MenuBean;
+import com.vnsoft.server.model.CompanyInfo;
+import com.vnsoft.server.model.Feed;
+import com.vnsoft.server.model.Item;
+
+public class ResizeImageAction extends BaseAction {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4195359982880241541L;
+	Logger log = Logger.getLogger(ResizeImageAction.class);
+
+	@Override
+	public String execute() throws Exception {
+		Connection con = null;
+		Statement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.createStatement();
+			String imagePath = null;
+			if (imagePath == null) {
+				File f = new File("tmp.txt");
+				imagePath = (f.getAbsolutePath().substring(0, f.getAbsolutePath().length() - 7));
+			}
+
+			String separatorChar = File.separator;
+			if ("\\".equals(separatorChar))
+				separatorChar = separatorChar + separatorChar;
+
+			String dir = imagePath + separatorChar + "webapps" + separatorChar + "images" + separatorChar;
+			log.info("file dir===============" + dir);
+			String fileName = "";
+			for (CompanyInfo com : CompanyBean.getInstance().getAllPages()) {
+
+				log.info("ContentImage()===============" + com.getContentImage());
+				if (com.getContentImage() != null && com.getContentImage().lastIndexOf("/") > 0) {
+					try {
+						log.info("ContentImage()===============" + com.getContentImage());
+						fileName = com.getContentImage().substring(com.getContentImage().lastIndexOf("/"), com.getContentImage().length());
+						Thumbnails.of(dir + separatorChar + com.getId() + fileName).width(330).outputFormat("jpg").toFiles(Rename.PREFIX_DOT_THUMBNAIL);
+						
+						String imageUrl = com.getContentImage();
+						String impagePath = imageUrl.substring(0,imageUrl.lastIndexOf("/")+1);
+						String name = imageUrl.substring(imageUrl.lastIndexOf("/")+1,imageUrl.length());
+						
+						stm.executeUpdate("update company set thumb_center_image='"+impagePath+"thumbnail."+name+"' where id="+com.getId());
+						
+					} catch (Exception e) {
+						// TODO: handle exception
+						e.printStackTrace();
+					}
+
+				}
+				if (com.getHeaderImage() != null && com.getHeaderImage().lastIndexOf("/") > 0) {
+					try {
+						log.info("HeaderImage()===============" + com.getHeaderImage());
+						fileName = com.getHeaderImage().substring(com.getHeaderImage().lastIndexOf("/"), com.getHeaderImage().length());
+						Thumbnails.of(dir + separatorChar + com.getId() + fileName).width(1024).outputFormat("jpg").toFiles(Rename.PREFIX_DOT_THUMBNAIL);
+						
+						String imageUrl = com.getHeaderImage();
+						String impagePath = imageUrl.substring(0,imageUrl.lastIndexOf("/")+1);
+						String name = imageUrl.substring(imageUrl.lastIndexOf("/")+1,imageUrl.length());
+						stm.executeUpdate("update company set thumb_header_image='"+impagePath+"thumbnail."+name+"' where id="+com.getId());
+					
+					} catch (Exception e) {
+						// TODO: handle exception
+						e.printStackTrace();
+					}
+
+				}
+
+				/*for (Item i : MenuBean.getInstance().getItems(Long.valueOf(com.getId()).intValue())) {
+
+					if (i.getImagePath() != null && i.getImagePath().lastIndexOf("/") > 0) {
+						try {
+							log.info("ImagePath()===============" + i.getImagePath());
+							fileName = i.getImagePath().substring(i.getImagePath().lastIndexOf("/"), i.getImagePath().length());
+							Thumbnails.of(dir + separatorChar + com.getId() + fileName).size(330, 200).outputFormat("jpg").toFiles(Rename.PREFIX_DOT_THUMBNAIL);
+						
+							String imageUrl = i.getImagePath();
+							String impagePath = imageUrl.substring(0,imageUrl.lastIndexOf("/")+1);
+							String name = imageUrl.substring(imageUrl.lastIndexOf("/")+1,imageUrl.length());
+							stm.executeUpdate("update menuitem set thumb_item_image='"+impagePath+"thumbnail."+name+"' where id="+i.getId());
+						
+						
+						
+						} catch (Exception e) {
+							// TODO: handle exception
+							e.printStackTrace();
+						}
+
+					}
+				}*/
+			}
+			for (Feed f : FeedBean.getInstance().getFeeds(100)) {
+				if (f.getImage() != null && !f.getImage().isEmpty()) {
+					if (f.getImage() != null && f.getImage().lastIndexOf("/") > 0) {
+						try {
+							log.info("f.getImage(()===============" + f.getImage());
+							fileName = f.getImage().substring(f.getImage().lastIndexOf("/"), f.getImage().length());
+							Thumbnails.of(dir + separatorChar + f.getComid() + fileName).width(460).outputFormat("jpg").toFiles(Rename.PREFIX_DOT_THUMBNAIL);
+							// hot feed
+							Thumbnails.of(dir + separatorChar + f.getComid() + fileName).width(170).outputFormat("jpg").toFiles(Rename.PREFIX_HYPHEN_THUMBNAIL);
+						
+							String imageUrl = f.getImage();
+							String impagePath = imageUrl.substring(0,imageUrl.lastIndexOf("/")+1);
+							String name = imageUrl.substring(imageUrl.lastIndexOf("/")+1,imageUrl.length());
+							stm.executeUpdate("update feed set thumb1_image='"+impagePath+"thumbnail."+name+"', thumb2_image='"+impagePath+"thumbnail-"+name+"' where id="+f.getId());
+						
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					}
+
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return SUCCESS;
+	}
+
+	public static void main(String[] args) {
+		if ("/images/43//defaultContent.jpg" != null && "/images/43/defaultContent.jpg".lastIndexOf('/') > 0) {
+			System.out.println("why");
+		}
+	}
+}

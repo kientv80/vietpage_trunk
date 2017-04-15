@@ -1,0 +1,29 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+
+<!-- <div id="item_mypagecontainer" style="border: 0px;margin-bottom: 0px;width: 100%"> -->
+	<c:if test="${companies != null && companies.size() > 0 && currentPage != 'search' }">
+<!-- 		<div style="float: left;position: relative;"> -->
+			<ui:table contentProvider="com.vnsoft.server.contentprovider.PageSimpleTableContentProvider" headers="Item 1, Item 2" displayHeader="false" data="${companies }"  params="editable=false,callback=m_viewItem3,showView=true,btnPrefix=discount,returnedBtnNames=discount_btns,showDesc=true,showContactInfo=true,showAssessment=false,showRanking=true,imageClass=item_image"></ui:table>
+<!-- 		</div> -->
+	</c:if>
+<!-- </div> -->
+
+<c:forEach items="${companies}" var="c2"> 
+	<div class="item">
+		<div class="item_image">
+			<img alt="" src="${c2.thumImage }">
+		</div>
+		<span>
+			${c2.name }<br>
+			${c2.address }<br>
+			${c2.phone }<br>
+		</span>
+	</div>
+</c:forEach>
+

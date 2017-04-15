@@ -1,0 +1,685 @@
+package com.vnsoft.server.biz;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.jcs.JCS;
+import org.apache.jcs.access.exception.CacheException;
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.cache.CacheType;
+import com.vnsoft.server.cache.JSCCacheManager;
+import com.vnsoft.server.model.Item;
+import com.vnsoft.server.model.Menu;
+
+public class MenuBean {
+	private static final String NEW_ITEMS = "newItems";
+	private static final String DISCOUNT_ITEMS = "discountItems";
+	private static MenuBean instance = new MenuBean();
+	Logger log = Logger.getLogger(MenuBean.class);
+
+	private MenuBean() {
+	}
+
+	public static MenuBean getInstance() {
+		if (instance == null) {
+			instance = new MenuBean();
+		}
+		return instance;
+	}
+
+	public Menu loadMainMenu(long compId) throws Exception {
+		JCS cache = JSCCacheManager.getInstace().getCache(CacheType.MAIN_MENU);
+		Object tmp = cache.get(compId);
+		if (tmp != null)
+			return (Menu) tmp;
+
+		Menu m = new Menu(0, "Main menu", "Main menu");
+		m.setItems(loadMainMenuItem(compId));
+		cache.put(compId, m);
+		return m;
+
+	}
+
+	public List<Item> loadMainMenuItem(long compId) throws Exception {
+		Connection con = null;
+		Statement stm = null;
+		ResultSet result = null;
+		List<Item> menuItems = new ArrayList<Item>();
+		try {
+			con = JDBCConnection.getInstance().getInstance().getConnection();
+			stm = con.createStatement();
+			result = stm.executeQuery("select m.*,c.name as com_name,c.url, u.username as pagename, c.addresses, c.phones from menuitem m,company c,users u where u.id=c.owner_id and m.comid=c.id and m.ismain=true and m.comid=" + compId);
+			menuItems = toItems(result);
+			for (Item i : menuItems) {
+				i.setMenuId(0);
+			}
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return menuItems;
+	}
+
+	public List<Menu> loadMenus(long comId) throws Exception {
+		ArrayList<Menu> menus = new ArrayList<Menu>();
+		JCS cache = JSCCacheManager.getInstace().getCache(CacheType.MENU);
+		Object tmp = cache.get(comId);
+		if (tmp != null)
+			return (List<Menu>) tmp;
+
+		Connection con = null;
+		Statement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.createStatement();
+			// Build all menu in DB
+			result = stm.executeQuery("Select * from menu where comid=" + comId);
+			while (result.next()) {
+				Menu m = new Menu(result.getInt(1), result.getString(2), result.getString(3));
+				menus.add(m);
+			}
+
+			for (Menu m : menus) {
+				result = stm.executeQuery("select m.*,c.name as com_name,c.url, u.username as pagename, c.addresses, c.phones from menuitem m,company c,users u where u.id=c.owner_id and m.comid=c.id and m.id in (select menu_item_id from menu_menuitem where menu_id=" + m.getId() + ")");
+				List<Item> items = new ArrayList<Item>();
+				items = toItems(result);
+				for (Item i : items) {
+					i.setMenuId(m.getId());
+				}
+				m.getItems().addAll(items);
+			}
+
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		// menusCache.put(comId, menus);
+		cache.put(comId, menus);
+		return menus;
+	}
+
+	public void updateMenu(Menu menu) {
+
+	}
+
+	public List<Item> getAllMenuItems(long comId) throws SQLException {
+		List<Item> items = new ArrayList<>();
+		Connection con = null;
+		Statement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.createStatement();
+			result = stm.executeQuery("select m.*,c.name as com_name,c.url, u.username as pagename, c.addresses, c.phones from menuitem m,company c,users u where u.id=c.owner_id and m.comid=c.id and m.comid=" + comId);// where
+			items = toItems(result);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return items;
+	}
+
+	public void updateMenuItem(Item item) throws Exception {
+		String sql = "Update menuitem set name=?,description=?,price=?,image=?,ismain=?,isdiscount=?,discount_percent=?,new_price=?, modified_date=?, code=?,iscargo=? WHERE id=?";
+		Connection con = null;
+		PreparedStatement stm = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement(sql);
+			stm.setString(1, item.getName());
+			stm.setString(2, item.getDescription());
+			if (item.getIsCargo())
+				stm.setDouble(3, item.getPrice());
+			else {
+				stm.setDouble(3, 0);
+			}
+			stm.setString(4, item.getImagePath());
+			stm.setBoolean(5, item.getIsmain());
+			if (item.getIsCargo() && item.getIsDiscount()) {
+				stm.setBoolean(6, item.getIsDiscount());
+				stm.setInt(7, item.getDiscountPercent());
+				stm.setDouble(8, item.getPriceAfterDiscount());
+			} else {
+				stm.setBoolean(6, item.getIsDiscount());
+				stm.setInt(7, 0);
+				stm.setDouble(8, 0);
+			}
+			stm.setDate(9, new Date(System.currentTimeMillis()));
+			stm.setString(10, item.getCode());
+			stm.setBoolean(11, item.getIsCargo());
+			stm.setInt(12, item.getId());
+			stm.executeUpdate();
+			clearMenuCache(item.getComId());
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (con != null)
+				con.close();
+			if (stm != null)
+				stm.close();
+		}
+
+	}
+
+	public Item getItem(int id) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		Item item = new Item();
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("select m.*,c.name as com_name,c.url, u.username as pagename, c.addresses, c.phones from menuitem m,company c,users u where u.id=c.owner_id and m.comid=c.id and m.id=?");
+			stm.setInt(1, id);
+			// Build all menu in DB
+			result = stm.executeQuery();
+			item = toItems(result).get(0);
+
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return item;
+	}
+
+	public List<Item> getItems(int comid) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		List<Item> items = new ArrayList<>();
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("select m.*,c.name as com_name,c.url, u.username as pagename, c.addresses, c.phones from menuitem m,company c,users u where u.id=c.owner_id and m.comid=c.id and m.comid=?");
+			stm.setInt(1, comid);
+			// Build all menu in DB
+			result = stm.executeQuery();
+
+			items = toItems(result);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return items;
+	}
+
+	public List<Item> getDiscountedItems(int limit, int serviceId) throws Exception {
+		JCS cache = JSCCacheManager.getInstace().getCache(CacheType.DISCOUNT_ITEMS);
+		Object tmp = cache.get(DISCOUNT_ITEMS);
+		if (tmp != null && serviceId <= 0)
+			return (List<Item>) tmp;
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		List<Item> items = new ArrayList<>();
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			if (serviceId > 0) {
+				stm = con.prepareStatement("select m.*,c.name as com_name,c.url, u.username as pagename, c.addresses, c.phones from menuitem m,company c,users u where u.id=c.owner_id and m.comid=c.id and isdiscount=true and c.service_id=? order by m.id, m.goodcount,m.quitegoodcount desc  limit " + limit);// and
+				stm.setInt(1, serviceId);
+			} else {
+				stm = con.prepareStatement("select m.*,c.name as com_name,c.url, u.username as pagename, c.addresses, c.phones from menuitem m,company c,users u where u.id=c.owner_id and m.comid=c.id and isdiscount=true order by m.id, m.goodcount,m.quitegoodcount desc  limit " + limit);// and
+			}
+			// Build all menu in DB
+			result = stm.executeQuery();
+			items = toItems(result);
+			if (serviceId <= 0)
+				cache.put(DISCOUNT_ITEMS, items);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return items;
+	}
+
+	public void addNewMenuItem(Item item) throws Exception {
+		String sql = "insert into menuitem(name,description,price,image,ismain,comid,code,iscargo,isdiscount,discount_percent,new_price)values(?,?,?,?,?,?,?,?,?,?,?)";
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement(sql);
+			stm.setString(1, item.getName());
+			stm.setString(2, item.getDescription());
+			if (item.getIsCargo()) {
+				stm.setDouble(3, item.getPrice());
+			} else {
+				stm.setDouble(3, 0d);
+			}
+			stm.setString(4, item.getImagePath());
+			stm.setBoolean(5, item.getIsmain());
+			stm.setLong(6, item.getComId());
+			stm.setString(7, item.getCode());
+			stm.setBoolean(8, item.getIsCargo());
+			stm.setBoolean(9, item.getIsDiscount());
+			stm.setInt(10, item.getDiscountPercent());
+			if (item.getPriceAfterDiscount() != null)
+				stm.setDouble(11, item.getPriceAfterDiscount());
+			else
+				stm.setDouble(11, 0);
+			stm.executeUpdate();
+			sql = "select max(id) as id from menuitem";
+			stm = con.prepareStatement(sql);
+			result = stm.executeQuery();
+			int menuItemId = -1;
+			while (result.next()) {
+				menuItemId = result.getInt("id");
+			}
+
+			sql = "insert into menu_menuitem(menu_id, menu_item_id) values (?,?)";
+			stm = con.prepareStatement(sql);
+			stm.setInt(1, item.getMenuId());
+			stm.setInt(2, menuItemId);
+			stm.executeUpdate();
+			clearMenuCache(item.getComId());
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (stm != null)
+				stm.close();
+			if (result != null)
+				result.close();
+			if (con != null)
+				con.close();
+
+		}
+
+	}
+
+	public int addNewMenuGroup(Menu menu) throws Exception {
+		String sql = "insert into menu(name,description,comid)values(?,?,?)";
+		Connection con = null;
+		PreparedStatement stm = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement(sql);
+			stm.setString(1, menu.getName());
+			stm.setString(2, menu.getDescription());
+			stm.setDouble(3, menu.getComid());
+			stm.executeUpdate();
+			clearMenuCache(menu.getComid());
+			return getMenuId(menu.getComid());
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (con != null)
+				con.close();
+			if (stm != null)
+				stm.close();
+		}
+		return -1;
+	}
+
+	public int getMenuId(int comid) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		int id = -1;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select id from menu where comid=?");
+			stm.setInt(1, comid);
+			result = stm.executeQuery();
+			while (result.next()) {
+				id = result.getInt("id");
+			}
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (stm != null)
+				stm.close();
+			if (result != null)
+				result.close();
+			if (con != null)
+				con.close();
+
+		}
+		return id;
+	}
+
+	public void setMenuItemForToday(List<Integer> ids, int comid) throws Exception {
+		String sql = "";
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+
+			// Update all current menu items in today menu to false
+			sql = "update menuitem set isitemfortoday=false where comid=" + comid;// TODO:
+																					// where
+																					// compid=
+			stm = con.prepareStatement(sql);
+			stm.executeUpdate();
+
+			String itemIds = "";
+			for (int id : ids) {
+				itemIds = itemIds + id + ",";
+			}
+
+			// update all selected items to moday menu
+			sql = "Update menuitem set isitemfortoday=true where id in(" + itemIds.substring(0, itemIds.length() - 1) + ")";
+			stm = con.prepareStatement(sql);
+			stm.executeUpdate();
+			clearMenuCache(comid);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+
+	}
+
+	
+	public void setMainMenuItems(List<Integer> ids, int companyId) throws Exception {
+		String sql = "update menuitem set ismain=false where comid=" + companyId;// where
+																					// comid=";
+		Connection con = null;
+		PreparedStatement stm = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement(sql);
+			stm.executeUpdate();
+
+			String itemIds = "";
+			for (int id : ids) {
+				itemIds = itemIds + id + ",";
+			}
+			// update all current today menu items to others
+			sql = "Update menuitem set ismain=true where id in(" + itemIds.substring(0, itemIds.length() - 1) + ")";
+			stm = con.prepareStatement(sql);
+			stm.executeUpdate();
+			clearMenuCache(companyId);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (con != null)
+				con.close();
+			if (stm != null)
+				stm.close();
+		}
+
+	}
+
+	public void setupMenu(List<Integer> ids, String selectedMenuId, int comid) throws Exception {
+		String sql = "";
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+
+			String itemIds = "";
+			for (int id : ids) {
+				itemIds = itemIds + id + ",";
+			}
+
+			sql = "delete from menu_menuitem where menu_id=?";
+			System.out.println(sql);
+			stm = con.prepareStatement(sql);
+			stm.setInt(1, Integer.valueOf(selectedMenuId));
+			stm.executeUpdate();
+
+			sql = "insert into menu_menuitem (menu_id, menu_item_id) values (?,?)";
+			System.out.println(sql);
+			for (int id : ids) {
+				stm = con.prepareStatement(sql);
+				stm.setInt(1, Integer.valueOf(selectedMenuId));
+				stm.setInt(2, id);
+				stm.executeUpdate();
+			}
+			clearMenuCache(comid);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+
+	public void deleteMenu(int id, long comid) throws Exception {
+		String sql = "";
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+
+			sql = "delete from menu_menuitem where menu_id=?";
+			stm = con.prepareStatement(sql);
+			stm.setInt(1, id);
+			stm.executeUpdate();
+
+			sql = "delete from menu where id=?";
+			stm = con.prepareStatement(sql);
+			stm.setInt(1, id);
+			stm.executeUpdate();
+			clearMenuCache(comid);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+
+	private void clearMenuCache(long comId) {
+		try {
+			JSCCacheManager.getInstace().getCache(CacheType.MAIN_MENU).clear();
+			JSCCacheManager.getInstace().getCache(CacheType.MENU).clear();
+		} catch (CacheException e) {
+			log.error("", e);
+		}
+	}
+
+	public void deleteMenuItem(int id, int comid) throws Exception {
+		String sql = "Delete from menuitem WHERE id=?";
+		Connection con = null;
+		PreparedStatement stm = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement(sql);
+			stm.setInt(1, id);
+			stm.executeUpdate();
+			sql = "Delete FROM menu_menuitem where menu_item_id=?";
+			stm = con.prepareStatement(sql);
+			stm.setInt(1, id);
+			stm.executeUpdate();
+			clearMenuCache(comid);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (con != null)
+				con.close();
+			if (stm != null)
+				stm.close();
+		}
+
+	}
+
+	public List<Item> getNewItems(int limit, int serviceId) throws Exception {
+		JCS cache = JSCCacheManager.getInstace().getCache(CacheType.NEW_ITEMS);
+
+		Object tmp = cache.get(NEW_ITEMS);
+		if (tmp != null && serviceId <= 0)
+			return (List<Item>) tmp;
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		List<Item> items = new ArrayList<>();
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			if (serviceId > 0) {
+				stm = con.prepareStatement("select m.*,c.name as com_name,c.url, u.username as pagename, c.addresses, c.phones from menuitem m,company c,users u where u.id=c.owner_id and m.comid=c.id and c.ispublic=true and c.service_id=? order by m.id, m.goodcount,m.quitegoodcount desc limit " + limit);// and
+				stm.setInt(1, serviceId);
+			} else {
+				stm = con.prepareStatement("select m.*,c.name as com_name,c.url, u.username as pagename, c.addresses, c.phones from menuitem m,company c,users u where u.id=c.owner_id and m.comid=c.id and c.ispublic=true  order by m.id, m.goodcount,m.quitegoodcount desc limit " + limit);// and
+			}
+
+			// Build all menu in DB
+			result = stm.executeQuery();
+			items = toItems(result);
+			if (serviceId <= 0)
+				cache.put(NEW_ITEMS, items);
+
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return items;
+	}
+
+	public List<Item> searchItems(int limit, int locationId, int serviceId, String searchText) throws Exception {
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		List<Item> items = new ArrayList<>();
+		try {
+			String sql = "select m.*,c.name as com_name,c.url, u.username as pagename, c.addresses, c.phones from menuitem m,company c,users u where u.id=c.owner_id and m.comid=c.id and c.ispublic=true";
+			 if (serviceId > 0){
+				 sql = sql + " and c.service_id=?";
+			 }
+			if (locationId > 0)
+				sql = sql + " and c.location_id=?";
+			if(searchText!=null && !searchText.isEmpty()){
+				sql = sql + " and m.name like ?";
+			}
+			sql += " order by m.id desc limit " + limit;
+			con = JDBCConnection.getInstance().getConnection();
+				stm = con.prepareStatement(sql);
+				int index = 0;
+				if (serviceId > 0){
+					index = index +1;
+					stm.setInt(index, serviceId);
+				}
+				if (locationId > 0){
+					index = index +1;
+					stm.setInt(index, locationId);
+				}
+				if(searchText!=null && !searchText.isEmpty()){
+					index = index +1;
+					stm.setString(index, "%"+searchText+"%");
+				}
+				result = stm.executeQuery();
+				items = toItems(result);
+			// Build all menu in DB
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return items;
+	}
+
+	private List<Item> toItems(ResultSet result) throws SQLException {
+		List<Item> data = new ArrayList<>();
+		while (result.next()) {
+			Item item = new Item();
+			item.setId(result.getInt("id"));
+			item.setName(result.getString("name"));
+			item.setDescription(result.getString("description"));
+			item.setPrice(result.getDouble("price"));
+			item.setImagePath(result.getString("image"));
+			item.setIsmain(result.getBoolean("ismain"));
+			// item.setMenuId(result.getInt("menu_id"));
+			item.setComId(result.getLong("comid"));
+			item.setIsDiscount(result.getBoolean("isdiscount"));
+			item.setDiscountPercent(result.getInt("discount_percent"));
+			item.setPriceAfterDiscount(result.getDouble("new_price"));
+			item.setCompanyName(result.getString("com_name"));
+			item.setCompanyUrl("vietpage?page=" + result.getString("pagename"));
+			item.setCode(result.getString("code"));
+			item.setIsCargo(result.getBoolean("iscargo"));
+			item.setAddress(result.getString("addresses"));
+			item.setPhone(result.getString("phones"));
+			item.setGoodCount(result.getInt("goodcount"));
+			item.setQuiteGoodCount(result.getInt("quitegoodcount"));
+			item.setMediumCount(result.getInt("mediumcount"));
+			item.setWeakCount(result.getInt("weakcount"));
+			item.setViewCount(result.getInt("viewcount"));
+			data.add(item);
+		}
+
+		return data;
+	}
+}

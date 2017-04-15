@@ -1,0 +1,17 @@
+thông tin DB nè
+[11/20/2013 3:03:04 PM] An Dao: PMA: http://124.158.9.54/pma/
+[11/20/2013 3:03:14 PM] An Dao: IP DB: 124.158.9.55
+[11/20/2013 3:03:23 PM] An Dao: DB Name: vietpage
+[11/20/2013 3:03:27 PM] An Dao: user: vietpage
+[11/20/2013 3:03:33 PM] An Dao: pass: WluS6ITeN67XG1
+
+sau đó lên DNS, trỏ domain : vietpage.info vào IP sau: 124.158.9.55
+
+svn: http://124.158.9.54:443/svn_vietpage
+user: kientv sktjapkIIlakj52O
+
+app sẽ deploy lên server: 124.158.9.55, port 10010
+
+/zserver/java-projects/vietpage
+
+svn add --force

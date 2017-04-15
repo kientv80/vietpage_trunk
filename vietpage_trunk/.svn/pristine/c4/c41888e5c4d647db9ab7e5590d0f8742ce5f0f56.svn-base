@@ -1,0 +1,244 @@
+package com.vnsoft.server.biz;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.jcs.JCS;
+import org.apache.jcs.access.exception.CacheException;
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.cache.CacheType;
+import com.vnsoft.server.cache.JSCCacheManager;
+import com.vnsoft.server.model.Feed;
+
+public class FeedBean {
+	private static FeedBean instance;
+	Logger log = Logger.getLogger(FeedBean.class);
+	private FeedBean() {
+	}
+	public static FeedBean getInstance(){
+		if(instance == null)
+			instance = new FeedBean();
+		
+		return instance;
+	}
+	
+public List<Feed> getFeeds(int limit) throws Exception{
+		
+//		JCS cache = JSCCacheManager.getInstace().getCache(CacheType.FEEDS);
+//		Object tmp = cache.get(comId);
+//		if(tmp != null && ((List<Feed>)tmp).size()>0)
+//			return (List<Feed>)tmp;
+		
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		List<Feed> feeds = new ArrayList<>();
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("SELECT  *, c.name FROM feed f, company c WHERE DATE(posted_date) >= CURDATE() - INTERVAL 30 DAY and c.id=f.comid ORDER BY f.id DESC limit " + limit);
+			result = stm.executeQuery();
+			feeds = resulSettToList(result, true);
+			if(feeds.size() == 0){
+				stm = con.prepareStatement("SELECT  *, c.name FROM feed f, company c WHERE c.id=f.comid ORDER BY f.id DESC limit " + limit);
+				result = stm.executeQuery();
+				feeds = resulSettToList(result, true);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("",e);
+		}finally{
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+//		cache.put(comId, feeds);
+		return feeds;
+	}
+	
+	private List<Feed> resulSettToList(ResultSet result, boolean getComName) throws SQLException{
+		List<Feed> feeds = new ArrayList<>();
+		while (result.next()) {
+			Feed a = new Feed();
+			a.setId(result.getInt("id"));
+			a.setFeed(result.getString("feed"));
+			a.setImage(result.getString("image"));
+			a.setTitle(result.getString("title"));
+			a.setLink(result.getString("link"));
+			a.setThumb1Image(result.getString("thumb1_image"));
+			a.setThumb2Image(result.getString("thumb2_image"));
+			a.setPostedDate(result.getDate("posted_date"));
+			a.setComid(result.getLong("comid"));
+			if(getComName){
+				a.setComName(result.getString("name"));
+			}
+			feeds.add(a);
+		}
+		return feeds;
+	}
+	
+	public List<Feed> getFeeds(long comId, int limit) throws Exception{
+		
+		JCS cache = JSCCacheManager.getInstace().getCache(CacheType.FEEDS);
+		Object tmp = cache.get(comId);
+//		if(tmp != null && ((List<Feed>)tmp).size()>0)
+//			return (List<Feed>)tmp;
+		
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		List<Feed> feeds = new ArrayList<>();
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select * from feed where comid=? order by id desc limit " + limit);
+			stm.setLong(1, comId);
+			result = stm.executeQuery();
+			feeds = resulSettToList(result, false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("",e);
+		}finally{
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		cache.put(comId, feeds);
+		return feeds;
+	}
+	
+	public Feed getFeed(long id) throws Exception{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		Feed a = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("select * from feed where id=?" );
+			stm.setLong(1, id);
+			result = stm.executeQuery();
+			List<Feed> f = resulSettToList(result, false);
+			if(f!=null && f.size()>0)
+				return f.get(0);
+		} catch (Exception e) {
+			log.error("",e);
+		}finally{
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return a;
+	}
+	
+	
+	public void editFeedInfo(Feed n) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Update feed set feed=?,posted_date=?,image=?,title=?,thumb1_image=?,thumb2_image=? where id=?");
+			stm.setString(1, n.getFeed());
+			stm.setDate(2, new Date(System.currentTimeMillis()));
+			stm.setString(3, n.getImage());
+			stm.setString(4, n.getTitle());
+			if(n.getImage()!=null && n.getImage().lastIndexOf("/") > 0){
+				String impagePath =n.getImage().substring(0,n.getImage().lastIndexOf("/")+1);
+				String name = n.getImage().substring(n.getImage().lastIndexOf("/")+1,n.getImage().length());
+				stm.setString(5, impagePath+"thumbnail."+name);
+				stm.setString(6, impagePath+"thumbnail-"+name);
+			}else{
+				stm.setString(5, "");
+				stm.setString(6, "");
+			}
+			stm.setLong(7, n.getId());
+			stm.executeUpdate();
+			clearFeedCache(n.getComid());
+		} catch (Exception e) {
+			log.error("",e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+	private void clearFeedCache(long comId){
+		try {
+			JSCCacheManager.getInstace().getCache(CacheType.FEEDS).clear();
+		} catch (CacheException e) {
+			log.error("",e);
+		}
+	}
+	public void addFeed(Feed n) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("insert into feed(feed,comid,posted_date,image,title,link,thumb1_image,thumb2_image) values(?,?,?,?,?,?,?,?)");
+			stm.setString(1, n.getFeed());
+			stm.setLong(2, n.getComid());
+			stm.setDate(3, new Date(System.currentTimeMillis()));
+			stm.setString(4, n.getImage());
+			stm.setString(5, n.getTitle());
+			stm.setString(6, n.getLink());
+			String impagePath =n.getImage().substring(0,n.getImage().lastIndexOf("/")+1);
+			String name = n.getImage().substring(n.getImage().lastIndexOf("/")+1,n.getImage().length());
+			stm.setString(7, impagePath+"thumbnail."+name);
+			stm.setString(8, impagePath+"thumbnail-"+name);
+			stm.executeUpdate();
+			clearFeedCache(n.getComid());
+		} catch (Exception e) {
+			log.error("",e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+	public void removeFeed(long id) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("delete from feed where id = ?");
+			stm.setLong(1, id);
+			stm.executeUpdate();
+			clearFeedCache(id);
+		} catch (Exception e) {
+			log.error("",e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+		}
+	}
+}

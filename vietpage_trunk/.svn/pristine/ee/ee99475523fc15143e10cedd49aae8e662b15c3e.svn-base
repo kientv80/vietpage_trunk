@@ -1,0 +1,104 @@
+package com.vnsoft.server.actions;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.biz.CompanyBean;
+import com.vnsoft.server.biz.LocationBean;
+import com.vnsoft.server.biz.ServiceTypeBean;
+import com.vnsoft.server.model.CompanyInfo;
+import com.vnsoft.server.model.KeyValue;
+
+
+public class SearchAction extends BaseAction {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1186145446410965742L;
+	private List<KeyValue> city = new ArrayList<>();
+	private List<KeyValue> location = new ArrayList<>();
+	private List<KeyValue> serviceType = new ArrayList<>();
+	private int locationId;
+	private int serviceTypeId;
+	private int selectedCity;
+	private String searchText;
+	private List<CompanyInfo> companies = new ArrayList<>();
+	private Logger logger = Logger.getLogger(SearchAction.class);
+	@Override
+	public String execute() {
+		try {
+			getHttpServletRequest().setCharacterEncoding("utf-8");
+			getHttpServletResponse().setCharacterEncoding("utf-8");
+			load();
+			if("search".equals(getAction())){
+				setCompanies(CompanyBean.getInstance().getCompanyInfo(locationId, serviceTypeId, searchText));
+				for(CompanyInfo com : companies){
+					if(com.getDescription() != null && com.getDescription().length() > 400)
+						com.setDescription(com.getDescription().substring(0,200)+ " ... ");
+					if(searchText != null && !searchText.isEmpty())
+						com.setName(com.getName().replaceAll(searchText, "<b>"+searchText+"</b>"));
+				}
+			}
+			trackingVisit("vietpage_search");
+		} catch (Exception e) {
+			logger.error("", e);
+			e.printStackTrace();
+		}
+		return SUCCESS;
+	}
+	private void load() throws Exception {
+		city = LocationBean.getInstance().getCity();
+		location = LocationBean.getInstance().getLocation();
+		serviceType = ServiceTypeBean.getInstance().getServiceType();
+	}
+	public List<KeyValue> getCity() {
+		return city;
+	}
+	public void setCity(List<KeyValue> city) {
+		this.city = city;
+	}
+	public List<KeyValue> getLocation() {
+		return location;
+	}
+	public void setLocation(List<KeyValue> location) {
+		this.location = location;
+	}
+	public List<KeyValue> getServiceType() {
+		return serviceType;
+	}
+	public void setServiceType(List<KeyValue> serviceType) {
+		this.serviceType = serviceType;
+	}
+	public int getLocationId() {
+		return locationId;
+	}
+	public void setLocationId(int locationId) {
+		this.locationId = locationId;
+	}
+	public int getServiceTypeId() {
+		return serviceTypeId;
+	}
+	public void setServiceTypeId(int serviceTypeId) {
+		this.serviceTypeId = serviceTypeId;
+	}
+	public int getSelectedCity() {
+		return selectedCity;
+	}
+	public void setSelectedCity(int selectedCity) {
+		this.selectedCity = selectedCity;
+	}
+	public List<CompanyInfo> getCompanies() {
+		return companies;
+	}
+	public void setCompanies(List<CompanyInfo> companies) {
+		this.companies = companies;
+	}
+	public String getSearchText() {
+		return searchText;
+	}
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
+	}
+}

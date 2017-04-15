@@ -1,0 +1,52 @@
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+
+<div style="position: relative;width: 100%;overflow: hidden;font-weight: normal; color: #827F8F;font-size: 20px;margin-left: 4px;">
+	${companyInfo.address}
+	<div style="float: right;padding-right: 8px;">
+		<a href="/home" title="Viet Page"><s:text name="vietpage.title"></s:text></a> | 
+		<a href="/mregister" title="Tao Page"><s:text name="vietpage.register.menu"></s:text></a> | 
+		<c:if test="${isLogin == null}">
+			<a href="/login" title="Login"><s:text name="vietpage.login"></s:text> </a>
+		</c:if>
+		<c:if test="${isLogin != null}">
+			<a href="/login?action=logout" title="Logout"><s:text name="vietpage.logout"></s:text> </a>
+		</c:if>
+	</div>
+</div>
+<div style="position: relative;width: 100%;overflow: hidden">
+	<div class="info">
+		<a href="#"  id="phone">
+			<img src="/images/vietpage/Phone.png" style="width: 60%;height: 60%"/><br>
+			${companyInfo.phone}<br>
+		</a>
+	</div>
+	<div class="info" >
+		<a href="#" id="map_image1">
+			<img alt="Map of the shop" src="/images/googlemap.jpg" style="width: 60%;height: 60%"><br>
+			<s:text name="vietpage.company.location"></s:text>
+		</a>
+	</div>
+	<div class="info" >
+		<a href="/items?comid=${companyInfo.id }" title="Menu" id="viewMenu">
+			<img src="/images/vietpage/sanpham.png" class="menu_button" id="viewMenu" style="width: 60%;height: 60%"/><br>
+			<s:text name="vietpage.page.item"></s:text>
+		</a>
+	</div>
+</div>
+<div style="position: relative;width: 100%; overflow: hidden;margin-bottom: 20px;">
+	<div class="pageAdminAction"  style="background-color: #0DA645">
+		<a href="/vietpage?comid=${companyInfo.id }&target=homePage" title="About us" id="aboutBtn" style="color: black;">
+			<s:text name="vietpage.menu.home"></s:text>
+		</a>
+	</div>
+	
+	<div class="pageAdminAction" style="background-color: #FC890D">
+		<a href="/feed?comid=${companyInfo.id }" title="Bản Tin"  id="commentBtn" style="color: black;">
+			<s:text name="vietpage.page.news"></s:text>
+		</a>
+	</div>
+</div>

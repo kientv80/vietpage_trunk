@@ -1,0 +1,53 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+
+<input type="button" id="addFeed" value='<s:text name="vietpage.com.feed.add"></s:text>'  class="btn btn-primary  btn-xs">
+
+<c:if test="${feeds != null && feeds.size() > 0 }">
+	<s:iterator value="feeds" var="f">
+	<table class="item" style="width: 100%;">
+		
+			<c:if test="${f.image !=null && !f.image.isEmpty()}">
+			<tr>
+				<td >
+					<b>Ngày đăng: ${f.postedDate}</b><a href="/manageFeed?feedId=${f.id}&action=delete" class="btn btn-danger  btn-xs">Delete</a><br>
+					<img src="${f.image }" style="max-width: 100%;">
+				</td>
+			</tr>
+			</c:if>
+			<tr>
+				<td>
+					<c:if test="${f.image ==null || f.image.isEmpty()}">
+						<b>Ngày đăng: ${f.postedDate}</b><a href="/manageFeed?feedId=${f.id}&action=delete" class="btn btn-danger  btn-xs">Delete</a><br>
+					</c:if>
+					 ${f.feed}
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="fb-like" data-href="http://vietpage.info/feed?comid=${companyInfo.id}&feedId=${f.id}" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="fb-comments" data-href="http://vietpage.info/feed?comid=${companyInfo.id}&feedId=${f.id}" data-numposts="5" data-colorscheme="light"></div>
+				</td>
+			</tr>
+	</table>
+	</s:iterator>
+</c:if>
+<c:if test="${feeds == null || feeds.size() == 0 }">
+	Chưa có bảng tin nào
+</c:if>
+<ui:PopupWindow panelId="addFeedId" width="500" isCentered="true" showPanelButtonId="addFeed" isVisible="false" containerId="addFeedForm" panelTitle="${companyInfo.name }" isRender="true" zIndex="1" isModal="true" dragAble="true" okButtonCallBack="addNewFeed" showOkButton="true" showCancelButton="true"></ui:PopupWindow>
+
+<script type="text/javascript">
+	function addNewFeed(){
+		document.getElementById("addFeedForm1").submit();
+	}
+</script>

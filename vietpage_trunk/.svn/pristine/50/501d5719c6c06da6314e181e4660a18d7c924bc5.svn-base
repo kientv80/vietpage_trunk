@@ -1,0 +1,209 @@
+package com.vnsoft.server.actions;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.biz.CompanyBean;
+import com.vnsoft.server.biz.LocationBean;
+import com.vnsoft.server.biz.MenuBean;
+import com.vnsoft.server.biz.NewsBean;
+import com.vnsoft.server.biz.ServiceTypeBean;
+import com.vnsoft.server.model.CompanyInfo;
+import com.vnsoft.server.model.Item;
+import com.vnsoft.server.model.KeyValue;
+import com.vnsoft.server.model.News;
+
+
+public class MyPageAction extends BaseAction{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6922704335078532732L;
+	private String content;
+	private List<News> news;
+	private List<Item> items;
+	private List<Item> newItems;
+	private List<KeyValue> city = new ArrayList<>();
+	private List<KeyValue> location = new ArrayList<>();
+	private List<KeyValue> serviceType = new ArrayList<>();
+	private int locationId;
+	private int serviceTypeId;
+	private int selectedCity;
+	private String searchText;
+	private List<CompanyInfo> companies = new ArrayList<>();
+	private Logger logger = Logger.getLogger(MyPageAction.class);
+	public List<CompanyInfo> getCompanies() {
+		return companies;
+	}
+
+	private void load() throws Exception {
+		city = LocationBean.getInstance().getCity();
+		location = LocationBean.getInstance().getLocation();
+		serviceType = ServiceTypeBean.getInstance().getServiceType();
+	}
+	public void setCompanies(List<CompanyInfo> companies) {
+		this.companies = companies;
+	}
+
+
+	@Override
+	public String execute() {
+		try {
+			getHttpServletRequest().setCharacterEncoding("utf-8");
+			getHttpServletResponse().setCharacterEncoding("utf-8");
+			load();
+			logger.debug("MyPageAction: action="+getAction()+" serviceTypeId="+serviceTypeId );
+			if("filter".equals(getAction())){
+					news = NewsBean.getInstance().getAllNews(100,serviceTypeId);
+					items = MenuBean.getInstance().getDiscountedItems(100,serviceTypeId);
+					newItems = MenuBean.getInstance().getNewItems(100,serviceTypeId);
+			}else if("search".equals(getAction())){
+				setCompanies(CompanyBean.getInstance().getCompanyInfo(locationId, serviceTypeId, searchText));
+				for(CompanyInfo com : companies){
+					if(com.getDescription() != null && com.getDescription().length() > 400)
+						com.setDescription(com.getDescription().substring(0,200)+ " ... ");
+					if(searchText != null && !searchText.isEmpty())
+						com.setName(com.getName().replaceAll(searchText, "<b>"+searchText+"</b>"));
+				}
+			}else{
+				if("discount".equals(getAction())){
+					news = NewsBean.getInstance().getAllNews(100,0);
+					items = MenuBean.getInstance().getDiscountedItems(100,0);
+					trackingVisit("vietpage_discount");
+				}else if("newItems".equals(getAction())){
+					news = NewsBean.getInstance().getAllNews(100,0);
+					newItems = MenuBean.getInstance().getNewItems(100,0);
+					trackingVisit("vietpage_newItems");
+				}else if("news".equals(getAction())){
+					news = NewsBean.getInstance().getAllNews(100,0);
+					trackingVisit("vietpage_news");
+				}else{
+					news = NewsBean.getInstance().getAllNews(100,0);
+					newItems = MenuBean.getInstance().getNewItems(100,0);
+					trackingVisit("vietpage_home");
+				}
+			}
+			setServiceType(ServiceTypeBean.getInstance().getServiceType());
+			
+			shottenItemDesc(items);
+			shottenItemDesc(newItems);
+			
+		} catch (Exception e) {
+			logger.error("", e);
+			e.printStackTrace();
+		}
+		if("news".equals(getAction())){
+			return "news";
+		}
+		return SUCCESS;
+	}
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+
+	public List<News> getNews() {
+		return news;
+	}
+
+
+	public void setNews(List<News> news) {
+		this.news = news;
+	}
+
+
+	public List<Item> getItems() {
+		return items;
+	}
+
+
+	public void setItems(List<Item> items) {
+		this.items = items;
+	}
+
+
+	public List<KeyValue> getServiceType() {
+		return serviceType;
+	}
+
+
+	public void setServiceType(List<KeyValue> serviceType) {
+		this.serviceType = serviceType;
+	}
+
+
+	public int getServiceTypeId() {
+		return serviceTypeId;
+	}
+
+
+	public void setServiceTypeId(int serviceTypeId) {
+		this.serviceTypeId = serviceTypeId;
+	}
+
+
+	public List<Item> getNewItems() {
+		return newItems;
+	}
+
+
+	public void setNewItems(List<Item> newItems) {
+		this.newItems = newItems;
+	}
+
+
+	public List<KeyValue> getCity() {
+		return city;
+	}
+
+
+	public void setCity(List<KeyValue> city) {
+		this.city = city;
+	}
+
+
+	public List<KeyValue> getLocation() {
+		return location;
+	}
+
+
+	public void setLocation(List<KeyValue> location) {
+		this.location = location;
+	}
+
+
+	public int getLocationId() {
+		return locationId;
+	}
+
+
+	public void setLocationId(int locationId) {
+		this.locationId = locationId;
+	}
+
+
+	public int getSelectedCity() {
+		return selectedCity;
+	}
+
+
+	public void setSelectedCity(int selectedCity) {
+		this.selectedCity = selectedCity;
+	}
+
+
+	public String getSearchText() {
+		return searchText;
+	}
+
+
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
+	}
+}

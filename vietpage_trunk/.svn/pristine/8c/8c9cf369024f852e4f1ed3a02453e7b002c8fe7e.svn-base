@@ -1,0 +1,67 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<table width="100%">
+	<tr>
+		<td>
+			<table width="100%">
+				<tr height="30px">
+					<td width="20px" align="center"><a href="/vietpage?page=${companyInfo.username }" title="About us">
+						<img src="/images/vietpage/Home.png"  class="menu_button" id="aboutBtn"  onmouseover="resize('aboutBtn')" onmouseout="reloadsize('aboutBtn')"/>
+					</a>
+					<br>Trang Chủ
+					</td>
+					<td width="20px" align="center">
+					<a href="/items?page=${companyInfo.username }" title="Menu">
+						<img src="/images/vietpage/sanpham.png" class="menu_button" id="viewMenu" />
+					</a>
+					<br>Sản Phẩm
+					</td>
+					<td width="20px" align="center">
+					<a href="#" title="Phone to call us">
+						<img src="/images/vietpage/Phone.png" class="menu_button" id="phone" />
+					</a>
+					<br>Liên Hệ
+					</td>
+					<td width="20px" align="center">
+					<a href="#" title="Our services">
+						<img src="/images/vietpage/User.png" class="menu_button" id="serviceBtn" />
+					</a>
+					<br>Dịch Vụ
+					</td>
+					<td width="20px" align="center">
+						<a href="#" title="Comment" >
+							<img src="/images/coment.png"  class="menu_button" id="commentBtn"  onmouseover="resize('commentBtn')" onmouseout="reloadsize('commentBtn')"/>
+						</a>
+						<br>Đánh Giá
+					</td>
+					<td width="20px" align="center"><a href="/serviceId=${companyInfo.serviceTypeId}" title="Viet Page">
+						<img src="/images/vietpage/vietpage_icon.png"  class="sanphamkhac" id="vietpage"  onmouseover="resize('aboutBtn')" onmouseout="reloadsize('aboutBtn')"/>
+					</a>
+					<br>Sản phẩm khác
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<script type="text/javascript">
+//  	function resize(id){
+//  		var img = document.getElementById(id);
+//  		img.width=80;
+//  		img.height=100;
+//  	}
+//  	function reloadsize(id){
+//  		var img = document.getElementById(id);
+//  		img.width=60;
+//  		img.height=80;
+//  	}
+// 	function test(msg){
+// 		alert("ok");
+// 	}
+</script>

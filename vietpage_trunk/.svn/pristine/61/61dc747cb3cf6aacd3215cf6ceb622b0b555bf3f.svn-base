@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+ */
+-->
+
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+
+<tiles-definitions>
+	 <definition name="access_denined" template="/jsp/layout/ErrorLayout.jsp">
+	 	<put-attribute name="center" value="/jsp/access_denined.jsp"/>
+	 </definition>
+    <definition name="mainlayout" template="/jsp/layout/NewMainLayout.jsp">
+        <put-attribute name="title" value="VietPage"/>
+        <put-attribute name="header" value="/jsp/layout/Header.jsp"/>
+        <put-attribute name="mainmenu" value="/jsp/layout/MainMenu.jsp"/>
+        <put-attribute name="news" value="/jsp/layout/News.jsp"/>
+        <put-attribute name="leftmenu" value="/jsp/layout/LeftMenu.jsp"/>
+        <put-attribute name="rightmenu" value="/jsp/layout/RightMenu.jsp"/>
+        <put-attribute name="table" value="/jsp/layout/Table.jsp"/>
+        <put-attribute name="footer" value="/jsp/layout/Footer.jsp"/>
+        <put-attribute name="center" value="/jsp/layout/Center.jsp"/>
+    </definition>
+    
+    <definition name="mainlayoutEdit" template="/jsp/layout/NewMainLayoutEdit.jsp">
+        <put-attribute name="title" value="VietPage"/>
+        <put-attribute name="header" value="/jsp/layout/Header.jsp"/>
+        <put-attribute name="mainmenu" value="/jsp/layout/MainMenu.jsp"/>
+        <put-attribute name="news" value="/jsp/layout/News.jsp"/>
+        <put-attribute name="leftmenu" value="/jsp/layout/LeftMenu.jsp"/>
+        <put-attribute name="rightmenu" value="/jsp/layout/RightMenu.jsp"/>
+        <put-attribute name="table" value="/jsp/layout/Table.jsp"/>
+        <put-attribute name="footer" value="/jsp/layout/Footer.jsp"/>
+        <put-attribute name="center" value="/jsp/layout/Center.jsp"/>
+    </definition>
+    
+    
+    
+    <definition name="items" extends="mainlayout">
+        <put-attribute name="center" value="/jsp/layout/Items.jsp"/>
+    </definition>
+    <definition name="m_items" extends="mainlayout">
+        <put-attribute name="center" value="/jsp/layout/mobile/m_Items.jsp"/>
+        <put-attribute name="mainmenu" value="/jsp/layout/mobile/m_MainMenu.jsp"/>
+    </definition>
+   <definition name="viewItemMainlayout" template="/jsp/layout/ViewItemMainLayout.jsp">
+        <put-attribute name="title" value="VietPage"/>
+        <put-attribute name="header" value="/jsp/layout/Header.jsp"/>
+        <put-attribute name="mainmenu" value="/jsp/layout/MainMenu.jsp"/>
+        <put-attribute name="news" value="/jsp/layout/News.jsp"/>
+        <put-attribute name="leftmenu" value="/jsp/layout/LeftMenu.jsp"/>
+        <put-attribute name="rightmenu" value="/jsp/layout/RightMenu.jsp"/>
+        <put-attribute name="table" value="/jsp/layout/Table.jsp"/>
+        <put-attribute name="footer" value="/jsp/layout/Footer.jsp"/>
+        <put-attribute name="center" value="/jsp/layout/Center.jsp"/>
+    </definition>
+    <definition name="viewItem" extends="viewItemMainlayout">
+        <put-attribute name="center" value="/jsp/itemviewInPage.jsp"/>
+    </definition>
+    <definition name="editlayout" extends="mainlayoutEdit">
+    	<put-attribute name="leftmenu" value="/jsp/layout/LeftMenuAdmin.jsp"/>
+    	<put-attribute name="table" value="/jsp/TableEdit.jsp"/>
+    	<put-attribute name="header" value="/jsp/HeaderEdit.jsp"/>
+    	<put-attribute name="center" value="/jsp/CenterEdit.jsp"/>
+		<put-attribute name="mainmenu" value="/jsp/MainMenuUpdate.jsp"/>
+    </definition>
+    
+    <definition name="editRegisterInfo" extends="editlayout">
+    	<put-attribute name="center" value="/jsp/layout/EditRegisterInfo.jsp"/>
+    </definition>
+    
+    <definition name="login" template="/jsp/layout/LoginLayout.jsp">
+    	<put-attribute name="header" value="/jsp/layout/RegisterHeader.jsp"/>
+    	<put-attribute name="center" value="/jsp/Login.jsp"/>
+    </definition>
+    <definition name="setupmenu" extends="editlayout">
+<!-- 		<put-attribute name="leftmenu" value="/jsp/layout/SetupMenuLeftMenuAdmin.jsp"/> -->
+    	<put-attribute name="center" value="/jsp/SetupCategory.jsp"/>
+    </definition>
+    <definition name="groupmenu" extends="editlayout">
+    	<put-attribute name="center" value="/jsp/SetupMenu.jsp"/>
+    </definition>
+    <definition name="updatemenuitem" extends="editlayout">
+    	<put-attribute name="mainmenu" value="/jsp/MainMenuUpdate.jsp"/>
+    </definition>
+    <definition name="comment" extends="editlayout">
+    	<put-attribute name="center" value="/jsp/comment.jsp"/>
+    </definition>
+    <definition name="managemenuitem" extends="editlayout">
+    	<put-attribute name="center" value="/jsp/managemenuitem.jsp"/>
+    </definition>
+    
+   <definition name="mypagelayout" template="/jsp/layout/MyPageLayout.jsp">
+        <put-attribute name="title" value="Viet Page"/>
+        <put-attribute name="header" value="/jsp/layout/MyPageHeader.jsp"/>
+        <put-attribute name="content" value="/jsp/layout/MypageContent.jsp"/>
+        <put-attribute name="news" value="/jsp/layout/MypageNews.jsp"/>
+        <put-attribute name="footer" value="/jsp/layout/Footer.jsp"/>
+    </definition>
+    
+   <definition name="m_mypagelayout" extends="mypagelayout">
+        <put-attribute name="content" value="/jsp/layout/mobile/m_MypageContent.jsp"/>
+        <put-attribute name="news" value="/jsp/layout/mobile/m_MypageNews.jsp"/>
+    </definition>
+    
+    <definition name="mypagenews" extends="mypagelayout">
+        <put-attribute name="news" value="/jsp/layout/MypageAds.jsp"/>
+        <put-attribute name="content" value="/jsp/layout/News.jsp"/>
+    </definition>
+    <definition name="hotnews" extends="mypagelayout">
+        <put-attribute name="news" value="/jsp/layout/MypageAds.jsp"/>
+        <put-attribute name="content" value="/jsp/layout/HotNews.jsp"/>
+    </definition>
+    
+   <definition name="agencylayout" extends="mypagelayout">
+        <put-attribute name="content" value="/jsp/layout/AgencyContent.jsp"/>
+        <put-attribute name="news" value="/jsp/layout/AgencyMenu.jsp"/>
+        <put-attribute name="header" value=""/>
+    </definition>
+    
+    <definition name="managehotnews" extends="adminlayout">
+        <put-attribute name="content" value="/jsp/layout/ManageHotNews.jsp"/>
+    </definition>
+    
+   <definition name="adminlayout" template="/jsp/layout/admin/AdminLayout.jsp">
+        <put-attribute name="title" value="Viet Page"/>
+        <put-attribute name="header" value="/jsp/layout/admin/AdminHeader.jsp"/>
+        <put-attribute name="leftmenu" value="/jsp/layout/admin/AdminLeftMenu.jsp"/>
+        <put-attribute name="footer" value="/jsp/layout/Footer.jsp"/>
+    </definition>
+   <definition name="pageAproval" extends="adminlayout">
+        <put-attribute name="content" value="/jsp/layout/admin/PageApproval.jsp"/>
+    </definition>
+     <definition name="userloginreport" extends="adminlayout">
+        <put-attribute name="content" value="/jsp/layout/admin/UserLoginReport.jsp"/>
+    </definition>  
+    <definition name="newuserreport" extends="adminlayout">
+        <put-attribute name="content" value="/jsp/layout/admin/NewUserReport.jsp"/>
+    </definition> 
+    <definition name="pagevisitReport" extends="adminlayout">
+        <put-attribute name="content" value="/jsp/layout/admin/PageVisitReport.jsp"/>
+    </definition> 
+    <definition name="report" extends="editlayout">
+        <put-attribute name="center" value="/jsp/layout/PageVisitReport.jsp"/>
+    </definition> 
+    <definition name="registerlayout" template="/jsp/layout/RegisterLayout.jsp">
+        <put-attribute name="title" value="My Page"/>
+        <put-attribute name="header" value="/jsp/layout/RegisterHeader.jsp"/>
+        <put-attribute name="right" value="/jsp/layout/RegisterLeft.jsp"/>
+        <put-attribute name="content" value="/jsp/layout/RegisterContent.jsp"/>
+        <put-attribute name="footer" value="/jsp/layout/Footer.jsp"/>
+    </definition>
+   <definition name="searchlayout" template="/jsp/layout/SearchLayout.jsp">
+        <put-attribute name="title" value="My Page"/>
+        <put-attribute name="header" value="/jsp/layout/SearchHeader.jsp"/>
+        <put-attribute name="search" value="/jsp/layout/Search.jsp"/>
+        <put-attribute name="footer" value="/jsp/layout/Footer.jsp"/>
+    </definition>
+
+</tiles-definitions>

@@ -1,0 +1,37 @@
+package com.vnsoft.server.contentprovider;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.jsp.PageContext;
+
+import com.vnsoft.server.model.Item;
+import com.vnsoft.server.model.Menu;
+import com.vnsoft.server.tags.yui.TabViewContentProvider;
+import com.vnsoft.server.util.UIHelper;
+
+public class MenuContentProvider implements TabViewContentProvider {
+
+
+	@Override
+	public StringBuilder buildContent(Object data, Map params, PageContext pageContext) {
+		StringBuilder content = new StringBuilder();
+		Menu m = (Menu) data;
+		Object buttons = pageContext.getAttribute("buttons");
+		if(buttons == null)
+			buttons = "";
+		List<Object> objData = new ArrayList<>();
+		if (m != null){
+			for (Item i : m.getItems()) {
+				objData.add(i);
+				buttons = buttons + params.get("btnPrefix").toString()+m.getId()+"_"+i.getId()+",";
+			}
+			pageContext.setAttribute("buttons",buttons.toString());
+		}
+		content = UIHelper.toHTMLTable(objData, false, "item 1, item2", "com.vnsoft.server.contentprovider.ItemSimpleTableContentProvider",params,pageContext);
+
+		return content;
+	}
+
+}

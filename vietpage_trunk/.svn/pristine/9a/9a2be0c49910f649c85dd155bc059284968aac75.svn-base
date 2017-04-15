@@ -1,0 +1,25 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<div style="text-align: left;">
+	<table >
+		<s:textfield id="code" name="code" labelposition="left" key="vietpage.item.code"/>
+		<s:textfield id="name" name="name" labelposition="left" key="vietpage.item.name"/>
+		<s:textarea id="desc" name="desc" rows="2" cols="30" labelposition="left" key="vietpage.item.desc"/>
+		<s:textfield id="price" name="price" labelposition="left" key="vietpage.item.price"/>
+		<s:checkbox id="ismain" name="ismain" labelposition="left" key="vietpage.item.main"/>
+		<tr>
+			<s:file name="upload"  labelposition="left" key="vietpage.item.image"/>
+		</tr>
+		<s:checkbox id="discount" name="discount" key="vietpage.item.discount" labelposition="left"/>
+		<s:textfield id="discountPercent" name="discountPercent" key="vietpage.item.discount.percent" labelposition="left"/>
+		<s:textfield id="discountPrice" name="discountPrice" key="vietpage.item.discount.newprice" labelposition="left"/>
+	</table>
+	<s:hidden name="id" id="id"></s:hidden>
+	<s:hidden name="type" value="menuitem"></s:hidden>
+	<input type="hidden" id="itemImage" name="itemImage" />
+</div>			

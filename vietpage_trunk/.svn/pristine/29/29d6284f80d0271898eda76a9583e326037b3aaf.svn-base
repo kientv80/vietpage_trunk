@@ -1,0 +1,94 @@
+package com.vnsoft.server.biz;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.jcs.JCS;
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.cache.CacheType;
+import com.vnsoft.server.cache.JSCCacheManager;
+import com.vnsoft.server.util.ClientIPUtil;
+import com.vnsoft.server.util.IdGeneratorHelper;
+
+public class VisistorBean {
+	private static Logger log = Logger.getLogger(VisistorBean.class);
+	public static VisistorBean instance;
+	public static VisistorBean getInstance(){
+		if(instance == null)
+			instance = new VisistorBean();
+		return instance;
+	}
+	private VisistorBean(){}
+	public String getVisistorId(HttpServletRequest req,HttpServletResponse res){
+		String visistorId = getCookie("visistor_id", req);
+		if(visistorId == null || visistorId.isEmpty()){
+			String ip = ClientIPUtil.getClientIpAddress(req);
+			if(ip!=null && !ip.isEmpty()){
+				try {
+					visistorId = getVisistorIP(ip);
+					res.addCookie(new Cookie("visistor_id", visistorId));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return visistorId;
+	}
+	private String getCookie(String name,HttpServletRequest req){
+		String cookie = "";
+		if(req.getCookies()!=null && req.getCookies().length >0){
+			for(Cookie a : req.getCookies()){
+				if(name.equals(a.getName())){
+					cookie = a.getValue();
+					break;
+				}
+			}
+		}
+		return cookie;
+	}
+	private String getVisistorIP(String ip) throws Exception {
+		JCS cache = JSCCacheManager.getInstace().getCache(CacheType.VISISTOR_IP);
+		Object tmp = cache.get(ip);
+		if(tmp != null)
+			return tmp.toString();
+		
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		String visistorId = "";
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select * from visistor_ip where ip=?");
+			stm.setString(1, ip);
+			result = stm.executeQuery();
+			while(result.next()){
+				visistorId = result.getString("visistor_id");
+			}
+			if(visistorId == null || visistorId.isEmpty()){
+				visistorId = IdGeneratorHelper.getGenId()+"";
+				stm = con.prepareStatement("insert into visistor_ip values(?,?)");
+				stm.setString(1, ip);
+				stm.setString(2, visistorId);
+				stm.executeUpdate();
+			}
+			cache.put(ip, visistorId);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return visistorId;
+	}
+}

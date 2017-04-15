@@ -1,0 +1,151 @@
+package com.vnsoft.server.biz;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.vnsoft.server.model.HotNews;
+
+public class HotNewsBean {
+	private static HotNewsBean instance;
+	public static HotNewsBean getInstance(){
+		if(instance == null)
+			instance = new HotNewsBean();
+		return instance;
+	}
+	private HotNewsBean(){}
+	
+	public List<HotNews> getHotNews() throws SQLException{
+		List<HotNews> news = new ArrayList<>();
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select  * from hotnews ORDER BY created_date");
+//			stm.setInt(1, comId);
+			result = stm.executeQuery();
+			while (result.next()) {
+				HotNews hn = new HotNews();
+				hn.setId(result.getInt("id"));
+				hn.setLink(result.getString("link"));
+				hn.setContent(result.getString("content"));
+				hn.setTitle(result.getString("title"));
+				hn.setThume(result.getString("thume"));
+				hn.setCreatedData(result.getDate("created_date"));
+				news.add(hn);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+		}
+		return news;
+	}
+	public HotNews getHotNews(long id) throws SQLException{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		HotNews hn = new HotNews();
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select  * from hotnews where id=?");
+			stm.setLong(1, id);
+			result = stm.executeQuery();
+			while (result.next()) {
+				hn.setId(result.getInt("id"));
+				hn.setLink(result.getString("link"));
+				hn.setContent(result.getString("content"));
+				hn.setTitle(result.getString("title"));
+				hn.setThume(result.getString("thume"));
+				hn.setCreatedData(result.getDate("created_date"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+		}
+		return hn;
+	}
+	public List<HotNews> editHotNews(HotNews hn) throws SQLException{
+		List<HotNews> news = new ArrayList<>();
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("update hotnews set link=?,title=?, content=? where id=?");
+			stm.setString(1, hn.getLink());
+			stm.setString(2, hn.getTitle());
+			stm.setString(3, hn.getContent());
+			stm.setLong(4, hn.getId());
+			stm.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+		}
+		return news;
+	}
+	public void createHotNews(HotNews hn) throws SQLException{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("insert into hotnews (link,title,content,thume)values(?,?,?,?)");
+			stm.setString(1, hn.getLink());
+			stm.setString(2, hn.getTitle());
+			stm.setString(3, hn.getContent());
+			stm.setString(4, hn.getThume());
+			stm.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+		}
+	}
+	public void deleteHotNews(long id) throws SQLException{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("delete from hotnews where id=?");
+			stm.setLong(1,id);
+			stm.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+		}
+	}
+}

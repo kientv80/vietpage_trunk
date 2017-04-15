@@ -1,0 +1,6 @@
+#Menu
+item_1=[id=1;name=Fried Fish;description=Fried Birth Fish;price=20000;image=/images/fish.jpg]
+item_2=[id=2;name=Chicken;description=Boil Chicken;price=20000;image=/images/com_ga.jpg]
+item_3=[id=3;name=Big;description=Rice with big meat;price=20000;image=/images/com_heo.jpg]
+item_4=[id=4;name=Com thit nuong;description=Com thit heo nuong;price=20000;image=/images/com_thit_nuong.jpg]
+item_5=[id=5;name=Hamburger ;description=Hamburger ;price=20000;image=/images/hamberger.jpg]

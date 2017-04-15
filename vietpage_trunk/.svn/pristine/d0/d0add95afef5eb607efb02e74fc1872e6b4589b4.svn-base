@@ -1,0 +1,57 @@
+package com.vnsoft.server.actions;
+
+import com.vnsoft.server.biz.VisistorBean;
+
+public class AjaxAction extends BaseAction {
+	private int itemId;
+	private String yourass;
+	private int comId;
+	String assessment;
+
+	public String itemAssessment() throws Exception {
+		String visistorId = VisistorBean.getInstance().getVisistorId(getHttpServletRequest(), getHttpServletResponse());
+		System.out.println(getItemId()+yourass);
+		if (getItemId() != 0 && yourass != null && !yourass.isEmpty()) {
+			if ("good".equals(getYourass())) {
+				VisistorBean.getInstance().setVisitorAssessment(getItemId(), true, false, false, false,comId,visistorId);
+			} else if ("quitegood".equals(getYourass())) {
+				VisistorBean.getInstance().setVisitorAssessment(getItemId(), false, true, false, false,comId,visistorId);
+			} else if ("medium".equals(getYourass())) {
+				VisistorBean.getInstance().setVisitorAssessment(getItemId(), false, false, true, false,comId,visistorId);
+			} else if ("weak".equals(getYourass())) {
+				VisistorBean.getInstance().setVisitorAssessment(getItemId(), false, false, false, true,comId,visistorId);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public String execute() throws Exception {
+		return null;
+	}
+
+	public int getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(int itemId) {
+		this.itemId = itemId;
+	}
+
+	public String getYourass() {
+		return yourass;
+	}
+
+	public void setYourass(String yourass) {
+		this.yourass = yourass;
+	}
+
+	public int getComId() {
+		return comId;
+	}
+
+	public void setComId(int comId) {
+		this.comId = comId;
+	}
+
+}

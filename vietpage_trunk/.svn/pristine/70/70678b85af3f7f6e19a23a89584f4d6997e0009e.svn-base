@@ -1,0 +1,56 @@
+package com.vnsoft.server.actions;
+
+import com.vnsoft.server.biz.MenuBean;
+
+public class AjaxAction extends BaseAction {
+	private int itemId;
+	private String yourass;
+	private int comId;
+	String assessment;
+
+	public String itemAssessment() throws Exception {
+		System.out.println(getItemId()+yourass);
+		if (getItemId() != 0 && yourass != null && !yourass.isEmpty()) {
+			if ("good".equals(getYourass())) {
+				MenuBean.getInstance().setVisitorAssessment(getItemId(), true, false, false, false,comId);
+			} else if ("quitegood".equals(getYourass())) {
+				MenuBean.getInstance().setVisitorAssessment(getItemId(), false, true, false, false,comId);
+			} else if ("medium".equals(getYourass())) {
+				MenuBean.getInstance().setVisitorAssessment(getItemId(), false, false, true, false,comId);
+			} else if ("weak".equals(getYourass())) {
+				MenuBean.getInstance().setVisitorAssessment(getItemId(), false, false, false, true,comId);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public String execute() throws Exception {
+		return null;
+	}
+
+	public int getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(int itemId) {
+		this.itemId = itemId;
+	}
+
+	public String getYourass() {
+		return yourass;
+	}
+
+	public void setYourass(String yourass) {
+		this.yourass = yourass;
+	}
+
+	public int getComId() {
+		return comId;
+	}
+
+	public void setComId(int comId) {
+		this.comId = comId;
+	}
+
+}

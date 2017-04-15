@@ -1,0 +1,393 @@
+package com.vnsoft.server.biz;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.jcs.JCS;
+import org.apache.jcs.access.exception.CacheException;
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.cache.CacheType;
+import com.vnsoft.server.cache.JSCCacheManager;
+import com.vnsoft.server.util.ClientIPUtil;
+import com.vnsoft.server.util.IdGeneratorHelper;
+
+public class VisistorBean {
+	public static final String VIETPAGE_VISISTOR_ID = "vietpage_visistor_id";
+	public static final String VIETPAGE_VISIT_PAGES = "vietpage_visit_pages";
+	private static Logger log = Logger.getLogger(VisistorBean.class);
+	public static VisistorBean instance;
+	public static final String TOP3_MOST_INTERESTED_LOCATIONS = "top3MostInterestedLocations";
+	public static final String TOP3_MOST_INTERESTED_SERVICES = "top3MostInterestedServices";
+
+	public static VisistorBean getInstance() {
+		if (instance == null)
+			instance = new VisistorBean();
+		return instance;
+	}
+
+	private VisistorBean() {
+	}
+
+	public String getVisistorId(HttpServletRequest req, HttpServletResponse res) {
+		String visistorId = getCookie(VIETPAGE_VISISTOR_ID, req);
+		if (visistorId == null || visistorId.isEmpty()) {
+			try {
+				visistorId = getVisistorIP(null, req);
+				Cookie c = new Cookie(VIETPAGE_VISISTOR_ID, visistorId);
+				c.setMaxAge(360 * 24 * 60 * 60);
+				res.addCookie(c);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			/*
+			 * String ip = ClientIPUtil.getClientIpAddress(req); if(ip!=null &&
+			 * !ip.isEmpty()){ try { visistorId = getVisistorIP(ip,req);
+			 * res.addCookie(new Cookie("visistor_id", visistorId)); } catch
+			 * (Exception e) { e.printStackTrace(); } }
+			 */
+
+		}
+		return visistorId;
+	}
+	public void trackRecentVisitPages(HttpServletRequest req, HttpServletResponse res, String pageId) {
+		String pages = getCookie(VIETPAGE_VISIT_PAGES, req);
+		StringBuilder result = new StringBuilder();
+		if (pages != null && !pages.isEmpty()) {
+				pages = pages + "," + pageId;
+				
+				List<String> p = new ArrayList<>();
+				for(String s : pages.split(",")){
+					if(s != null && !s.isEmpty()){
+						if(!p.contains(s))
+							p.add(s);
+					}
+				}
+				
+				if(p.size() > 3){
+					for(int i = 1;i< p.size();i++){
+						result.append(p.get(i)).append(",");
+					}
+				}else{
+					for(int i = 0;i< p.size();i++){
+						result.append(p.get(i)).append(",");
+					}
+				}
+				Cookie c = new Cookie(VIETPAGE_VISIT_PAGES, result.toString());
+				c.setMaxAge(360 * 24 * 60 * 60);
+				res.addCookie(c);
+		}else{
+			Cookie c = new Cookie(VIETPAGE_VISIT_PAGES, pageId + ",");
+			c.setMaxAge(360 * 24 * 60 * 60);
+			res.addCookie(c);
+		}
+	}
+	public List<Long> getRecentVisitPages(HttpServletRequest req, HttpServletResponse res){
+		String pages = getCookie(VIETPAGE_VISIT_PAGES, req);
+		List<Long> pageIds = new ArrayList<>();
+		if(pages == null || pages.isEmpty())
+			return pageIds;
+		
+		List<String> ps = Arrays.asList(pages.split(","));
+		if(ps != null && ps.size() > 0){
+			for(String p : ps){
+				if(isNumber(p)){
+					pageIds.add(Long.valueOf(p));
+				}
+			}
+		}
+		return pageIds;
+	}
+	public boolean isNumber(String comId) {
+		try {
+			Integer.valueOf(comId);
+			return true;
+		} catch (Exception e) {
+		}
+		return false;
+	}
+	private String getCookie(String name, HttpServletRequest req) {
+		String cookie = "";
+		if (req.getCookies() != null && req.getCookies().length > 0) {
+			for (Cookie a : req.getCookies()) {
+				if (name.equals(a.getName())) {
+					cookie = a.getValue();
+					break;
+				}
+			}
+		}
+		return cookie;
+	}
+
+	private String getVisistorIP(String ip, HttpServletRequest req) throws Exception {
+		JCS cache = JSCCacheManager.getInstace().getCache(CacheType.VISISTOR_IP);
+		Object tmp = cache.get(ip);
+		if (tmp != null)
+			return tmp.toString();
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		String visistorId = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			// stm =
+			// con.prepareStatement("Select * from visistor_ip where ip=?");
+			// stm.setString(1, ip);
+			// result = stm.executeQuery();
+			// while(result.next()){
+			// visistorId = result.getString("visistor_id");
+			// }
+			if (visistorId == null || visistorId.isEmpty()) {
+				visistorId = IdGeneratorHelper.getGenId() + "";
+				stm = con.prepareStatement("insert into visistor_ip values(?,?)");
+				stm.setString(1, ip);
+				stm.setString(2, visistorId);
+				stm.executeUpdate();
+
+				stm = con.prepareStatement("insert into visistor_interested(visistor_id,score,visistor_info) values(?,?,?)");
+				stm.setString(1, visistorId);
+				stm.setString(2, "");
+				stm.setString(3, req.getHeader("User-Agent"));
+				stm.executeUpdate();
+
+			}
+			cache.put(ip, visistorId);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return visistorId;
+	}
+
+	public void setVisitorAssessment(int itemId, boolean good, boolean quiteGood, boolean medium, boolean weak, int comId, String visistorId, String cmt) throws Exception {
+
+		if (visistorId != null && alreadyAssessment(itemId, visistorId)) {
+			return;
+		} else if (visistorId != null && !visistorId.isEmpty()) {
+			String sql = "";
+			if (good) {
+				sql = "update menuitem set goodcount=goodcount+1 , goodcmts=CONCAT(goodcmts,?,'\n') where id=?";
+			} else if (quiteGood) {
+				sql = "update menuitem set quitegoodcount=quitegoodcount+1 , quitegoodcmts=CONCAT(quitegoodcmts,?,'\n')  where id=?";
+			} else if (medium) {
+				sql = "update menuitem set mediumcount=mediumcount+1 , mediumcmts=CONCAT(mediumcmts,?,'\n') where id=?";
+			} else {
+				sql = "update menuitem set weakcount=weakcount+1, weakcmts=CONCAT(weakcmts,?,'\n')  where id=?";
+			}
+			Connection con = null;
+			PreparedStatement stm = null;
+			try {
+				con = JDBCConnection.getInstance().getConnection();
+				stm = con.prepareStatement(sql);
+				stm.setString(1, cmt);
+				stm.setInt(2, itemId);
+				stm.executeUpdate();
+				if (visistorId != null)
+					assessment(itemId, visistorId);
+				clearMenuCache(comId);
+			} catch (Exception e) {
+				log.error("", e);
+			} finally {
+				if (con != null)
+					con.close();
+				if (stm != null)
+					stm.close();
+			}
+		}
+
+	}
+
+	private boolean alreadyAssessment(int itemId, String visistorId) throws Exception {
+		boolean already = false;
+		String sql = "select assessment_items from visistor_interested where visistor_id=?";
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement(sql);
+			stm.setString(1, visistorId);
+			result = stm.executeQuery();
+			String tmp = null;
+			while (result.next()) {
+				tmp = result.getString("assessment_items");
+			}
+			if (tmp != null && tmp.contains("[" + itemId + "]")) {
+				already = true;
+			}
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (con != null)
+				con.close();
+			if (stm != null)
+				stm.close();
+
+		}
+		return already;
+	}
+
+	private void assessment(int itemId, String visistorId) throws Exception {
+		System.out.println("tmp======" + itemId + "========" + visistorId);
+		String sql = "update visistor_interested set assessment_items=CONCAT(assessment_items,'[" + itemId + "]') where visistor_id=?";
+		Connection con = null;
+		PreparedStatement stm = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement(sql);
+			stm.setString(1, visistorId);
+			stm.executeUpdate();
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (con != null)
+				con.close();
+			if (stm != null)
+				stm.close();
+		}
+	}
+
+	public Map<String, List<Integer>> getUserInterestedScores(String visistorId) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		Map<String, List<Integer>> top3InterestedScore = new HashMap<>();
+		top3InterestedScore.put(TOP3_MOST_INTERESTED_SERVICES, new ArrayList<Integer>());
+		top3InterestedScore.put(TOP3_MOST_INTERESTED_LOCATIONS, new ArrayList<Integer>());
+		List<Integer> services = new ArrayList<>();
+		List<Integer> locations = new ArrayList<>();
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select * from visistor_interested where visistor_id=?");
+			stm.setString(1, visistorId);
+			result = stm.executeQuery();
+			String score = "";
+			while (result.next()) {
+				score = result.getString("score");
+			}
+			if (score != null && !score.isEmpty()) {
+				Map<String, Integer> s = toScore(score);
+				Map<String, Integer> stmp = new HashMap<>();
+				Map<String, Integer> ltmp = new HashMap<>();
+				for (Entry<String, Integer> e : s.entrySet()) {
+					if (e.getKey().startsWith("s")) {
+						stmp.put(e.getKey(), e.getValue());
+					} else {// l
+						ltmp.put(e.getKey(), e.getValue());
+					}
+				}
+				Map<Integer, String> stmp1 = new HashMap<>();
+				for (Entry<String, Integer> e : stmp.entrySet()) {
+					if (services.size() < 3) {
+						stmp1.put(e.getValue(), e.getKey());
+					} else {
+						int removeKey = 0;
+						for (Entry<Integer, String> e2 : stmp1.entrySet()) {
+							if (e.getValue().intValue() > e2.getKey().intValue()) {
+								removeKey = e2.getKey().intValue();
+								break;
+							}
+						}
+						if (removeKey > 0) {
+							stmp1.remove(removeKey);
+							stmp1.put(e.getValue(), e.getKey());
+						}
+					}
+				}
+				Map<Integer, String> ltmp1 = new HashMap<>();
+				for (Entry<String, Integer> e : ltmp.entrySet()) {
+					if (services.size() < 3) {
+						ltmp1.put(e.getValue(), e.getKey());
+					} else {
+						int removeKey = 0;
+						for (Entry<Integer, String> e2 : ltmp1.entrySet()) {
+							if (e.getValue().intValue() > e2.getKey().intValue()) {
+								removeKey = e2.getKey().intValue();
+								break;
+							}
+						}
+						if (removeKey > 0) {
+							ltmp1.remove(removeKey);
+							ltmp1.put(e.getValue(), e.getKey());
+						}
+					}
+				}
+				for (Entry<Integer, String> k : stmp1.entrySet()) {
+					services.add(Integer.valueOf(k.getValue().substring(1)));
+				}
+				for (Entry<Integer, String> k : ltmp1.entrySet()) {
+					locations.add(Integer.valueOf(k.getValue().substring(1)));
+				}
+				Collections.sort(services);
+				Collections.sort(locations);
+				if (services.size() > 5) {
+					top3InterestedScore.get(TOP3_MOST_INTERESTED_SERVICES).addAll(services.subList(services.size() - 5, services.size()));
+				} else {
+					top3InterestedScore.get(TOP3_MOST_INTERESTED_SERVICES).addAll(services);
+				}
+				if (locations.size() > 5) {
+					top3InterestedScore.get(TOP3_MOST_INTERESTED_LOCATIONS).addAll(locations.subList(locations.size() - 5, locations.size()));
+				} else {
+					top3InterestedScore.get(TOP3_MOST_INTERESTED_LOCATIONS).addAll(locations);
+				}
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return top3InterestedScore;
+	}
+
+	private Map<String, Integer> toScore(String score) {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		if (score.indexOf(":") > 0) {
+			for (String s : score.split(":")) {
+				String[] tmp = s.split("=");
+				if (tmp.length == 2) {
+					map.put(tmp[0], Integer.valueOf(tmp[1]));
+				}
+			}
+		}
+		return map;
+	}
+
+	private void clearMenuCache(long comId) {
+		try {
+			JSCCacheManager.getInstace().getCache(CacheType.MAIN_MENU).clear();
+			JSCCacheManager.getInstace().getCache(CacheType.MENU).clear();
+		} catch (CacheException e) {
+			log.error("", e);
+		}
+	}
+}

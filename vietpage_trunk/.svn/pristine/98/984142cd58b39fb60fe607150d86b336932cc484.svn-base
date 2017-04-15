@@ -1,0 +1,483 @@
+function editItem(id,action) {
+	if("edit"== action){
+		var url = "/item?action=getItem&id=" + id;
+		ajaxRequest(url, 'loadItem');
+		return true;
+	}else{
+		var form = document.getElementById("deleteItemForm");
+		form.id.value = id;
+		form.submit();
+	}
+}
+function loadItem(item) {
+	globalLoadItem(item,'doEditItem')
+}
+function loadItem2(item) {
+	globalLoadItem(item,'doEditItem2')
+	return true;
+}
+function loadItem3(item){
+	globalLoadItem(item,'doEditItemSetupCategory')
+	return true;
+}
+function globalLoadItem(item,formId) {
+	var form = document.getElementById(formId);
+	form.id.value = item.id;
+	form.code.value = item.code;
+	form.name.value = item.name;
+	form.desc.value = item.description;
+	form.price.value = item.price;
+	form.discountPercent.value = item.discountPercent;
+	form.discountPrice.value = item.priceAfterDiscount;
+	form.itemImage.value = item.imagePath;
+	if (true == item.ismain)
+		form.ismain.checked = 'checked';
+	else
+		form.ismain.checked = '';
+	
+	if (true == item.isDiscount)
+		form.discount.checked = 'checked';
+	else
+		form.discount.checked = '';
+	
+	if (true == item.isCargo){
+		form.isCargo.checked = 'checked';
+	}else{
+		form.isCargo.checked = '';
+	}
+	
+	var nodes = form.childNodes;
+	for (var i = 0; i < nodes.length; i++) {
+	    if (nodes[i].tagName == "DIV") {
+	    	if(nodes[i].id=="itemOptional"){
+	    		node = nodes[i];
+	    		if(form.isCargo.checked){
+	    			nodes[i].style.display="block";
+	    		}else{
+	    			nodes[i].style.display="none";
+	    		}
+	    		break;
+	    	}
+	    }
+	}
+	
+}
+function validateItem(formId) {
+	var form = document.getElementById(formId);
+	var result = "";
+	if(form.code.value == null ||form.code.value == ""){
+		result = result + " mã sản phẩm,";
+	}
+	if(form.name.value == ""){
+		result = result + "tên sản phẩm,";
+	}
+	if(form.desc.value == ""){
+		result = result + "chi tiết sản phẩm,";
+	}
+	if(form.isCargo.checked && form.price.value == ""){
+		result = result + " giá sản phẩm,";
+	}
+	if(form.name.value.length > 50){
+		result = result +  " Tên không được vượt 50 ký tự";
+	}
+	if(result !=""){
+		result = "Xin nhập " + result;
+	}
+	return result;
+}
+function updateMenuItem() {
+	var result = validateItem("doEditItem");
+	if(result == ""){
+		document.getElementById('action').value = "updatemenuitem";
+		document.getElementById('doEditItem').submit();
+		return true;
+	}else{
+		showMessage(result);
+		return false;
+	}
+}
+function showMessage(message){
+	showDialog(message,"icon-error");
+}
+function clearMessage(message,formID,divId){
+	var nodes = formID.childNodes;
+	var cnt = 0;
+	var node;
+	for (var i = 0; i < nodes.length; i++) {
+	    if (nodes[i].tagName == "DIV") {
+	    	if(nodes[i].id==divId){
+	    		node = nodes[i];
+	    		node.innerHTML="";
+	    		break;
+	    	}
+	    }
+	}
+}
+function editItem2(id,action) {
+	if("edit"== action){
+		var url = "/item?action=getItem&id=" + id;
+		ajaxRequest(url, 'loadItem2');
+		return true;
+	}else{
+		var form = document.getElementById("deleteItemForm");
+		form.id.value = id;
+		form.submit();
+	}
+	
+}
+function editItem3(id,action) {
+
+	if("edit"== action){
+		var url = "/item?action=getItem&id=" + id;
+		ajaxRequest(url, 'loadItem2');
+		return true;
+	}else{
+		var form = document.getElementById("deleteItemForm");
+		form.id.value = id;
+		form.submit();
+	}
+	
+}
+function updateMenuItem2() {
+	var result = validateItem("doEditItem2");
+	if(result == ""){
+		document.getElementById('action').value = "updatemenuitem";
+		document.getElementById('doEditItem2').submit();
+	}else{
+		showMessage(result);
+		return false;
+	}
+}
+
+function addNewMenuItem() {
+	var result = validateItem("addNewMenuItem");
+	if(result ==""){
+		var form = document.getElementById('addNewMenuItem');
+		if(form.upload.value==''){
+			showMessage("Bạn cần chọn hình cho sản phẩm");
+			return false;
+		}else{
+			form.submit();
+		}
+	}else{
+		showMessage(result);
+		return false;
+	}
+
+}
+
+function addComment() {
+	showDialog("Cảm ơn nhận xét của bạn.","icon-success");
+	document.getElementById("comment").submit();
+}
+
+function editContactInfo() {
+	document.getElementById("contactinfo").submit();
+}
+function editServiceInfo() {
+	document.getElementById("service_update").submit();
+}
+function editAboutInfo() {
+	document.getElementById("about_update").submit();
+}
+function addMenuGroup(){
+	var from = document.getElementById("createUpdateMenu");
+	from.submit();
+}
+function deleteMenuGroup(){
+	var from = document.getElementById("deleteMenuFrom");
+	var from2 = document.getElementById("menuGroupForm");
+	var menus = from2.selectedMenuId;
+	from.id.value = menus.options[menus.selectedIndex].value;
+	from.submit();
+}
+
+
+
+function setupTodayMenu(selectedItems){
+	document.getElementById("selectedIds").value=selectedItems;
+	document.getElementById('setmenufortoday').submit();
+}
+
+function update3(){
+	var result = validateItem("doEditItemSetupCategory");
+	if(result ==""){
+		document.getElementById('action').value="updatemenuitem";
+		document.getElementById('doEditItemSetupCategory').submit();
+	}else{
+		showMessage(result);
+		return false;
+	}
+}
+function addMenuItem(){
+	var result = validateItem("doEditItem2");
+	if(result ==""){
+		var form = document.getElementById('doEditItem2');
+		if(form.upload.value==''){
+			showMessage(result);
+			return false;
+		}else{
+			form.submit();
+		}
+	}else{
+		showMessage(result);
+		return false;
+	}
+}
+
+function setupCategoryEditItem(id,action){
+	if("edit"== action){
+		var url = "/item?action=getItem&id=" + id;
+		ajaxRequest(url, 'loadItem3');
+	}else if("delete"== action){
+		var form = document.getElementById("deleteItemForm");
+		form.id.value = id;
+		form.submit();
+	}
+
+}
+function viewItem(comid,id) {
+//	var url = "/item?action=getItem&id=" + id;
+//	ajaxRequest(url, 'viewItemForm');
+	document.getElementById("viewItemDetail").src = "/viewitem?comid="+comid + "&id=" + id;
+	return true;
+}
+function viewItemForm(item) {
+	fillItemInfo(item,"viewItemForm","");
+}
+
+function viewItem2(comid,id) {
+//	var url = "/item?action=getItem&id=" + id;
+//	ajaxRequest(url, 'viewItemForm2');
+	document.getElementById("viewItemDetail2").src = "/viewitem?comid="+comid + "&id=" + id;
+	return true;
+}
+function viewItem3(comid,id) {
+//	var url = "/item?action=getItem&id=" + id;
+//	ajaxRequest(url, 'viewItemForm2');
+	document.getElementById("viewItemDetail3").src = "/viewitem?comid="+comid + "&id=" + id;
+	return true;
+}
+function m_viewItem3(comid,id) {
+//	var url = "/item?action=getItem&id=" + id;
+//	ajaxRequest(url, 'viewItemForm2');
+	document.getElementById("m_viewItemDetail3").src = "/viewitem?comid="+comid + "&id=" + id;
+	return true;
+}
+function viewItem4(comid,id) {
+//	var url = "/item?action=getItem&id=" + id;
+//	ajaxRequest(url, 'viewItemForm2');
+	document.getElementById("m_viewItemDetail4").src = "/viewitem?comid="+comid + "&id=" + id;
+	return true;
+}
+function m_viewSuggestItem(comid,id) {
+//	var url = "/item?action=getItem&id=" + id;
+//	ajaxRequest(url, 'viewItemForm2');
+	document.getElementById("m_viewItemDetail5").src = "/viewitem?comid="+comid + "&id=" + id;
+	return true;
+}
+function viewItemForm2(item) {
+	fillItemInfo(item,"viewItemForm2","f2");
+	return true;
+}
+function fillItemInfo(item,formid,prefix) {
+	var form = document.getElementById(formid);
+	document.getElementById(prefix+"code").innerText = item.code;
+	document.getElementById(prefix+"name").innerText = item.name;
+	document.getElementById(prefix+"desc").innerText = item.description;
+	document.getElementById(prefix+"price").innerText = item.price + " VND";;
+	form.itemImage.src = item.imagePath;
+	document.getElementById(prefix+"discountPercent").innerText = item.discountPercent + "%";
+	document.getElementById(prefix+"discountPrice").innerText = item.priceAfterDiscount + " VND";
+	 if (true == item.isDiscount)
+		 document.getElementById(prefix+"discount").innerText = 'Yes';
+	 else
+		 document.getElementById(prefix+"discount").innerText = 'No';
+}
+
+function loadLocation(type){
+	var city = document.getElementById("selectedCityId");
+	if(city.selectedIndex > 0){
+		var id = city.options[city.selectedIndex].value;
+		var uri="/location?action=getlocation&id=" + id+"&type="+type;
+		asynReloadDropdownList(uri,"selectedLocationId");
+	}
+
+}
+function loadLocation2(form){
+	var form = document.getElementById(form);
+	var city = form.selectedCityId;
+	if(city.selectedIndex > 0){
+		var id = city.options[city.selectedIndex].value;
+		var uri="/location?action=getlocation&id=" + id;
+		asynReloadDropdownList2(uri,"addressFormId","selectedLocationId");
+	}
+
+}
+function addHotNews(){
+	var form = document.getElementById("addHotNewsForm");
+	form.submit();
+}
+function onOK(){
+	alert("onOK");
+}
+function onCancel(){
+	alert("onCancel");
+}
+function editHotNews(id,action){
+	if("edit"== action){
+		var url = "/hotnews?action=getHotNews&id=" + id;
+		ajaxRequest(url, 'loadHotNews');
+		return true;
+	}else{
+		var form = document.getElementById("deleteItemForm");
+		form.id.value = id;
+		form.submit();
+	}
+}
+function loadHotNews(hotnews){
+	var form = document.getElementById("editHotNewsForm");
+	form.link.value = hotnews.link;
+	form.title.value = hotnews.title;
+	form.content.value = hotnews.content;
+	form.thume.value = hotnews.thume;
+	form.id.value = hotnews.id;
+}
+function submitEditHotNews(){
+	var form = document.getElementById("editHotNewsForm");
+	form.submit();
+}
+function deleteHotNews(id){
+	var form = document.getElementById("delHotNewsForm");
+	form.action="/managehotnews?action=deleteHotNews&id="+id;
+	form.submit();
+}
+
+function registerWindowResizeEvent(){
+	window.addEventListener('resize', function(event){
+		if(window.innerWidth < (1024+155)){
+			var div = document.getElementById("ads_left");
+			if(div!=null){
+				div.style.display="none";
+				div.width=0;
+			}
+		}else{
+			var div = document.getElementById("ads_left");
+			if(div!=null){
+				div.style.display="block";
+				div.width=155;
+			}
+		}
+		
+		if(window.innerWidth < (1024+2*155)){
+			var div = document.getElementById("ads_right");
+			if(div!=null){
+				div.style.display="none";
+				div.width=0;
+			}
+		}else{
+			var div = document.getElementById("ads_right");
+			if(div!=null){
+				div.style.display="block";
+				div.width=155;
+			}
+		}
+		
+	});
+}
+function createLeftAds(){
+	if(screen.width>(1024+160)){
+		document.write('<div class=\"n_ads_left\" id=\"ads_left\"></div>');
+	}
+	if(window.innerWidth < (1024+155)){
+		var div = document.getElementById("ads_left");
+		if(div!=null){
+			div.style.display="none";
+			div.width=0;
+		}
+	}else{
+		var div = document.getElementById("ads_left");
+		if(div!=null){
+			div.style.display="block";
+			div.width=155;
+		}
+	}
+}
+function createRightAds(){
+	if(screen.width > (1024+(2*155))){
+		document.write('<div class=\"n_ads_right\" id=\"ads_right\"></div>');
+	}
+	if(window.innerWidth < (1024+2*155)){
+		var div = document.getElementById("ads_right");
+		if(div!=null){
+			div.style.display="none";
+			div.width=0;
+		}
+
+	}else{
+		var div = document.getElementById("ads_right");
+		if(div!=null){
+			div.style.display="block";
+			div.width=155;
+		}
+	}
+}
+function detectScreenSize(){
+	var exdate=new Date();
+	exdate.setDate(exdate.getDate() + 5);
+	var c_value=escape(screen.width) + ((5==null) ? "" : "; expires="+exdate.toUTCString());
+	var c_value2=escape( window.innerWidth) + ((5==null) ? "" : "; expires="+exdate.toUTCString());
+	document.cookie="screenWidth" + "=" + c_value;
+	document.cookie="innerWidth" + "=" + c_value2;
+}
+function assessItem1(){
+	assessItem("viewItemDetail", "assessmentItemForm");
+	return true;
+}
+function assessItem2(){
+	assessItem("viewItemDetail3", "assessmentItemForm");
+	return true;
+}
+function assessItem3(){
+	assessItem("m_viewItemDetail3", "assessmentItemForm");
+	return true;
+}
+function assessItem4(){
+	assessItem("m_viewItemDetail4", "assessmentItemForm");
+	return true;
+}
+function assessItem5(){
+	assessItem("m_viewItemDetail5", "assessmentItemForm");
+	return true;
+}
+function assessItem(framename, formname){
+	var form;
+	var isFireFox=navigator.userAgent.match(/(Firefox)/i);
+	if(isFireFox){
+		form = window.frames[framename].contentWindow.document.getElementById (formname);
+	}else{
+		form = window.frames[framename].document.getElementById (formname);
+	}
+	if(form != undefined && form !=null){
+		id = form.itemId.value;
+		comId = form.comId.value;
+		score="";
+		if(form.yourass1.checked){
+			score = form.yourass1.value;
+		}else if(form.yourass2.checked){
+			score = form.yourass2.value;
+		}else if(form.yourass3.checked){
+			score = form.yourass3.value;
+		}else if(form.yourass4.checked){
+			score = form.yourass4.value;
+		}
+		var cmt = form.cmt.value;
+		if(score!="" && id != null){
+			ajaxRequest("/itemAssessment?itemId="+id+"&yourass="+score+"&comId="+comId+"&cmt="+cmt,null);
+		}
+	}
+	return true;
+}
+
+
+

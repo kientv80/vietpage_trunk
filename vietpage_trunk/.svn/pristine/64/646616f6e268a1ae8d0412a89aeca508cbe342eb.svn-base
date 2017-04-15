@@ -1,0 +1,43 @@
+package com.vnsoft.server.actions;
+
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.biz.MenuBean;
+import com.vnsoft.server.model.Item;
+
+
+public class HomeAction extends StandarLayout{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8067961467571110142L;
+	private Item item;
+	private Logger logger = Logger.getLogger(HomeAction.class);
+	@Override
+	public String execute() {
+		String result = super.execute();
+		if(getComId() == null || getComId() == "-1" || getComId() == "0" || !isNumber(getComId()))
+			return "nocompanyid";
+		
+//		trackingVisit(getComId());
+		if("viewItemInPage".equals(getAction())){
+			try {
+				setItem(MenuBean.getInstance().getItem(Integer.valueOf(getId())));
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+				logger.error("", e);
+			} catch (Exception e) {
+				logger.error("", e);
+			}
+		}
+		return result;
+	}
+	public Item getItem() {
+		return item;
+	}
+	public void setItem(Item item) {
+		this.item = item;
+	}
+
+}

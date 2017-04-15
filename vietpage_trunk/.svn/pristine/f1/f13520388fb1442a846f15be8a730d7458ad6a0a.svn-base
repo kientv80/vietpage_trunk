@@ -1,0 +1,84 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+
+<table width="100%">
+	<tr>
+		<td>
+			<table width="100%">
+				<tr height="30px">
+					<td width="20px" align="center">
+						<img src="/images/TMKMenu.jpg" height="80px" width="60px" id="viewMenu" />
+						<a href="/setupmenu?type=company&id=${companyInfo.id}&action=edit" title=""><s:text name="vietpage.edit"></s:text></a>
+					</td>
+					<td width="20px" align="center">
+						<a href="#" title="Phone to call us"><img src="/images/dienthoai.png" height="80px" width="60px"/></a>
+						<a href="#" title="Edit Contact Info" id="phone"><s:text name="vietpage.edit"></s:text></a>
+					</td>
+					<td width="20px" align="center">
+						<a href="#" title="Our services" ><img src="/images/service.jpg" height="80px" width="60px"/></a>
+						<a href="#" title="Edit Service Info"  id="serviceBtn"><s:text name="vietpage.edit"></s:text></a>
+					</td>
+					<td width="20px" align="center">
+						<a href="#" title="About us"><img src="/images/about_us.png"  height="80px" width="60px"  /></a>
+						<a href="#" title="Edit About us Info"  id="aboutBtn"><s:text name="vietpage.edit"></s:text></a>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<div id="menuContainer" class="menu">
+	<div id="menu" class="yui3-widget-bd,yui3-scrollview-loading"></div>
+</div>
+
+<c:if test="${contactInfo != null &&contactInfo.comId > 0}">
+<div id="contact_info" align="left">
+	<form action="contactinfo?type=contactinfo&comId=${companyInfo.id }" id="contactinfo" method="post">
+		<table>
+			<tr>
+				<s:textfield name="phone" id="phone" key="vietpage.company.phone" value="%{contactInfo.phone}" maxlength="45" size="50"></s:textfield>
+			</tr>
+			<tr>
+				<s:textfield name="email" id="email" key="vietpage.register.email" value="%{contactInfo.email}" maxlength="45" size="50"></s:textfield>
+			</tr>
+			<tr>
+				<s:textfield name="address" id="address" key="vietpage.company.address" value="%{contactInfo.address}" maxlength="500" size="50"></s:textfield>
+			</tr>
+		</table>
+		<s:hidden name="id" value="%{contactInfo.comId}"></s:hidden>
+		<input type="hidden" id="action" name="action" value="edit"/>
+	</form>
+</div>
+<ui:PopupWindow width="500" isCentered="false" showPanelButtonId="phone" isVisible="false" containerId="contact_info" panelTitle="${companyInfo.name }" isRender="true" zIndex="5" isModal="true" dragAble="true" showOkButton="true" okButtonCallBack="editContactInfo" showCancelButton="true"></ui:PopupWindow>
+</c:if>
+<c:if test="${service != null }">
+<div id="service" align="left">
+	<form action="service_update?type=service&comId=${companyInfo.id }" id="service_update" method="post">
+		<s:textarea id="content" name = "content" key="vietpage.register.service" rows="10" cols="50" wrap="true" value="%{service.content}"></s:textarea>
+		<s:hidden name="id" value="%{service.comid}"></s:hidden>
+		<input type="hidden" id="action" name="action" value="edit"/>
+	</form>
+</div>
+<ui:PopupWindow width="500" isCentered="false" showPanelButtonId="serviceBtn" isVisible="false" containerId="service" scrollContainerId="service" panelTitle="${companyInfo.name }" isRender="true" zIndex="5" isModal="true" dragAble="true"  scrollHeight="250" showOkButton="true" showCancelButton="true" okButtonCallBack="editServiceInfo"></ui:PopupWindow>
+</c:if>
+<c:if test="${about != null }">
+<div id="about" align="left">
+	<form action="about_update?type=about&comId=${companyInfo.id }" id="about_update" method="post">
+		<s:textarea id="content" name="content" key="vietpage.register.desc" rows="10" cols="50" wrap="true" value="%{about.content}"></s:textarea>
+		<s:hidden name="id" value="%{about.comid}"></s:hidden>
+		<input type="hidden" id="action" name="action" value="edit"/>
+	</form>
+</div>
+<ui:PopupWindow width="500" isCentered="false" showPanelButtonId="aboutBtn" isVisible="false" containerId="about" scrollContainerId="about" panelTitle="${companyInfo.name }" isRender="true" zIndex="5" isModal="true" dragAble="true"  scrollHeight="250" showOkButton="true" showCancelButton="true" okButtonCallBack="editAboutInfo"></ui:PopupWindow>
+</c:if>
+
+<%-- <c:if test="${menus != null }"> --%>
+<%-- 	<ui:menus width="280" height="200" divId="menu" menus="${menus}" btnPrefix="menuBtn"></ui:menus> --%>
+<%-- 	<ui:PopupWindow width="800" isCentered="false" showPanelButtonId="viewMenu" isVisible="false" containerId="menuContainer" scrollContainerId="menu" panelTitle="${companyInfo.name }" isRender="true" zIndex="5" isModal="true" dragAble="false" scroll="true" scrollHeight="500" showOkButton="true" showCancelButton="false"></ui:PopupWindow> --%>
+<%-- </c:if> --%>
+

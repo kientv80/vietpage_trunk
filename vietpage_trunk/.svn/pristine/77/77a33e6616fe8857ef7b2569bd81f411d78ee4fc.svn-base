@@ -1,0 +1,103 @@
+package com.vnsoft.server.biz;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.model.KeyValue;
+
+public class LocationBean {
+	private static LocationBean location = null;
+	Logger log = Logger.getLogger(LocationBean.class);
+	public static LocationBean getInstance(){
+		if(location == null)
+			location = new LocationBean();
+		return location;
+	}
+	public List<KeyValue> getCity() throws Exception{
+		List<KeyValue> cities = new ArrayList<>();
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select * from city");
+			result = stm.executeQuery();
+			while (result.next()) {
+				KeyValue city = new KeyValue(result.getString("id"), result.getString("name"));
+				cities.add(city);
+			}
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return cities;
+		
+	}
+	public List<KeyValue> getLocation(int city) throws Exception{
+		List<KeyValue> locations = new ArrayList<>();
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select * from location where city_id=?");
+			stm.setInt(1, city);
+			result = stm.executeQuery();
+			while (result.next()) {
+				KeyValue location = new KeyValue(result.getString("id"), result.getString("name"));
+				locations.add(location);
+			}
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return locations;
+		
+	}
+	public List<KeyValue> getLocation() throws Exception{
+		List<KeyValue> locations = new ArrayList<>();
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select * from location");
+			result = stm.executeQuery();
+			while (result.next()) {
+				KeyValue location = new KeyValue(result.getString("id"), result.getString("name"));
+				locations.add(location);
+			}
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return locations;
+		
+	}
+}

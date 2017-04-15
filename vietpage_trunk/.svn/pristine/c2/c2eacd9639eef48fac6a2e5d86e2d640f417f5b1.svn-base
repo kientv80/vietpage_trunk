@@ -1,0 +1,410 @@
+package com.vnsoft.server.actions;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import net.coobird.thumbnailator.Thumbnailator;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Positions;
+import net.coobird.thumbnailator.name.Rename;
+
+import org.apache.log4j.Logger;
+
+import com.opensymphony.xwork2.ActionContext;
+import com.vnsoft.server.biz.CompanyBean;
+import com.vnsoft.server.biz.MenuBean;
+import com.vnsoft.server.biz.NewsBean;
+import com.vnsoft.server.biz.UserBean;
+import com.vnsoft.server.model.About;
+import com.vnsoft.server.model.CompanyInfo;
+import com.vnsoft.server.model.ContactInfo;
+import com.vnsoft.server.model.Item;
+import com.vnsoft.server.model.Menu;
+import com.vnsoft.server.model.News;
+import com.vnsoft.server.model.Service;
+import com.vnsoft.server.model.User;
+
+public class StandarLayout extends BaseAction {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2003161624775230261L;
+
+	private Menu mainMenus;
+	private News news;
+	private Service service;
+	private List<Menu> menus;
+	private ContactInfo contactInfo;
+	private About about;
+	private CompanyInfo companyInfo;
+	private List<CompanyInfo> otherCompanies;
+	private String comId = null;
+	private String btn = "";
+	private String action;
+	private String type;
+	private String id;
+	private String page;
+	private HttpServletRequest request;
+	// Used in upload file only
+	File file;
+	private String contentType;
+	private String filename;
+	private Map<String, Menu> menuTabs = new HashMap<>();
+//	private List<Comment> comments = new ArrayList<>();
+	private String displayTabs = "";
+	private String callback = "";
+	private String undefined;
+	private String targetUrl;
+	private String pageName;
+	private Logger logger = Logger.getLogger(StandarLayout.class);
+
+
+	public String execute() {
+		logger.debug("V003:  Enter StandarLayout action = " + getAction() + " pageid=" + getComId());
+		try {
+			setCurrentPage(ActionContext.getContext().getName());
+			if (getComId() == null || getComId() == "-1" || getComId() == "0" || !isNumber(getComId()))
+				return "nocompanyid";
+			if (action == null || action.isEmpty())
+				action = getHttpServletRequest().getParameter("action");
+			
+			mainMenus = MenuBean.getInstance().loadMainMenu(Long.valueOf(getComId()));
+			menus = MenuBean.getInstance().loadMenus(Long.valueOf(getComId()));
+			for (Item item : mainMenus.getItems()) {
+				setBtn(getBtn() + "btn" + mainMenus.getId() + "_" + item.getId() + ",");
+			}
+			if(mainMenus!=null && mainMenus.getItems()!=null && mainMenus.getItems().size()>0)
+				shottenItemDesc( mainMenus.getItems());
+			
+			for (Menu m : menus) {
+				if(m.getItems().size()>0){
+					menuTabs.put(m.getId() + "", m);
+					displayTabs = displayTabs + m.getId() + ":" + m.getName() + ",";
+					shottenItemDesc( m.getItems());
+				}
+			}
+			if (displayTabs != null && displayTabs.length() > 0)
+				displayTabs = displayTabs.substring(0, displayTabs.length() - 1);
+			
+			companyInfo = CompanyBean.getInstance().getCompanyInfo(Long.valueOf(getComId()));
+			service = new Service();
+			service.setComid(companyInfo.getId());
+			service.setContent(companyInfo.getService());
+			about = new About();
+			about.setComid(companyInfo.getId());
+			about.setContent(companyInfo.getAbout());
+			contactInfo = new ContactInfo();
+			contactInfo.setAddress(companyInfo.getAddress());
+			contactInfo.setPhone(companyInfo.getPhone());
+			contactInfo.setEmail(companyInfo.getEmail());
+			contactInfo.setComId(companyInfo.getId());
+			news = NewsBean.getInstance().getNews(Long.valueOf(getComId()));
+			setOtherCompanies(CompanyBean.getInstance().getCompanyInfo(0, companyInfo.getLocationId(), companyInfo.getServiceTypeId(), null));
+//			setComments(new CommentBean().getComments(Integer.valueOf(getComId()), 100));
+
+		} catch (Exception e) {
+			logger.error("", e);
+			e.printStackTrace();
+		}
+		if (targetUrl != null && !targetUrl.isEmpty())
+			return targetUrl;
+
+		return SUCCESS;
+	}
+
+//	public void init() throws Exception {
+//		getHttpServletRequest().setCharacterEncoding("utf-8");
+//		getHttpServletResponse().setCharacterEncoding("utf-8");
+//	}
+
+	public enum UPLOAD_OBJECT {ITEM,FEED,PAGE_CENTER,BANNER,OTHERS}
+	protected String uploadFile(String fileName, String comId, UPLOAD_OBJECT uploadObj) {
+		if (file != null) {
+			String imagePath = null;
+			FileOutputStream out = null;
+			FileInputStream in = null;
+			try {
+				if (imagePath == null) {
+					File f = new File("tmp.txt");
+					imagePath = (f.getAbsolutePath().substring(0, f.getAbsolutePath().length() - 7));
+				}
+
+				String separatorChar = File.separator;
+				if ("\\".equals(separatorChar))
+					separatorChar = separatorChar + separatorChar;
+				String dir = imagePath + separatorChar + "webapps" + separatorChar + "images" + separatorChar + comId;
+				File f = new File(dir);
+				f.mkdir();
+				out = new FileOutputStream(new File(dir + separatorChar + fileName));
+				in = new FileInputStream(file);
+				byte buf[] = new byte[1024];
+				while (in.read(buf) > 0) {
+					out.write(buf);
+				}
+				if(UPLOAD_OBJECT.ITEM.equals(uploadObj)){
+					//item
+					Thumbnails.of(dir + separatorChar + fileName).size(330, 200).outputFormat("jpg").toFiles(Rename.PREFIX_DOT_THUMBNAIL);
+				}else if(UPLOAD_OBJECT.FEED.equals(uploadObj)){
+					//latest feed
+					Thumbnails.of(dir + separatorChar + fileName).width(460).outputFormat("jpg").toFiles(Rename.PREFIX_DOT_THUMBNAIL);
+					//hot feed
+					Thumbnails.of(dir + separatorChar + fileName).width(170).outputFormat("jpg").toFiles(Rename.PREFIX_HYPHEN_THUMBNAIL);
+				}else if(UPLOAD_OBJECT.PAGE_CENTER.equals(uploadObj)){
+					Thumbnails.of(dir + separatorChar + fileName).width(330).outputFormat("jpg").toFiles(Rename.PREFIX_DOT_THUMBNAIL);
+				}else if(UPLOAD_OBJECT.BANNER.equals(uploadObj)){
+					Thumbnails.of(dir + separatorChar + fileName).width(1024).outputFormat("jpg").toFiles(Rename.PREFIX_DOT_THUMBNAIL);
+				}
+				return "/images/" + comId + "/" + fileName;
+			} catch (Exception e) {
+				logger.error("Upload file fileName=" + fileName + " comid=" + comId, e);
+			}finally{
+				try{
+				if(out!=null)
+					out.close();
+				if(in != null)
+					in.close();
+				}catch(Exception ex){
+					logger.error("", ex);
+				}
+			}
+
+		}
+		logger.info("No file to upload");
+		return null;
+	}
+
+	public void setUploadContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public void setUpload(File file) {
+		this.file = file;
+	}
+
+	public Menu getMainMenus() {
+		return mainMenus;
+	}
+
+	public void setMainMenus(Menu menu) {
+		this.mainMenus = menu;
+	}
+
+	public News getNews() {
+		return news;
+	}
+
+	public void setNews(News news) {
+		this.news = news;
+	}
+
+	public List<Menu> getMenus() {
+		return menus;
+	}
+
+	public void setMenus(List<Menu> menus) {
+		this.menus = menus;
+	}
+
+	public String getBtn() {
+		return btn;
+	}
+
+	public void setBtn(String btn) {
+		this.btn = btn;
+	}
+
+	public Service getService() {
+		return service;
+	}
+
+	public void setService(Service service) {
+		this.service = service;
+	}
+
+	public About getAbout() {
+		return about;
+	}
+
+	public void setAbout(About about) {
+		this.about = about;
+	}
+
+	public ContactInfo getContactInfo() {
+		return contactInfo;
+	}
+
+	public void setContactInfo(ContactInfo contactInfo) {
+		this.contactInfo = contactInfo;
+	}
+
+	public CompanyInfo getCompanyInfo() {
+		return companyInfo;
+	}
+
+	public void setCompanyInfo(CompanyInfo companyInfo) {
+		this.companyInfo = companyInfo;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public void setUploadFileName(String filename) {
+		this.filename = filename;
+	}
+
+	public String getComId() {
+		if (comId == null && getHttpServletRequest().getParameter("comid") != null) {
+			comId = getHttpServletRequest().getParameter("comid").toString();
+			pageName = getHttpServletRequest().getSession().getAttribute("pageName") + "";
+		}else if ((page != null && !page.isEmpty())) {
+			try {
+				User u = UserBean.getUser(page);
+				if (u == null)
+					return null;
+				pageName = u.getUsername();
+				comId = CompanyBean.getInstance().getId(u.getId()) + "";
+				getHttpServletRequest().getSession().setAttribute("comid", comId);
+				getHttpServletRequest().getSession().setAttribute("pageName", pageName);
+				pageName = getHttpServletRequest().getSession().getAttribute("pageName") + "";
+			} catch (Exception e) {
+				logger.error("", e);
+			}
+
+		} else if(getHttpServletRequest().getAttribute("page")!=null && !getHttpServletRequest().getAttribute("page").toString().isEmpty()){
+			try {
+				User u = UserBean.getUser(getHttpServletRequest().getAttribute("page").toString());
+				if (u == null)
+					return null;
+				pageName = u.getUsername();
+				comId = CompanyBean.getInstance().getId(u.getId()) + "";
+				getHttpServletRequest().getSession().setAttribute("comid", comId);
+				getHttpServletRequest().getSession().setAttribute("pageName", pageName);
+				pageName = getHttpServletRequest().getSession().getAttribute("pageName") + "";
+			} catch (Exception e) {
+				logger.error("", e);
+			}
+		}
+		else if (getHttpServletRequest().getSession().getAttribute(LoginAction.COMPANY_INFO) != null) {
+			CompanyInfo com = (CompanyInfo) getHttpServletRequest().getSession().getAttribute(LoginAction.COMPANY_INFO);
+			comId = com.getId() + "";
+//			pageName = com.getUsername();
+		} else if (comId == null && getHttpServletRequest().getSession().getAttribute("comid") != null) {
+			comId = getHttpServletRequest().getSession().getAttribute("comid").toString();
+			pageName = getHttpServletRequest().getSession().getAttribute("pageName") + "";
+		} 
+		return comId;
+	}
+
+	public void setComId(String comId) {
+		this.comId = comId;
+	}
+
+	public String getPage() {
+		return page;
+	}
+
+	public void setPage(String page) {
+		this.page = page;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Map<String, Menu> getMenuTabs() {
+		return menuTabs;
+	}
+
+	public void setMenuTabs(Map<String, Menu> menuTabs) {
+		this.menuTabs = menuTabs;
+	}
+
+	public String getDisplayTabs() {
+		return displayTabs;
+	}
+
+	public void setDisplayTabs(String displayTabs) {
+		this.displayTabs = displayTabs;
+	}
+
+	public List<CompanyInfo> getOtherCompanies() {
+		return otherCompanies;
+	}
+
+	public void setOtherCompanies(List<CompanyInfo> otherCompanies) {
+		this.otherCompanies = otherCompanies;
+	}
+//
+//	public List<Comment> getComments() {
+//		return comments;
+//	}
+//
+//	public void setComments(List<Comment> comments) {
+//		this.comments = comments;
+//	}
+
+	public String getCallback() {
+		return callback;
+	}
+
+	public void setCallback(String callback) {
+		this.callback = callback;
+	}
+
+	public String getUndefined() {
+		return undefined;
+	}
+
+	public void setUndefined(String undefined) {
+		this.undefined = undefined;
+	}
+
+	public String getTargetUrl() {
+		return targetUrl;
+	}
+
+	public void setTargetUrl(String targetUrl) {
+		this.targetUrl = targetUrl;
+	}
+
+	public String getPageName() {
+		return pageName;
+	}
+
+	public void setPageName(String pageName) {
+		this.pageName = pageName;
+	}
+	public static void main(String[] args) {
+		try {
+			Thumbnails.of("D:\\tmp\\vnnews2.jpg").forceSize(300, 200).outputFormat("jpg").toFiles(Rename.PREFIX_DOT_THUMBNAIL);
+//			Thumbnails.of("D:\\tmp\\1305016772375.jpg").crop(Positions.CENTER).size(300, 200).outputFormat("jpg").toFiles(Rename.PREFIX_DOT_THUMBNAIL);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

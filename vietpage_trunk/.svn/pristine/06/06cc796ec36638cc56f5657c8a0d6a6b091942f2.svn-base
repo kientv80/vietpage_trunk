@@ -1,0 +1,104 @@
+package com.vnsoft.server.actions;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.biz.MenuBean;
+import com.vnsoft.server.interceptor.AuthorizationInterceptor;
+import com.vnsoft.server.model.Item;
+
+public class SetupMenuAction extends StandarLayout {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7738125639978025021L;
+	private String selectedIds;
+	private List<Item> items ;
+	private String setupmainmenu;
+	private String selectedMenuId;
+	private String targetUrl;
+	private Logger logger = Logger.getLogger(SetupMenuAction.class);
+	@Override
+	public String execute() {
+		try {
+			init();
+			if(getComId() == null || getComId().isEmpty()){
+				return "nocompanyid";
+			}
+			if (AuthorizationInterceptor.EDIT.equals(action) && "editMainMenu".equals(setupmainmenu)) {
+				if (selectedIds != null && !selectedIds.isEmpty()) {
+					List<Integer> ids = new ArrayList<>();
+					for (String id : selectedIds.split(";")) {
+						ids.add(Integer.valueOf(id.split(":")[1]));
+					}
+					MenuBean.getInstance().setMainMenuItems(ids, Integer.valueOf(getComId().trim()));
+				}
+			}else if (AuthorizationInterceptor.EDIT.equals(action) && "editMenu".equals(setupmainmenu)) {
+				if (selectedIds != null && !selectedIds.isEmpty() && selectedMenuId !=null && !selectedMenuId.isEmpty()) {
+					List<Integer> ids = new ArrayList<>();
+					for (String id : selectedIds.split(";")) {
+						ids.add(Integer.valueOf(id.split(":")[1]));
+					}
+					
+					if(getComId()!=null)
+						MenuBean.getInstance().setupMenu(ids,selectedMenuId,Integer.valueOf(getComId().trim()));
+					else
+						System.out.println("getComid=null");
+				}
+			} 
+			setItems(MenuBean.getInstance().getAllMenuItems(Long.valueOf(getComId())));
+			super.execute();
+		} catch (Exception e) {
+			logger.error("", e);
+			e.printStackTrace();
+		}
+
+		if(getTargetUrl() != null && !getTargetUrl().isEmpty()){
+			return getTargetUrl();
+		}else{
+			return SUCCESS;
+		}
+	}
+
+	public String getSelectedIds() {
+		return selectedIds;
+	}
+
+	public void setSelectedIds(String selectedIds) {
+		this.selectedIds = selectedIds;
+	}
+
+	public List<Item> getItems() {
+		return items;
+	}
+
+	public void setItems(List<Item> items) {
+		this.items = items;
+	}
+
+	public String getSetupmainmenu() {
+		return setupmainmenu;
+	}
+
+	public void setSetupmainmenu(String setupmainmenu) {
+		this.setupmainmenu = setupmainmenu;
+	}
+
+	public String getSelectedMenuId() {
+		return selectedMenuId;
+	}
+
+	public void setSelectedMenuId(String selectedMenuId) {
+		this.selectedMenuId = selectedMenuId;
+	}
+
+	public String getTargetUrl() {
+		return targetUrl;
+	}
+
+	public void setTargetUrl(String targetUrl) {
+		this.targetUrl = targetUrl;
+	}
+}

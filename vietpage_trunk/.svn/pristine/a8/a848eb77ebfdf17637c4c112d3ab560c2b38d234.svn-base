@@ -1,0 +1,86 @@
+package com.vnsoft.server.actions;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.opensymphony.xwork2.ActionContext;
+import com.vnsoft.server.biz.MenuBean;
+import com.vnsoft.server.biz.TrackingBean;
+import com.vnsoft.server.biz.UserInterestedBean;
+import com.vnsoft.server.model.Item;
+
+public class HomeAction extends StandarLayout {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8067961467571110142L;
+	private Item viewItem;
+	private Logger logger = Logger.getLogger(HomeAction.class);
+	private String itemId;
+	private List<Item> suggestItems = new ArrayList<>();
+	@Override
+	public String execute() {
+		setCurrentPage(ActionContext.getContext().getName());
+		logger.info("viewItemInPage itemid1=" + getItemId() + getAction());
+		String result = super.execute();
+		try {
+			if (getComId() == null || getComId() == "-1" || getComId() == "0" || !isNumber(getComId()))
+				return "nocompanyid";
+			logger.info("viewItemInPage itemid1=" + getItemId() + getAction());
+			trackingVisit(getComId());
+			if ("viewItemInPage".equals(getAction())) {
+				try {
+					setViewItem(MenuBean.getInstance().getItem(Integer.valueOf(getItemId())));
+				} catch (NumberFormatException e) {
+					logger.error("", e);
+				} catch (Exception e) {
+					logger.error("", e);
+				}
+			}
+			String visistorId = getVisistorId();
+			if (getCompanyInfo() != null) {
+				TrackingBean.getInstance().trackingUserInterested(visistorId, getCompanyInfo().getServiceTypeId(), getCompanyInfo().getLocationId());
+			}
+			Map<String, List<Integer>> scores = UserInterestedBean.getInstance().getUserInterestedScores(visistorId);
+			 
+			if (scores.get(UserInterestedBean.TOP3_MOST_INTERESTED_SERVICES).size() > 0) {
+				for (int sid : scores.get(UserInterestedBean.TOP3_MOST_INTERESTED_SERVICES)) {
+					suggestItems.addAll(MenuBean.getInstance().getDiscountedItems(2, sid));
+				}
+			}
+			
+		} catch (Exception e) {
+			logger.error("", e);
+		}
+		return result;
+	}
+
+	public String getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(String itemId) {
+		this.itemId = itemId;
+	}
+
+	public Item getViewItem() {
+		return viewItem;
+	}
+
+	public void setViewItem(Item viewItem) {
+		this.viewItem = viewItem;
+	}
+
+	public List<Item> getSuggestItems() {
+		return suggestItems;
+	}
+
+	public void setSuggestItems(List<Item> suggestItems) {
+		this.suggestItems = suggestItems;
+	}
+
+}

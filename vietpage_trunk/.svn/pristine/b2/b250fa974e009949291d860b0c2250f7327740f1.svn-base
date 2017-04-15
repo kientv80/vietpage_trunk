@@ -1,0 +1,167 @@
+package com.vnsoft.server.biz;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.jcs.JCS;
+import org.apache.jcs.access.exception.CacheException;
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.cache.CacheType;
+import com.vnsoft.server.cache.JSCCacheManager;
+import com.vnsoft.server.model.News;
+
+
+public class NewsBean {
+	private static NewsBean instance;
+	Logger log = Logger.getLogger(NewsBean.class);
+	private NewsBean() {
+	}
+	public static NewsBean getInstance(){
+		if(instance == null)
+			instance = new NewsBean();
+		
+		return instance;
+	}
+	public News getNews(long comId) throws Exception{
+		News a = new News();
+		JCS cache = JSCCacheManager.getInstace().getCache(CacheType.NEWS);
+		Object tmp = cache.get(comId);
+		if(tmp != null)
+			return (News)tmp;
+		
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select * from news where comid=?");
+			stm.setLong(1, comId);
+			result = stm.executeQuery();
+			while (result.next()) {
+				a.setId(result.getInt("id"));
+				a.setComId(result.getLong("comid"));
+				a.setContent(result.getString("content"));
+				a.setCreateddate(result.getDate("createdate"));
+			}
+		} catch (Exception e) {
+			log.error("",e);
+		}finally{
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		cache.put(comId, a);
+		return a;
+	}
+	
+	public List<News> getAllNews(long limit, int serviceId) throws Exception{
+		JCS cache = JSCCacheManager.getInstace().getCache(CacheType.ALL_NEWS);
+		Object tmp = cache.get("allnews");
+		if(tmp != null)
+			return (List<News>)tmp;
+		
+		List<News> news = new ArrayList<>();
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			if(serviceId > 0){
+				stm = con.prepareStatement("SELECT n.id,n.comid, c.name,u.username, c.contentimage, c.headerimage,n.createdate,n.content FROM news n, company c,users u where n.comid=c.id and u.id = c.owner_id and c.ispublic=true and c.isapprove=true and c.service_id=? order by n.createdate desc limit " + limit);
+				stm.setInt(1, serviceId);
+			}else{
+				stm = con.prepareStatement("SELECT n.id,n.comid, c.name,u.username, c.contentimage, c.headerimage,n.createdate,n.content FROM news n, company c,users u where n.comid=c.id and u.id = c.owner_id and c.ispublic=true  and c.isapprove=true order by n.createdate desc limit " + limit);
+			}
+			result = stm.executeQuery();
+			while (result.next()) {
+				News n = new News();
+				n.setId(result.getInt("id"));
+				n.setComId(result.getLong("comid"));
+				n.setContent(result.getString("content"));
+				n.setCompanyName(result.getString("name"));
+				n.setCompanyImage(result.getString("contentimage"));
+				n.setCreateddate(result.getDate("createdate"));
+				n.setUserName(result.getString("username"));
+				news.add(n);
+			}
+			cache.put("allnews", news);
+		} catch (Exception e) {
+			log.error("",e);
+			log.error("",e);
+		}finally{
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return news;
+	}
+	
+	
+	public void editNewsInfo(News n) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Update news set content=?,createdate=? where id=?");
+			stm.setString(1, n.getContent());
+			stm.setDate(2, new Date(System.currentTimeMillis()));
+			stm.setLong(3, n.getId());
+			stm.executeUpdate();
+			clearMenuCache(n.getComId());
+		} catch (Exception e) {
+			log.error("",e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+	private void clearMenuCache(long comId){
+		try {
+			JSCCacheManager.getInstace().getCache(CacheType.NEWS).clear();
+		} catch (CacheException e) {
+			log.error("",e);
+		}
+	}
+	public void addNews(News n) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("insert into news(content,comid,createdate) values(?,?,?)");
+			stm.setString(1, n.getContent());
+			stm.setLong(2, n.getComId());
+			stm.setDate(3, new Date(System.currentTimeMillis()));
+			stm.executeUpdate();
+		} catch (Exception e) {
+			log.error("",e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+}

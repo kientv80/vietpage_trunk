@@ -1,0 +1,118 @@
+package com.vnsoft.server.interceptor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
+import com.vnsoft.server.actions.LoginAction;
+import com.vnsoft.server.biz.AuthorizationBean;
+import com.vnsoft.server.model.CompanyInfo;
+
+@SuppressWarnings("serial")
+public class AuthorizationInterceptor extends AbstractInterceptor {
+	public static final String ACCESS_DENINED = "access_denined";
+	public static final String TYPE_COMPANY = "company";
+	public static final String TYPE_ABOUT = "about";
+	public static final String TYPE_CONTACTINFO = "contactinfo";
+	public static final String TYPE_SERVICE = "service";
+	public static final String TYPE_MENUITEM = "menuitem";
+	public static final String TYPE_NEWS = "news";
+	public static final String LOAD_COMMENTS = "loadComments";
+	public static final String DELETE = "delete";
+	public static final String EDIT = "edit";
+	public static final String ADD = "add";
+	private Logger logger = Logger.getLogger(AuthorizationInterceptor.class);
+	List<String> actions = new ArrayList<>();
+	{
+		actions.add(ADD);
+		actions.add(EDIT);
+		actions.add(DELETE);
+		actions.add(LOAD_COMMENTS);
+	}
+	@Override
+	public String intercept(ActionInvocation inv) throws Exception {
+		if(checkAuthorize(inv)){
+			return inv.invoke();
+		}else{
+			return ACCESS_DENINED;
+		}
+	}
+
+	private boolean checkAuthorize(ActionInvocation inv) throws Exception, Exception {
+		Object action = inv.getInvocationContext().getParameters().get("action");
+		Object type = inv.getInvocationContext().getParameters().get("type");
+		Object id = inv.getInvocationContext().getParameters().get("id");
+		if(action != null && needCheckAuthorize(getValue(action))){
+			if(type == null || type.toString().isEmpty() || id == null || id.toString().isEmpty()){
+				logger.debug("checkAuthorize action="+action + " type=" + type + " id=" + id + " DONT need to Authorize");
+				return false;
+			}
+			String act = getValue(action);
+			String t = getValue(type);
+			String i = getValue(id);
+			if(i == null || i.isEmpty() || !isNumber(i)){
+				logger.debug("checkAuthorize action="+action + " type=" + type + " id=" + id + ". id is null or not a number");
+				return false;
+			}
+			CompanyInfo com = (CompanyInfo)inv.getInvocationContext().getSession().get(LoginAction.COMPANY_INFO);
+			if(TYPE_NEWS.equals(t)){
+				if(AuthorizationBean.getOwnerOfNews(Integer.valueOf(i.toString())) != com.getId())
+					return false;
+			}else if(TYPE_MENUITEM.equals(t)){
+				if(AuthorizationBean.getOwnerOfMenuItem(Integer.valueOf(i.toString())) != com.getId())
+					return false;
+			}else if(TYPE_SERVICE.equals(t)){
+				if(Integer.valueOf(i.toString()) != com.getId())
+					return false;
+			}else if(TYPE_CONTACTINFO.equals(t)){
+				if(Integer.valueOf(i.toString()) != com.getId())
+					return false;
+			}else if(TYPE_ABOUT.equals(t)){
+				if(Integer.valueOf(i.toString()) != com.getId())
+					return false;
+			}else if(TYPE_COMPANY.equals(t)){
+				if(com.getId() != Long.valueOf(i.toString()).longValue()){
+					return false;
+				}
+			}
+			return true;
+		}
+		return true;
+	}
+	private boolean isNumber(String i) {
+		try {
+			Integer.valueOf(i);
+			return true;
+		} catch (Exception e) {
+		}
+		return false;
+	}
+
+	private String getValue(Object obj){
+		if (obj instanceof String[]) {
+			String[] tmp = (String[]) obj;
+			return tmp[0];
+			
+		}else{
+			if(obj != null)
+				return obj.toString();
+		}
+		return null;
+	}
+	private boolean needCheckAuthorize(String action){
+		logger.debug("Enter needCheckAuthorize action =" + action);
+		boolean result = false;
+		for(String act : actions){
+			if(action.toString().startsWith(act) || action.toString().equals(act) ){
+				logger.debug("needCheckAuthorize action =" + action + " -> need to check authorize");
+				result = true;
+				break;
+			}
+		}
+		logger.debug("End needCheckAuthorize: don't need to check action=" + action.toString());
+		return result;
+	}
+}

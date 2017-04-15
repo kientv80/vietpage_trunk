@@ -1,0 +1,54 @@
+package com.vnsoft.server.model;
+
+import java.io.Serializable;
+import java.sql.Date;
+
+public class Feed implements Serializable{
+	String feed;
+	private Date postedDate;
+	String image;
+	long comid;
+	long id;
+	private String title;
+	
+	
+	public String getFeed() {
+		return feed;
+	}
+	public void setFeed(String feed) {
+		this.feed = feed;
+	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
+	}
+	public long getComid() {
+		return comid;
+	}
+	public void setComid(long comid) {
+		this.comid = comid;
+	}
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
+	public Date getPostedDate() {
+		return postedDate;
+	}
+	public void setPostedDate(Date postedDate) {
+		this.postedDate = postedDate;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+	
+	
+}

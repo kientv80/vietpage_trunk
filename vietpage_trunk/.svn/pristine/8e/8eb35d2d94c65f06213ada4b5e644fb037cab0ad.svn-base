@@ -1,0 +1,165 @@
+package com.vnsoft.server.util;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.jsp.PageContext;
+
+import com.opensymphony.xwork2.util.LocalizedTextUtil;
+import com.vnsoft.server.actions.ItemAction;
+import com.vnsoft.server.model.Item;
+import com.vnsoft.server.tags.yui.SimpleTableContentProvider;
+
+public class UIHelper {
+	public static String itemToHTML(String width, String height, Item item, boolean edit, String btnPrefix, String callBackMethod, boolean showView, PageContext pageContext, boolean showDesc) {
+		String code = getLocalizeText(pageContext,"vietpage.item.code");
+		String name = getLocalizeText(pageContext,"vietpage.item.name");
+		String desc = getLocalizeText(pageContext,"vietpage.item.desc");
+		String price = getLocalizeText(pageContext,"vietpage.item.price");
+		String discountPercent = getLocalizeText(pageContext,"vietpage.item.discount.percent");
+		String newPrice = getLocalizeText(pageContext,"vietpage.item.discount.newprice");
+		String company = getLocalizeText(pageContext,"vietpage.item.company");
+		String view = getLocalizeText(pageContext,"vietpage.view");
+		String btnEdit = getLocalizeText(pageContext,"vietpage.edit");
+		String btnDelete = getLocalizeText(pageContext,"vietpage.delete");
+		StringBuilder content = new StringBuilder();
+		content.append("<tr>");
+		content.append("<td width=\""+width+"\" align=\"left\"><img src=\"" + item.getImagePath() + "\" height=\"" + height + "\" width=\"" + width + "\"/></td>");
+		content.append("</tr>");
+		String menuName = "";
+		if(item.getMenuName() != null){
+			menuName = "<b>Menu:</b> " + item.getMenuName() + "</b></br>";
+		}
+		content.append("<tr>");
+		content.append("<td width=\""+width+"\" align=\"left\">" +
+				"<font size=\"2\">"+menuName);
+		if(item.getCode() != null && !item.getCode().isEmpty()){
+			content.append("<b>"+name+":</b> " + item.getName()).append("(<b>"+code+":</b> " + item.getCode()+")");
+		}else{
+			content.append("<b>"+name+":</b> " + item.getName());
+		}
+		
+		if(showDesc)
+			content.append("</b></br><b>"+desc+":</b> " + item.getDescription());
+		if(item.getIsCargo()){
+			content.append("</br><b>"+price+": </b>" + item.getPrice() 
+			+ "VND");
+			if(item.getIsDiscount()){
+				content.append("</br><b>"+discountPercent+": </b>" + item.getDiscountPercent()+"%" + "<b> "+newPrice+": </b>" + item.getPriceAfterDiscount()+" VND") ;
+			}
+		}
+		if(showView && !edit)
+			content.append("</br><a href=\"#\" id=\"" + btnPrefix +item.getMenuId() + "_" + item.getId() + "\" onclick=\""+callBackMethod+"('" +item.getComId()+"','"+ item.getId() + "'); \"> "+view+" </a>");
+		
+		if(item.getCompanyName()!= null && !item.getCompanyName().isEmpty() && item.getCompanyUrl() != null && !item.getCompanyUrl().isEmpty()){
+			content.append("</br><b>"+company+":</b><a href=\"/items?comid=4"+item.getComId()+"\">"+item.getCompanyName()+"</a>");
+		}
+		content.append("</font>" +
+		"</td>");
+		content.append("</tr>");
+
+		if (edit) {
+			content.append("<tr>");
+			if(btnPrefix == null || btnPrefix.isEmpty())
+				btnPrefix = "btn";
+			if(callBackMethod == null || callBackMethod.isEmpty())
+				callBackMethod = "editItem";
+			content.append("<td><button class=\"btn btn-primary  btn-xs\" id=\"" + btnPrefix +item.getMenuId() + "_" + item.getId() + "\" onclick=\""+callBackMethod+"('" + item.getId() + "','edit');\">"+btnEdit+"</button>" +
+					" <button class=\"btn btn-danger  btn-xs\" id=\"" + btnPrefix +item.getMenuId() + "_" + item.getId() + "_delete" + "\" onclick=\""+callBackMethod+"('" + item.getId() + "','delete');\">"+btnDelete+"</button>"+
+					"</td>");
+			content.append("</tr>");	
+		}
+		return content.toString();
+	}
+	public static String itemToHTMLAjax(String width, String height, Item item, boolean edit, String btnPrefix, String callBackMethod,PageContext pageContext) {
+		String code = getLocalizeText(pageContext,"vietpage.item.code");
+		String name = getLocalizeText(pageContext,"vietpage.item.name");
+		String desc = getLocalizeText(pageContext,"vietpage.item.desc");
+		String price = getLocalizeText(pageContext,"vietpage.item.price");
+		String discountPercent = getLocalizeText(pageContext,"vietpage.item.discount.percent");
+		String newPrice = getLocalizeText(pageContext,"vietpage.item.discount.newprice");
+		String company = getLocalizeText(pageContext,"vietpage.item.company");
+		String view = getLocalizeText(pageContext,"vietpage.view");
+		String btnEdit = getLocalizeText(pageContext,"vietpage.edit");
+		
+		StringBuilder content = new StringBuilder();
+//		content.append("<table width=\"100%\" height=\"100%\" border='1'>");
+		content.append("<tr>");
+		content.append("<td align=\"left\"><img src=\"" + item.getImagePath() + "\" height=\"" + height + "\" width=\"" + width + "\"/></td>");
+		String menuName = "";
+		if(item.getMenuName() != null){
+			menuName = "<b>Menu:</b> " + item.getMenuName() + "</b></br>";
+		}
+		content.append("<td align=\"left\"><font size=\"2\">"+menuName+"<b>"+name+":</b> " + item.getName() + "</b></br><b>"+desc+":</b> " + item.getDescription());
+				if(item.getIsCargo()){
+					content.append("</br><b>"+price+": </b>" + item.getPrice() + "VND");
+					if(item.getIsDiscount()){
+						content.append("</br><b>"+discountPercent+": </b>" + item.getDiscountPercent()+"%" + "<b> "+newPrice+": </b>" + item.getPriceAfterDiscount()+" VND") ;
+					}
+				}
+		content.append("</font></tr>");
+
+		if (edit) {
+			content.append("<tr>");
+			content.append("<td></td>");
+			String ismain = "false";
+			if (item.getIsmain())
+				ismain = "true";
+			if(btnPrefix == null || btnPrefix.isEmpty())
+				btnPrefix = "btn";
+			if(callBackMethod == null || callBackMethod.isEmpty())
+				callBackMethod = "editItem";
+			content.append("<td><button class=\"btn btn-primary  btn-xs\" id=\"" + btnPrefix + item.getId() + "\" onclick=\""+callBackMethod+"('" + item.getId() + "');\">"+btnEdit+"</button></td>");
+			content.append("</tr>");
+		}
+		return content.toString();
+	}
+	public static StringBuilder toHTMLTable(List<Object> data, boolean displayHeader,String headers,String contentProvider ,Map params,PageContext pageContext){
+		StringBuilder c = new StringBuilder();
+		c.append("<table>");
+		if(displayHeader){
+			c.append("<thead><tr>");
+			for(String h : headers.split(",")){
+				c.append("<th>").append(h).append("<th>");
+			}
+			c.append("</tr></thead>");
+		}
+		int count =0;
+		int size = data.size();
+		int col = headers.split(",").length;
+		SimpleTableContentProvider contentBuilder = null;
+		try {
+			contentBuilder = (SimpleTableContentProvider)Class.forName(contentProvider).newInstance();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		while(count < size){
+			c.append("<tr>");
+			for(int i =0;i<col;i++){
+				c.append("<td>");
+				c.append("<table>");
+				c.append(contentBuilder.buildContent(data.get(count), i, params,pageContext));
+				c.append("</table>");
+				c.append("</td>");
+				count ++;
+				if(count == size && i < col){
+					for(int j = i+1 ;j<col;j++){
+						c.append("<td>");
+						c.append("</td>");
+					}
+					break;
+				}
+			}
+			c.append("</tr>");
+		}
+		c.append("</table>");
+		return c;
+	}
+	public static String getLocalizeText(PageContext pageContext,String key){
+   		return LocalizedTextUtil.findText(ItemAction.class, key, pageContext.getRequest().getLocale());
+	}
+}

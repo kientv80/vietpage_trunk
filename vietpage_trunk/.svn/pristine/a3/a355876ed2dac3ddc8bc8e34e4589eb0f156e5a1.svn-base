@@ -1,0 +1,75 @@
+package com.vnsoft.server.plugin.social;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import org.apache.log4j.Logger;
+
+import com.vng.zalosdk.service.ZaloMessageService;
+import com.vng.zalosdk.service.ZaloServiceConfigure;
+import com.vng.zalosdk.service.ZaloServiceFactory;
+
+class ZaloServiceImpl implements ZaloService {
+	private final BlockingQueue<Object> msgQueue = new LinkedBlockingQueue<Object>(6000);
+	Logger log = Logger.getLogger(ZaloServiceImpl.class);
+	ZaloServiceFactory a = new ZaloServiceConfigure(2484853059230521968l, "6F58BJL2eqd1PfNr6VHz").getZaloServiceFactory();
+	ZaloMessageService service = a.getZaloMessageService();
+	private static ZaloService zservice;
+	public static ZaloService getInstance(){
+		if(zservice == null){
+			zservice = new ZaloServiceImpl();
+			new Thread(zservice).run();
+		}
+		return zservice;
+	}
+	@Override
+	public void sendLinkMessageByPhonenumber(ZaloLinkMessage link) {
+		try {
+			msgQueue.put(link);
+		} catch (InterruptedException e) {
+			log.error("", e);
+		}
+
+	}
+
+	@Override
+	public void sendTextMessageByPhoneNum(ZaloMessage msg) {
+		try {
+			msgQueue.put(msg);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void run() {
+		while (true) {
+			try {
+				execute(msgQueue.take());
+			} catch (InterruptedException e) {
+				log.error("", e);
+			} catch (Exception e) {
+				log.error("", e);
+			}
+		}
+
+	}
+
+	private void execute(Object msg) {
+		try {
+			if (msg instanceof ZaloLinkMessage) {
+				ZaloLinkMessage link = (ZaloLinkMessage) msg;
+				service.sendLinkMessageByPhoneNum(link.getPhoneNumber(), link.getLink(), link.getLinkTitle(), link.getLinkDesc(), link.getLinkThumb(), null);
+
+			}else{
+				ZaloMessage zmsg = (ZaloMessage)msg;
+				service.sendTextMessageByPhoneNum(zmsg.getPhone(), zmsg.getMessage(), zmsg.getMessage());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("",e);
+		}
+
+	}
+
+}

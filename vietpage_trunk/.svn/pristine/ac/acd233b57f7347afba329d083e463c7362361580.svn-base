@@ -1,0 +1,53 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<c:if test="${errorMessage != null}">
+	<font color="red"> <c:out value="${errorMessage}"></c:out></font>
+</c:if>
+<form id = "menuGroupForm">
+<!-- Menu item -->
+<table>
+	<tr>
+		<td>
+			<table>
+				<s:select list="menus" listValue="name" listKey="id" key="vietpage.menu.group" name="selectedMenuId" id="selectedMenuId"></s:select>
+			</table>
+		</td>
+		<td>
+			<table>
+				<tr>
+					<td align="left" width="30px">
+						<input type="button" id="addMenu" value='<s:text name="vietpage.menu.group.add"></s:text>' class="btn btn-primary  btn-xs">
+					</td>
+					<td align="right"  width="30px">
+						<input type="button" id="deleteMenu" value='<s:text name="vietpage.delete"></s:text>' class="btn btn-danger  btn-xs">
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<c:if test="${menus == null || menus.size() == 0}">
+		<tr>
+			<td align="left" width="30px">
+				<a href="#" id="addMenu"><s:text name="vietpage.menu.group.add"></s:text>p</a>
+				<ui:PopupWindow panelId="showAddMenuPannelId"  width="500" isCentered="true" showPanelButtonId="addMenu" isVisible="false" containerId="addMenuContainer" scrollContainerId="addMenuContainer" panelTitle="${companyInfo.name }" isRender="true" zIndex="8" isModal="true" dragAble="true"  scrollHeight="250" showOkButton="true" showCancelButton="true" okButtonCallBack="addMenuGroup"></ui:PopupWindow>
+			</td>
+		</tr>
+	</c:if>
+</table>
+</form>
+<ui:tabview tabviewContentCSS="menu" tabviewContainerCSS="menucontainer" contentProviderClass="com.vnsoft.server.contentprovider.MenuContentProvider" data="${menuTabs}" displayTabs="${displayTabs}" id="menu2" customParams="width=240,height=150,columns=item1:item2:item3,editable=true,btnPrefix=setupCategory,callback=setupCategoryEditItem"></ui:tabview>
+<c:if test="${menus != null || menus.size() > 0}">
+	<ui:PopupWindow panelId="editItemPanelSetupCategory" width="500" isCentered="true" showPanelButtonId="${buttons}" isVisible="false" containerId="edititemSetupCategory" panelTitle="${companyInfo.name }" isRender="true" zIndex="6" isModal="true" dragAble="true" okButtonCallBack="update3" showOkButton="true" showCancelButton="true"></ui:PopupWindow>
+	<br>
+</c:if>
+<input type="button" id="add" value='<s:text name="vietpage.item.add"></s:text>'  class="btn btn-primary  btn-xs">
+<br>
+
+
+	
+

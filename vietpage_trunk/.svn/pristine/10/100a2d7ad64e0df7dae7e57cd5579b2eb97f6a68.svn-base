@@ -1,0 +1,103 @@
+package com.vnsoft.server.actions;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.biz.CompanyBean;
+import com.vnsoft.server.biz.MenuBean;
+import com.vnsoft.server.biz.ServiceTypeBean;
+import com.vnsoft.server.biz.TrackingBean;
+import com.vnsoft.server.model.CompanyInfo;
+import com.vnsoft.server.model.Item;
+
+
+public class SearchAction extends BaseAction {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1186145446410965742L;
+	private int locationId;
+	private int serviceTypeId;
+	private int selectedCity;
+	private String searchText;
+	private List<CompanyInfo> companies = new ArrayList<>();
+	private List<Item> items = new ArrayList<>();
+	private Logger logger = Logger.getLogger(SearchAction.class);
+	@Override
+	public String execute() {
+		String result = SUCCESS;
+		try {
+			System.out.println(getAction() + ":"+getLocationId()+":"+getServiceTypeId());
+			loadSearchCategories();
+			setHotservices(ServiceTypeBean.getInstance().getHotServiceType());
+			String visistorId = getVisistorId();
+			TrackingBean.getInstance().trackingUserInterested(visistorId, getServiceTypeId(), getLocationId());
+			
+			if("search".equals(getAction())){
+				setCompanies(CompanyBean.getInstance().getCompanyInfo(selectedCity, locationId, serviceTypeId, searchText));
+				for(CompanyInfo com : companies){
+					if(com.getDescription() != null && com.getDescription().length() > 400)
+						com.setDescription(com.getDescription().substring(0,200)+ " ... ");
+					if(searchText != null && !searchText.isEmpty())
+						com.setName(com.getName().replaceAll(searchText, "<b>"+searchText+"</b>"));
+				}
+			}else if("searchItems".equals(getAction())){
+				items = MenuBean.getInstance().searchItems(100, selectedCity, getLocationId(),getServiceTypeId(),searchText);
+				if(searchText != null && !searchText.isEmpty()){
+					for(Item i : items){
+						i.setName(i.getName().replaceAll(searchText, "<b>"+searchText+"</b>"));
+					}
+				}
+				shottenItemDesc(items);
+				return "vietpage";
+			}
+			trackingVisit("vietpage_search");
+		} catch (Exception e) {
+			logger.error("", e);
+		}
+		if(isMobilePhone(getHttpServletRequest())){
+			return "m_"+SUCCESS;
+		}
+		return SUCCESS;
+	}
+
+	
+	public int getLocationId() {
+		return locationId;
+	}
+	public void setLocationId(int locationId) {
+		this.locationId = locationId;
+	}
+	public int getServiceTypeId() {
+		return serviceTypeId;
+	}
+	public void setServiceTypeId(int serviceTypeId) {
+		this.serviceTypeId = serviceTypeId;
+	}
+	public int getSelectedCity() {
+		return selectedCity;
+	}
+	public void setSelectedCity(int selectedCity) {
+		this.selectedCity = selectedCity;
+	}
+	public List<CompanyInfo> getCompanies() {
+		return companies;
+	}
+	public void setCompanies(List<CompanyInfo> companies) {
+		this.companies = companies;
+	}
+	public String getSearchText() {
+		return searchText;
+	}
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
+	}
+	public List<Item> getItems() {
+		return items;
+	}
+	public void setItems(List<Item> items) {
+		this.items = items;
+	}
+}

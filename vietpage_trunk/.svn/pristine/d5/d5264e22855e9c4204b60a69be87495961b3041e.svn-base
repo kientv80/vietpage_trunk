@@ -1,0 +1,78 @@
+package com.vnsoft.server.actions;
+
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.opensymphony.xwork2.ActionContext;
+import com.vnsoft.server.biz.CompanyBean;
+import com.vnsoft.server.biz.UserBean;
+import com.vnsoft.server.interceptor.AuthorizationInterceptor;
+import com.vnsoft.server.model.CompanyInfo;
+import com.vnsoft.server.model.User;
+
+public class LoginAction extends StandarLayout {
+	public static final String COMPANY_INFO = "company_info";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2003161624775230261L;
+	public static final String USER = "USER";
+	private String username;
+	private String password;
+	private Logger logger = Logger.getLogger(LoginAction.class);
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	@Override
+	public String execute() {
+		try {
+			if ("logout".equals(getAction())) {
+				CompanyInfo com = (CompanyInfo) ActionContext.getContext().getSession().get(COMPANY_INFO);
+				ActionContext.getContext().getSession().remove(COMPANY_INFO);
+				ActionContext.getContext().getSession().remove("isLogin");
+				if (com != null)
+					getHttpServletResponse().sendRedirect("/vietpage?page=" + com.getUsername());
+				return "home";
+			} else if ("login".equals(getAction())) {
+
+				User user = UserBean.getInstance().login(username, password);
+				if (user != null) {
+					Map session = ActionContext.getContext().getSession();
+					session.put(USER, user);
+					session.put("isLogin", true);
+					CompanyInfo com = CompanyBean.getInstance().getCompanyInfo(user.getId());
+					Map<String, Object> params = ActionContext.getContext().getParameters();
+					params.put("action", AuthorizationInterceptor.EDIT);
+					params.put("type", AuthorizationInterceptor.TYPE_COMPANY);
+					params.put("id", com.getId());
+					ActionContext.getContext().setParameters(params);
+					session.put(COMPANY_INFO, com);
+					if ("admin".equals(user.getRole()))
+						return "admin";
+					return SUCCESS;
+				} else {
+					return LOGIN;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("", e);
+		}
+		return LOGIN;
+	}
+
+}

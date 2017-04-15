@@ -1,0 +1,68 @@
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+
+<!-- <div class="boder"> -->
+<!-- 	<div class="label"> -->
+<!-- 		<a href="#"> -->
+<!-- 			<img alt="Search on Lookup" src="/images/lookup.png" width="100%" height="50px" onclick="window.open('/search');"> -->
+<!-- 		</a> -->
+<!-- 	</div> -->
+<!-- </div> -->
+<div class="note">
+	<img alt="" src="/images/note.jpg" width="60px" height="60px" align="left">
+	<b><c:out value="${news.createddate}"></c:out>:</b><c:out value="${news.content}"></c:out>
+	<br><br><br>
+</div>
+
+<div class="note alert-info">
+<table>
+	<tr>
+		<td>
+			<b><s:text name="vietpage.company.name"></s:text> :</b>${companyInfo.name}<br>
+			<b><s:text name="vietpage.company.phone"></s:text>:</b>${companyInfo.phone}<br>
+			<b><s:text name="vietpage.company.address"></s:text>:</b>${companyInfo.address}<br>
+			<b><s:text name="vietpage.company.web"></s:text>:</b><a href="${companyInfo.url}">${companyInfo.url}</a><br>
+			<b><s:text name="vietpage.company.location"></s:text>:  </b>
+			<a href="#" id="map_image1">
+				<img alt="Map of the shop" src="/images/googlemap.jpg" height="20px" width="20px">
+			</a>
+			<br><br>
+		</td>
+	</tr>
+</table>
+</div>
+
+<div class="same_companies">
+<b><s:text name="vietpage.samecompany"></s:text>:</b>
+	<table>
+		<c:forEach items="${otherCompanies}" var="c">
+			<tr>
+				<td>
+					<img src="${c.contentImage }" width="80px" height="60px">
+				</td>
+				<td>
+					<br><a href="#" onclick="window.open('/lookup?comid=${c.id }&webid=${c.username }&redirectUrl=/vietpageItem?page=${c.username}');">${c.name} </a><br>
+					<b><s:text name="vietpage.company.phone"></s:text> </b>${c.phone}
+				</td>
+			</tr>
+		</c:forEach>
+	</table>
+</div>
+
+<div id="map_image_container1" class="map">
+	<img alt="" src="${companyInfo.mapImage}" >
+</div>
+<ui:PopupWindow panelId="showMapImage1" width="700" isCentered="true" showPanelButtonId="map_image1" isVisible="false" containerId="map_image_container1" panelTitle="${companyInfo.name }" isRender="true" zIndex="8" isModal="true" dragAble="false" showOkButton="true" showCancelButton="false"></ui:PopupWindow>
+
+
+
+<!-- <div class="ads_200"> -->
+<!-- 	<img alt="" src="/images/ads/ads2_300x250.jpg" width="100%"> -->
+<!-- </div> -->
+
+<!-- <div class="ads_200"> -->
+<!-- 	<img alt="" src="/images/ads/ads1_300x250.jpg" width="100%"> -->
+<!-- </div> -->

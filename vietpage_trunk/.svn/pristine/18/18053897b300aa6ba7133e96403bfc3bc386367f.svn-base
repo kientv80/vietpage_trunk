@@ -1,0 +1,1 @@
+<div class="n_bar" style="text-align: center;width: 99.2%;">© Copyright VIETPAGE.INFO, All rights reserved. </div>

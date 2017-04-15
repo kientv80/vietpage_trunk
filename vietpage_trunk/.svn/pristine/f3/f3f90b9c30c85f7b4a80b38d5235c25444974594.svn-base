@@ -1,0 +1,451 @@
+2013/11/15 22:44:04 DEBUG com.vnsoft.server.actions.StandarLayout:?  - Test log 4J
+2013/11/15 22:44:04 ERROR com.vnsoft.server.actions.StandarLayout:?  - 
+java.lang.IllegalStateException: Failed to load properties for name [/cache.ccf]
+	at org.apache.jcs.engine.control.CompositeCacheManager.configure(CompositeCacheManager.java:242)
+	at org.apache.jcs.engine.control.CompositeCacheManager.configure(CompositeCacheManager.java:194)
+	at org.apache.jcs.engine.control.CompositeCacheManager.getInstance(CompositeCacheManager.java:122)
+	at org.apache.jcs.JCS.ensureCacheManager(JCS.java:96)
+	at org.apache.jcs.JCS.getInstance(JCS.java:64)
+	at com.vnsoft.server.cache.JSCCacheManager.<init>(Unknown Source)
+	at com.vnsoft.server.cache.JSCCacheManager.getInstace(Unknown Source)
+	at com.vnsoft.server.biz.MenuBean.loadMainMenu(Unknown Source)
+	at com.vnsoft.server.actions.StandarLayout.execute(Unknown Source)
+	at com.vnsoft.server.actions.HomeAction.execute(Unknown Source)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invokeAction(DefaultActionInvocation.java:450)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invokeActionOnly(DefaultActionInvocation.java:289)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:252)
+	at org.apache.struts2.interceptor.debugging.DebuggingInterceptor.intercept(DebuggingInterceptor.java:256)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.DefaultWorkflowInterceptor.doIntercept(DefaultWorkflowInterceptor.java:176)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.validator.ValidationInterceptor.doIntercept(ValidationInterceptor.java:265)
+	at org.apache.struts2.interceptor.validation.AnnotationValidationInterceptor.doIntercept(AnnotationValidationInterceptor.java:68)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ConversionErrorInterceptor.intercept(ConversionErrorInterceptor.java:138)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ParametersInterceptor.doIntercept(ParametersInterceptor.java:249)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ParametersInterceptor.doIntercept(ParametersInterceptor.java:249)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.StaticParametersInterceptor.intercept(StaticParametersInterceptor.java:191)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.MultiselectInterceptor.intercept(MultiselectInterceptor.java:73)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.CheckboxInterceptor.intercept(CheckboxInterceptor.java:91)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.FileUploadInterceptor.intercept(FileUploadInterceptor.java:252)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ModelDrivenInterceptor.intercept(ModelDrivenInterceptor.java:100)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ScopedModelDrivenInterceptor.intercept(ScopedModelDrivenInterceptor.java:141)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ChainingInterceptor.intercept(ChainingInterceptor.java:145)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.PrepareInterceptor.doIntercept(PrepareInterceptor.java:171)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.I18nInterceptor.intercept(I18nInterceptor.java:176)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.ServletConfigInterceptor.intercept(ServletConfigInterceptor.java:164)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.AliasInterceptor.intercept(AliasInterceptor.java:193)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ExceptionMappingInterceptor.intercept(ExceptionMappingInterceptor.java:187)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.impl.StrutsActionProxy.execute(StrutsActionProxy.java:54)
+	at org.apache.struts2.dispatcher.Dispatcher.serviceAction(Dispatcher.java:546)
+	at org.apache.struts2.dispatcher.ng.ExecuteOperations.executeAction(ExecuteOperations.java:77)
+	at org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter.doFilter(StrutsPrepareAndExecuteFilter.java:91)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:243)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:210)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:222)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:123)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:472)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:171)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:99)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:118)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:408)
+	at org.apache.coyote.http11.AbstractHttp11Processor.process(AbstractHttp11Processor.java:1008)
+	at org.apache.coyote.AbstractProtocol$AbstractConnectionHandler.process(AbstractProtocol.java:589)
+	at org.apache.tomcat.util.net.JIoEndpoint$SocketProcessor.run(JIoEndpoint.java:310)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+2013/11/15 22:49:54 DEBUG com.vnsoft.server.actions.StandarLayout:?  - Test log 4J
+2013/11/15 22:52:17 DEBUG com.vnsoft.server.actions.StandarLayout:?  - Test log 4J
+2013/11/15 22:53:43 DEBUG com.vnsoft.server.actions.StandarLayout:?  - Test log 4J
+2013/11/15 23:16:10 DEBUG com.vnsoft.server.actions.StandarLayout:?  - Test log 4J
+2013/11/15 23:16:15 DEBUG com.vnsoft.server.actions.StandarLayout:?  - Test log 4J
+2013/11/15 23:39:40 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:39:44 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:39:47 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:39:49 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:39:51 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:43:48 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:44:02 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:44:23 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:44:33 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:44:38 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:44:49 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:44:57 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:45:21 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:45:25 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:45:33 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:45:36 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:45:39 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:45:41 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/15 23:45:43 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:21:08 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:21:23 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =edit
+2013/11/16 00:21:23 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:110  - needCheckAuthorize action =edit -> need to check authorize
+2013/11/16 00:21:23 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=edit
+2013/11/16 00:21:23 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:21:30 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getItem
+2013/11/16 00:21:30 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getItem
+2013/11/16 00:21:38 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:21:39 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getItems
+2013/11/16 00:21:39 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getItems
+2013/11/16 00:21:42 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:21:45 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:21:46 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:21:46 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:21:46 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:21:50 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:21:51 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:22:01 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =edit
+2013/11/16 00:22:01 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:110  - needCheckAuthorize action =edit -> need to check authorize
+2013/11/16 00:22:01 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=edit
+2013/11/16 00:22:01 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:22:21 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:22:28 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:22:30 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:22:30 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:22:30 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:46:52 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:46:53 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:46:53 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:46:53 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:47:44 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:47:45 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:47:45 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:47:45 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:51:50 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:51:51 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:51:51 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:51:51 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:51:55 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:51:56 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:51:56 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:51:56 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:54:29 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:54:31 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:54:31 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:54:31 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:56:29 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:56:30 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:56:30 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:56:30 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:56:43 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:56:44 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:56:44 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:56:44 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:57:20 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:57:21 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:57:21 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:57:21 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:57:35 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:57:36 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:57:36 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:57:36 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:58:11 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:58:12 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:58:12 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:58:12 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:59:03 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:59:04 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:59:04 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:59:04 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:59:26 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:59:27 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:59:27 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:59:27 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:59:40 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 00:59:42 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 00:59:42 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 00:59:42 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 01:00:57 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 01:00:59 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 01:00:59 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 01:00:59 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 01:01:19 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 01:01:20 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 01:01:20 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 01:01:20 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 01:01:28 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 01:01:29 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 01:01:29 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 01:01:29 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 01:01:36 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 01:01:37 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 01:01:37 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 01:01:37 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 01:01:42 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 01:01:43 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 01:01:43 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 01:01:43 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 01:02:05 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =edit
+2013/11/16 01:02:05 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:110  - needCheckAuthorize action =edit -> need to check authorize
+2013/11/16 01:02:05 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=edit
+2013/11/16 01:02:05 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 01:02:10 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =edit
+2013/11/16 01:02:10 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:110  - needCheckAuthorize action =edit -> need to check authorize
+2013/11/16 01:02:10 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=edit
+2013/11/16 01:02:10 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 01:02:23 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/16 01:02:24 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =getcomments
+2013/11/16 01:02:24 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=getcomments
+2013/11/16 01:02:24 DEBUG com.vnsoft.server.actions.StandarLayout:69  - Test log 4J
+2013/11/17 00:15:55 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =new
+2013/11/17 00:15:55 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=new
+2013/11/17 00:20:59 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:106  - Enter needCheckAuthorize action =new
+2013/11/17 00:20:59 DEBUG com.vnsoft.server.interceptor.AuthorizationInterceptor:115  - End needCheckAuthorize: don't need to check action=new
+2013/11/19 23:35:57 INFO  com.vnsoft.server.TomcatServer:?  - >>>>>>>>>>>>>> Starting TomcatServer Successfully>>>>>>>>>...
+2013/11/19 23:37:04 INFO  com.vnsoft.server.TomcatServer:?  - >>>>>>>>>>>>>> Starting TomcatServer Successfully>>>>>>>>>...
+2013/11/19 23:54:16 INFO  com.vnsoft.server.TomcatServer:?  - >>>>>>>>>>>>>> Starting TomcatServer Successfully>>>>>>>>>...
+2013/11/19 23:56:57 INFO  com.vnsoft.server.TomcatServer:?  - >>>>>>>>>>>>>> Starting TomcatServer Successfully>>>>>>>>>...
+2013/11/20 00:06:56 INFO  com.vnsoft.server.TomcatServer:?  - >>>>>>>>>>>>>> Starting TomcatServer Successfully>>>>>>>>>...
+2013/11/20 00:07:26 ERROR com.vnsoft.server.actions.ReportPageVisitAction:118  - 
+java.text.ParseException: Unparseable date: "home_2013,11,17"
+	at java.text.DateFormat.parse(DateFormat.java:357)
+	at com.vnsoft.server.actions.ReportPageVisitAction.execute(ReportPageVisitAction.java:74)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invokeAction(DefaultActionInvocation.java:450)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invokeActionOnly(DefaultActionInvocation.java:289)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:252)
+	at com.opensymphony.xwork2.interceptor.ConversionErrorInterceptor.intercept(ConversionErrorInterceptor.java:138)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ParametersInterceptor.doIntercept(ParametersInterceptor.java:249)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.vnsoft.server.interceptor.AdminInterceptor.intercept(Unknown Source)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.vnsoft.server.interceptor.LoginInterceptor.intercept(Unknown Source)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.FileUploadInterceptor.intercept(FileUploadInterceptor.java:252)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ParametersInterceptor.doIntercept(ParametersInterceptor.java:249)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.MultiselectInterceptor.intercept(MultiselectInterceptor.java:73)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.CheckboxInterceptor.intercept(CheckboxInterceptor.java:91)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.PrepareInterceptor.doIntercept(PrepareInterceptor.java:171)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.ServletConfigInterceptor.intercept(ServletConfigInterceptor.java:164)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ExceptionMappingInterceptor.intercept(ExceptionMappingInterceptor.java:187)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.impl.StrutsActionProxy.execute(StrutsActionProxy.java:54)
+	at org.apache.struts2.dispatcher.Dispatcher.serviceAction(Dispatcher.java:546)
+	at org.apache.struts2.dispatcher.ng.ExecuteOperations.executeAction(ExecuteOperations.java:77)
+	at org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter.doFilter(StrutsPrepareAndExecuteFilter.java:91)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:243)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:210)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:222)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:123)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:472)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:171)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:99)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:118)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:408)
+	at org.apache.coyote.http11.AbstractHttp11Processor.process(AbstractHttp11Processor.java:1008)
+	at org.apache.coyote.AbstractProtocol$AbstractConnectionHandler.process(AbstractProtocol.java:589)
+	at org.apache.tomcat.util.net.JIoEndpoint$SocketProcessor.run(JIoEndpoint.java:312)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+2013/11/20 00:07:50 ERROR com.vnsoft.server.actions.ReportPageVisitAction:118  - 
+java.text.ParseException: Unparseable date: "search_2013,11,17"
+	at java.text.DateFormat.parse(DateFormat.java:357)
+	at com.vnsoft.server.actions.ReportPageVisitAction.execute(ReportPageVisitAction.java:74)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invokeAction(DefaultActionInvocation.java:450)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invokeActionOnly(DefaultActionInvocation.java:289)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:252)
+	at com.opensymphony.xwork2.interceptor.ConversionErrorInterceptor.intercept(ConversionErrorInterceptor.java:138)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ParametersInterceptor.doIntercept(ParametersInterceptor.java:249)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.vnsoft.server.interceptor.AdminInterceptor.intercept(Unknown Source)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.vnsoft.server.interceptor.LoginInterceptor.intercept(Unknown Source)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.FileUploadInterceptor.intercept(FileUploadInterceptor.java:252)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ParametersInterceptor.doIntercept(ParametersInterceptor.java:249)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.MultiselectInterceptor.intercept(MultiselectInterceptor.java:73)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.CheckboxInterceptor.intercept(CheckboxInterceptor.java:91)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.PrepareInterceptor.doIntercept(PrepareInterceptor.java:171)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.ServletConfigInterceptor.intercept(ServletConfigInterceptor.java:164)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ExceptionMappingInterceptor.intercept(ExceptionMappingInterceptor.java:187)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.impl.StrutsActionProxy.execute(StrutsActionProxy.java:54)
+	at org.apache.struts2.dispatcher.Dispatcher.serviceAction(Dispatcher.java:546)
+	at org.apache.struts2.dispatcher.ng.ExecuteOperations.executeAction(ExecuteOperations.java:77)
+	at org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter.doFilter(StrutsPrepareAndExecuteFilter.java:91)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:243)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:210)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:222)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:123)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:472)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:171)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:99)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:118)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:408)
+	at org.apache.coyote.http11.AbstractHttp11Processor.process(AbstractHttp11Processor.java:1008)
+	at org.apache.coyote.AbstractProtocol$AbstractConnectionHandler.process(AbstractProtocol.java:589)
+	at org.apache.tomcat.util.net.JIoEndpoint$SocketProcessor.run(JIoEndpoint.java:312)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+2013/11/20 00:08:00 ERROR com.vnsoft.server.actions.ReportPageVisitAction:118  - 
+java.text.ParseException: Unparseable date: "search_2013,11,17"
+	at java.text.DateFormat.parse(DateFormat.java:357)
+	at com.vnsoft.server.actions.ReportPageVisitAction.execute(ReportPageVisitAction.java:74)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invokeAction(DefaultActionInvocation.java:450)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invokeActionOnly(DefaultActionInvocation.java:289)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:252)
+	at com.opensymphony.xwork2.interceptor.ConversionErrorInterceptor.intercept(ConversionErrorInterceptor.java:138)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ParametersInterceptor.doIntercept(ParametersInterceptor.java:249)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.vnsoft.server.interceptor.AdminInterceptor.intercept(Unknown Source)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.vnsoft.server.interceptor.LoginInterceptor.intercept(Unknown Source)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.FileUploadInterceptor.intercept(FileUploadInterceptor.java:252)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ParametersInterceptor.doIntercept(ParametersInterceptor.java:249)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.MultiselectInterceptor.intercept(MultiselectInterceptor.java:73)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.CheckboxInterceptor.intercept(CheckboxInterceptor.java:91)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.PrepareInterceptor.doIntercept(PrepareInterceptor.java:171)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.ServletConfigInterceptor.intercept(ServletConfigInterceptor.java:164)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ExceptionMappingInterceptor.intercept(ExceptionMappingInterceptor.java:187)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.impl.StrutsActionProxy.execute(StrutsActionProxy.java:54)
+	at org.apache.struts2.dispatcher.Dispatcher.serviceAction(Dispatcher.java:546)
+	at org.apache.struts2.dispatcher.ng.ExecuteOperations.executeAction(ExecuteOperations.java:77)
+	at org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter.doFilter(StrutsPrepareAndExecuteFilter.java:91)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:243)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:210)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:222)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:123)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:472)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:171)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:99)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:118)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:408)
+	at org.apache.coyote.http11.AbstractHttp11Processor.process(AbstractHttp11Processor.java:1008)
+	at org.apache.coyote.AbstractProtocol$AbstractConnectionHandler.process(AbstractProtocol.java:589)
+	at org.apache.tomcat.util.net.JIoEndpoint$SocketProcessor.run(JIoEndpoint.java:312)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+2013/11/20 00:08:02 ERROR com.vnsoft.server.actions.ReportPageVisitAction:118  - 
+java.text.ParseException: Unparseable date: "search_2013,11,17"
+	at java.text.DateFormat.parse(DateFormat.java:357)
+	at com.vnsoft.server.actions.ReportPageVisitAction.execute(ReportPageVisitAction.java:74)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invokeAction(DefaultActionInvocation.java:450)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invokeActionOnly(DefaultActionInvocation.java:289)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:252)
+	at com.opensymphony.xwork2.interceptor.ConversionErrorInterceptor.intercept(ConversionErrorInterceptor.java:138)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ParametersInterceptor.doIntercept(ParametersInterceptor.java:249)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.vnsoft.server.interceptor.AdminInterceptor.intercept(Unknown Source)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.vnsoft.server.interceptor.LoginInterceptor.intercept(Unknown Source)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.FileUploadInterceptor.intercept(FileUploadInterceptor.java:252)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ParametersInterceptor.doIntercept(ParametersInterceptor.java:249)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.MultiselectInterceptor.intercept(MultiselectInterceptor.java:73)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.CheckboxInterceptor.intercept(CheckboxInterceptor.java:91)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.PrepareInterceptor.doIntercept(PrepareInterceptor.java:171)
+	at com.opensymphony.xwork2.interceptor.MethodFilterInterceptor.intercept(MethodFilterInterceptor.java:98)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.interceptor.ServletConfigInterceptor.intercept(ServletConfigInterceptor.java:164)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at com.opensymphony.xwork2.interceptor.ExceptionMappingInterceptor.intercept(ExceptionMappingInterceptor.java:187)
+	at com.opensymphony.xwork2.DefaultActionInvocation.invoke(DefaultActionInvocation.java:246)
+	at org.apache.struts2.impl.StrutsActionProxy.execute(StrutsActionProxy.java:54)
+	at org.apache.struts2.dispatcher.Dispatcher.serviceAction(Dispatcher.java:546)
+	at org.apache.struts2.dispatcher.ng.ExecuteOperations.executeAction(ExecuteOperations.java:77)
+	at org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter.doFilter(StrutsPrepareAndExecuteFilter.java:91)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:243)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:210)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:222)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:123)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:472)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:171)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:99)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:118)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:408)
+	at org.apache.coyote.http11.AbstractHttp11Processor.process(AbstractHttp11Processor.java:1008)
+	at org.apache.coyote.AbstractProtocol$AbstractConnectionHandler.process(AbstractProtocol.java:589)
+	at org.apache.tomcat.util.net.JIoEndpoint$SocketProcessor.run(JIoEndpoint.java:312)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:744)
+2013/11/20 10:14:30 INFO  com.vnsoft.server.TomcatServer:?  - >>>>>>>>>>>>>> Starting TomcatServer Successfully>>>>>>>>>...
+2013/11/20 10:32:21 INFO  com.vnsoft.server.TomcatServer:?  - >>>>>>>>>>>>>> Starting TomcatServer Successfully>>>>>>>>>...
+2013/11/20 11:03:20 INFO  com.vnsoft.server.TomcatServer:?  - >>>>>>>>>>>>>> Starting TomcatServer Successfully>>>>>>>>>...
+2013/11/20 11:18:45 INFO  com.vnsoft.server.TomcatServer:?  - >>>>>>>>>>>>>> Starting TomcatServer Successfully>>>>>>>>>...
+2013/11/20 13:31:24 INFO  com.vnsoft.server.TomcatServer:?  - >>>>>>>>>>>>>> Starting TomcatServer Successfully>>>>>>>>>...
+2013/11/20 13:33:11 INFO  com.vnsoft.server.TomcatServer:?  - >>>>>>>>>>>>>> Starting TomcatServer Successfully>>>>>>>>>...
+2013/11/20 13:38:28 INFO  com.vnsoft.server.TomcatServer:?  - >>>>>>>>>>>>>> Starting TomcatServer Successfully>>>>>>>>>...

@@ -1,0 +1,463 @@
+package com.vnsoft.server.actions;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
+
+import com.opensymphony.xwork2.ActionContext;
+import com.vnsoft.server.biz.AgencyBean;
+import com.vnsoft.server.biz.CompanyBean;
+import com.vnsoft.server.biz.LocationBean;
+import com.vnsoft.server.biz.MenuBean;
+import com.vnsoft.server.biz.NewsBean;
+import com.vnsoft.server.biz.ServiceTypeBean;
+import com.vnsoft.server.biz.UserBean;
+import com.vnsoft.server.interceptor.AuthorizationInterceptor;
+import com.vnsoft.server.model.Agency;
+import com.vnsoft.server.model.CompanyInfo;
+import com.vnsoft.server.model.Item;
+import com.vnsoft.server.model.KeyValue;
+import com.vnsoft.server.model.Menu;
+import com.vnsoft.server.model.News;
+import com.vnsoft.server.model.User;
+import com.vnsoft.server.util.SecurityHelper;
+
+public class RegisterAction extends BaseAction {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7187670775863959900L;
+	String name;
+	String address;
+	String phone;
+	String email;
+	String about;
+	String service;
+	String username;
+	String password;
+	private String url;
+	private File file;
+	private String filename;
+	private String contentType;
+	private String action = "";
+	private List<KeyValue> city = new ArrayList<>();
+	private List<KeyValue> location = new ArrayList<>();
+	private List<KeyValue> serviceType = new ArrayList<>();
+	private String locationId;
+	private String serviceTypeId;
+	private String errorMessage;
+	private String selectedCity;
+	private Logger logger = Logger.getLogger(RegisterAction.class);
+	private String comid;
+	@Override
+	public String execute() {
+		String result = SUCCESS;
+		try {
+			getHttpServletRequest().setCharacterEncoding("utf-8");
+			getHttpServletResponse().setCharacterEncoding("utf-8");
+			logger.info("Register username = " + username);
+			if ("register".equals(action) && "post".equalsIgnoreCase(getHttpServletRequest().getMethod())) {
+				if (UserBean.getInstance().getUser(username) != null) {
+					errorMessage = "User name already exist";
+					logger.info("Register username = " + username + " User name already exist");
+				} else {
+					errorMessage = "";
+					User u = new User(username, "user", 0);
+					u.setPassword(SecurityHelper.endcodeSHA256(password));
+					u = UserBean.getInstance().createUser(u);
+					logger.info("Register: successfully create login user " + username + " user id=" + u.getId());
+					
+					logger.info("Register: Begin creating companyinfo");
+					logger.info("Register: companyinfo->name=" + name + ":desc="+about+":locationId="+getLocationId()+":serviceId="+getServiceTypeId()+":phone="+phone+":address="+address+":mail="+email+":service="+service);
+					CompanyInfo com = new CompanyInfo();
+					com.setName(name);
+					String headerImage = "/images/defaultHeader.jpg";
+					com.setHeaderImage(headerImage);
+					String contentImage = "/images/defaultContent.jpg";
+					com.setContentImage(contentImage);
+					String description = about;
+					com.setDescription(description);
+					com.setUsername(username);
+					com.setUrl(url);
+					String defaultUrl = "/" + username;
+					if (url == null || url.isEmpty())
+						com.setUrl(defaultUrl);
+					com.setOwnerId(u.getId());
+					com.setUsername(u.getUsername());
+					com.setLocationId(Integer.valueOf(getLocationId()));
+					com.setServiceTypeId(Integer.valueOf(getServiceTypeId()));
+					com.setPhone(phone);
+					com.setAddress(address);
+					com.setEmail(email);
+					com.setService(service);
+					int comid = CompanyBean.getInstance().addCompanyInfo(com);
+					logger.info("Register: End creating companyinfo");
+
+					String mapImage = "";
+					com.setMapImage(mapImage);
+					if (file != null) {
+						logger.info("Upload Map file");
+						mapImage = uploadFile("map_" + Calendar.getInstance().getTimeInMillis() + ".jpg", comid + "");
+						CompanyBean.getInstance().editCompanyMap(comid, mapImage);
+					}else{
+						logger.info("No Map file");
+					}
+
+					if (comid > 0) {
+						logger.info("Register: Begin setting default news, menu items,");
+						// Create default news
+						News n = new News();
+						n.setComId(comid);
+						n.setContent(com.getName() + " mới tạo website trên VietPage.");
+						NewsBean.getInstance().addNews(n);
+						
+						logger.info("Register: DONE creating news");
+						// Create example menus
+						Menu defaultPhotos = new Menu("Menu", "Menu", comid);
+						int menuid = MenuBean.getInstance().addNewMenuGroup(defaultPhotos);
+						// Create 5 example main menu items
+						Item item = new Item();
+						item.setName("Item 1");
+						item.setDescription("Your item could be lunch");
+						item.setPrice(1000d);
+						item.setImagePath("/images/defaultItem1.jpg");
+						item.setIsmain(true);
+						item.setComId(comid);
+						item.setMenuId(menuid);
+						MenuBean.getInstance().addNewMenuItem(item);
+
+						Item item2 = new Item();
+						item2.setName("Item 2");
+						item2.setDescription("Your item could be drink");
+						item2.setPrice(1000d);
+						item2.setImagePath("/images/defaultItem2.jpg");
+						item2.setIsmain(true);
+						item2.setComId(comid);
+						item2.setMenuId(menuid);
+						MenuBean.getInstance().addNewMenuItem(item2);
+
+						Item item3 = new Item();
+						item3.setName("Item 3");
+						item3.setDescription("Item could be a room in your hotel");
+						item3.setPrice(1000d);
+						item3.setImagePath("/images/defaultItem3.jpg");
+						item3.setIsmain(true);
+						item3.setComId(comid);
+						item3.setMenuId(menuid);
+						MenuBean.getInstance().addNewMenuItem(item3);
+
+						Item item4 = new Item();
+						item4.setName("Item 4");
+						item4.setDescription("Item could be a bag, clothes, dress shoes etc");
+						item4.setPrice(1000d);
+						item4.setImagePath("/images/defaultItem4.jpg");
+						item4.setIsmain(true);
+						item4.setComId(comid);
+						item4.setMenuId(menuid);
+						MenuBean.getInstance().addNewMenuItem(item4);
+
+						Item item5 = new Item();
+						item5.setName("Item 5");
+						item5.setDescription("Item could be a phone or whatever you sale");
+						item5.setPrice(1000d);
+						item5.setImagePath("/images/defaultItem5.jpg");
+						item5.setIsmain(true);
+						item5.setComId(comid);
+						item5.setMenuId(menuid);
+						MenuBean.getInstance().addNewMenuItem(item5);
+						logger.info("Register: DONE creating menu items");
+						
+						logger.info("Register: End setting default news, menu items,");
+/*						 * delete from company where id=9; delete from about
+						 * where id=9; delete from contactinfo where id=9;
+						 * delete from menu where id=9; delete from news where
+						 * id=9; delete from service where id=9;
+						 */
+						errorMessage = "Chúc mừng bạn đã đăng ký thành công website trên VietPage." +
+								"Đường dẫn tới trang web của bạn là http://vietpage.info/"+u.getUsername();
+						
+						if(getHttpServletRequest().getSession().getAttribute("AGENCY_LOGIN") != null){
+							Agency a = (Agency)getHttpServletRequest().getSession().getAttribute("AGENCY_LOGIN");
+							AgencyBean.getInstance().trackingCreatePage(a.getId(), comid);
+						}
+						User user = UserBean.getInstance().login(username, password);
+						if (user != null) {
+							Map session = ActionContext.getContext().getSession();
+							session.put(LoginAction.USER, user);
+							session.put("isLogin", true);
+							CompanyInfo com1 = CompanyBean.getInstance().getCompanyInfoByOwner(user.getId());
+							Map<String, Object> params = ActionContext.getContext().getParameters();
+							params.put("action", AuthorizationInterceptor.EDIT);
+							params.put("type", AuthorizationInterceptor.TYPE_COMPANY);
+							params.put("id", com.getId());
+							ActionContext.getContext().setParameters(params);
+							session.put(LoginAction.COMPANY_INFO, com1);
+							if(isMobilePhone(getHttpServletRequest())){
+								getHttpServletResponse().sendRedirect("/edit");
+							}else{
+								getHttpServletResponse().sendRedirect("/editRegisterInfo?action=loadRegisterInfo");
+							}
+							
+							
+							result =  SUCCESS;
+						} else {
+							result = "failed";
+						}
+					} else {
+						System.out.println("Failed in register");
+					}
+				}
+			}
+			loadSearchCategories();
+		} catch (Exception ex) {
+			logger.error("", ex);
+			ex.printStackTrace();
+		}
+		if(isMobilePhone(getHttpServletRequest())){
+			return "m_" + result;
+		}else{
+			return result;
+		}
+	}
+	public String input() {
+		try {
+			loadSearchCategories();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return SUCCESS;
+	}
+	protected HttpServletRequest getHttpServletRequest() {
+		return (HttpServletRequest) ActionContext.getContext().get(ServletActionContext.HTTP_REQUEST);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getAbout() {
+		return about;
+	}
+
+	public void setAbout(String about) {
+		this.about = about;
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
+	}
+
+	public void setUploadFileName(String filename) {
+		this.filename = filename;
+	}
+
+	public void setUploadContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public void setUpload(File file) {
+		this.file = file;
+	}
+
+	protected String uploadFile(String fileName, String comId) {
+		if (file != null) {
+			String imagePath = null;
+			try {
+				if (imagePath == null) {
+					File f = new File("tmp.txt");
+					imagePath = (f.getAbsolutePath().substring(0, f.getAbsolutePath().length() - 7));
+				}
+
+				String separatorChar = File.separator;
+				if ("\\".equals(separatorChar))
+					separatorChar = separatorChar + separatorChar;
+
+				String dir = imagePath + separatorChar + "webapps" + separatorChar + "images" + separatorChar + comId;
+				File f = new File(dir);
+				f.mkdir();
+				FileOutputStream out = new FileOutputStream(new File(dir + separatorChar + fileName));
+				FileInputStream in = new FileInputStream(file);
+				byte buf[] = new byte[1024];
+				while (in.read(buf) > 0) {
+					out.write(buf);
+				}
+				out.close();
+				in.close();
+				return "/images/" + comId + "/" + fileName;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+		return null;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public List<KeyValue> getCity() {
+		city = new ArrayList<>();
+		city.add(new KeyValue("0", "-- Chọn Thành Phố --"));
+		try {
+			city.addAll(1, LocationBean.getInstance().getCity());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return city;
+	}
+
+	public void setCity(List<KeyValue> city) {
+		this.city = city;
+	}
+
+	public List<KeyValue> getLocation() {
+		if(location.size() == 0)
+			try {
+				location = new ArrayList<>();
+				location.add(new KeyValue("0", "-- Chọn vị trí --"));
+				location.addAll(1, LocationBean.getInstance().getLocation());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		return location;
+	}
+
+	public void setLocation(List<KeyValue> location) {
+		this.location = location;
+	}
+
+	public List<KeyValue> getServiceType() {
+		if(serviceType.size() == 0)
+			try {
+				serviceType.add(new KeyValue("0", "-- Chọn dịch vụ --"));
+				serviceType.addAll(1,ServiceTypeBean.getInstance().getServiceType());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		return serviceType;
+	}
+
+	public void setServiceType(List<KeyValue> serviceType) {
+		this.serviceType = serviceType;
+	}
+
+	public String getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
+	}
+
+	public String getServiceTypeId() {
+		return serviceTypeId;
+	}
+
+	public void setServiceTypeId(String serviceTypeId) {
+		this.serviceTypeId = serviceTypeId;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
+	public String getSelectedCity() {
+		return selectedCity;
+	}
+
+	public void setSelectedCity(String selectedCity) {
+		this.selectedCity = selectedCity;
+	}
+	public static void main(String[] args) {
+		System.out.println(SecurityHelper.endcodeSHA256("calem12345678"));
+	}
+	public String getComid() {
+		return comid;
+	}
+	public void setComid(String comid) {
+		this.comid = comid;
+	}
+	
+}

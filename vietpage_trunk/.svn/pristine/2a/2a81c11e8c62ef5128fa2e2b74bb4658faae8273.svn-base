@@ -1,0 +1,13 @@
+eclipse.preferences.version=1
+encoding//src/com/vnsoft/server/actions/BaseAction.java=UTF-8
+encoding//src/com/vnsoft/server/actions/LocationAction.java=UTF-8
+encoding//src/com/vnsoft/server/actions/MyPageAction.java=UTF-8
+encoding//src/com/vnsoft/server/actions/RegisterAction.java=UTF-8
+encoding//src/com/vnsoft/server/actions/package.properties=UTF-8
+encoding//src/com/vnsoft/server/actions/package_en.properties_original_BK=UTF-8
+encoding//src/com/vnsoft/server/actions/package_vi.properties_original=UTF-8
+encoding//src/com/vnsoft/server/model/Item.java=UTF-8
+encoding//webapps/js/mypage.js=UTF-8
+encoding//webapps/jsp/layout/Center.jsp=UTF-8
+encoding//webapps/jsp/layout/MyPageHeader.jsp=UTF-8
+encoding//webapps/jsp/layout/error.jsp=UTF-8

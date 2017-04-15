@@ -1,0 +1,18 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+	<link rel="stylesheet" href="../../css/m_layout.css">
+<div id="item_mypagecontainer" class="panel panel-primary" style="border: 0px;">
+	
+	<c:if test="${companies != null && companies.size() > 0 && currentPage != 'search' }">
+		<div style="float: left;position: relative;margin-bottom: 60px;">
+			<ui:table contentProvider="com.vnsoft.server.contentprovider.PageSimpleTableContentProvider" headers="Item 1" displayHeader="false" data="${companies }"  params="width=540,height=300,editable=false,callback=m_viewItem3,showView=true,btnPrefix=discount,returnedBtnNames=discount_btns,showDesc=true,showContactInfo=true,showAssessment=false,showRanking=true"></ui:table>
+		</div>
+	</c:if>
+
+</div>
+

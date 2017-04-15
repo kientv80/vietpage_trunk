@@ -1,0 +1,72 @@
+package com.vnsoft.server.actions;
+
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.biz.CompanyBean;
+import com.vnsoft.server.interceptor.AuthorizationInterceptor;
+
+public class ContactInfoAction extends StandarLayout {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7687790896223657053L;
+	private String address;
+	private String email;
+	private String info;
+	private String phone;
+	private Logger logger = Logger.getLogger(ContactInfoAction.class);
+	@Override
+	public String execute() {
+		try {
+//			init();
+			if (getComId() == null || getComId().isEmpty()) {
+				return "nocompanyid";
+			}
+//			getHttpServletRequest() = (HttpServletRequest) ActionContext.getContext().get(ServletActionContext.HTTP_REQUEST);
+			if(getAction() == null || getAction().isEmpty())
+			setAction(getHttpServletRequest().getParameter("action"));
+
+			if (AuthorizationInterceptor.EDIT.equals(getAction())) {
+				CompanyBean.getInstance().updateContactInfo(getPhone(), getAddress(), getEmail(), Integer.valueOf(getComId()));
+			} 
+
+		} catch (Exception e) {
+			logger.error("", e);
+			e.printStackTrace();
+		}
+		return super.execute();
+	}
+
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+}

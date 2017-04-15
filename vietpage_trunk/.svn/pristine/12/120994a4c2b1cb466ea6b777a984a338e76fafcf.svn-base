@@ -1,0 +1,41 @@
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+
+<div style="position: relative;width:100%;float: left;">
+	<div class="info" style="padding-left: 10px;">
+			<a href="/vietpage?comid=${companyInfo.id }&target=homePage" title="About us" id="aboutBtn" style="color: #fff;">
+				<img src="/images/vietpage/m_home.png" class="menu_button" id="viewMenu"/>
+			</a>
+	</div>
+	<div class="info" >
+		<a href="/items?comid=${companyInfo.id }" title="Menu" id="viewMenu" style="color: #fff;">
+			<img src="/images/vietpage/m_product.png" class="menu_button" id="viewMenu"/>
+		</a>
+	</div>
+	<div class="info" >
+		<a href="/feed?comid=${companyInfo.id }" title="Bản Tin"  id="commentBtn" style="color: #fff;">
+			<img src="/images/vietpage/m_news.png" class="menu_button" id="viewMenu" />
+		</a>
+	</div>
+	
+	<div class="info">
+			<a href="#"  id="phone" style="color: #fff;">
+				<img src="/images/vietpage/m_phone.png" class="menu_button"/>
+			</a>
+	</div>
+	<div class="info" >
+		<a href="#" id="map_image1" style="color: #fff;">
+			<img alt="Map of the shop" src="/images/vietpage/m_map.png" class="menu_button">
+		</a>
+	</div>
+	<div class="info" >
+		<a href="/home" title="Viet Page"  style="color: white;">
+			<img alt="Map of the shop" src="/images/vietpage/vietpage_icon.png" class="menu_button">
+		</a>
+	</div>
+</div>
+<div style="position: relative;width:100%;float: left;height: 10px;background-color: #dadce0;">
+</div>

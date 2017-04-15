@@ -1,0 +1,939 @@
+package com.vnsoft.server.biz;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.jcs.JCS;
+import org.apache.jcs.access.exception.CacheException;
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.cache.CacheType;
+import com.vnsoft.server.cache.JSCCacheManager;
+import com.vnsoft.server.model.Address;
+import com.vnsoft.server.model.CompanyInfo;
+
+public class CompanyBean {
+	private static CompanyBean instance;
+	Logger log = Logger.getLogger(CompanyBean.class);
+
+	private CompanyBean() {
+	}
+
+	public static CompanyBean getInstance() {
+		if (instance == null) {
+			instance = new CompanyBean();
+		}
+		return instance;
+	}
+
+	public CompanyInfo getCompanyInfo(long id) throws Exception {
+		JCS cache = JSCCacheManager.getInstace().getCache(CacheType.COMPANY);
+		Object tmp = cache.get(id);
+		if (tmp != null)
+			return (CompanyInfo) tmp;
+
+		CompanyInfo company = new CompanyInfo();
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select c.*, u.username from company c, users u where u.id=c.owner_id and c.id=?");
+			stm.setLong(1, id);
+			result = stm.executeQuery();
+			List<CompanyInfo> coms = toCompanyInfo(result);
+			if (coms != null && coms.size() > 0) {
+				company = coms.get(0);
+				System.out.println(">>>>>... get address for com=" + company.getId());
+				stm = con.prepareStatement("select * from address where page_id=?");
+				stm.setLong(1, company.getId());
+				result = stm.executeQuery();
+				company.setAddresses(toAddresses(result));
+				System.out.println(">>>>>... get address for com=" + company.getAddresses().size());
+				cache.put(id, company);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+		}
+		return company;
+	}
+
+	public List<CompanyInfo> getCompanyInfoByService(long serviceId, int getmax) throws Exception {
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		List<CompanyInfo> coms = new ArrayList<>();
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select c.*, u.username from company c, users u where u.id=c.owner_id and ispublic=true and isapprove=true and c.service_id=? limit " + getmax);
+			stm.setLong(1, serviceId);
+			result = stm.executeQuery();
+			coms = toCompanyInfo(result);
+			for (CompanyInfo com : coms) {
+				stm = con.prepareStatement("select * from address where page_id=?");
+				stm.setLong(1, com.getId());
+				result = stm.executeQuery();
+				com.setAddresses(toAddresses(result));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+		}
+		return coms;
+	}
+
+	public boolean alreadyExits(String name) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		int count = 0;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select count(*) as result from company where name=?");
+			stm.setString(1, name);
+			result = stm.executeQuery();
+			while (result.next()) {
+				count = result.getInt("result");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		if (count > 0)
+			return true;
+		return false;
+	}
+
+	public int getCurrentItemNum(long comid) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		int count = 0;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select count(*) as result from menuitem where comid=?");
+			stm.setLong(1, comid);
+			result = stm.executeQuery();
+			while (result.next()) {
+				count = result.getInt("result");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return count;
+	}
+
+	public int getId(int ownerId) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		int id = -1;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select id from company where owner_id=? and isapprove = true");
+			stm.setInt(1, ownerId);
+			result = stm.executeQuery();
+			while (result.next()) {
+				id = result.getInt("id");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return id;
+	}
+
+	public void editCompanyInfo(CompanyInfo c) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("update company set name=?,url=?,headerimage=?,description=?,contentimage=? where id=?");
+			stm.setString(1, c.getName());
+			stm.setString(2, c.getUrl());
+			stm.setString(3, c.getHeaderImage());
+			stm.setString(4, c.getDescription());
+			stm.setString(5, c.getContentImage());
+			stm.setLong(6, c.getId());
+			stm.executeUpdate();
+			clearCompanyCache(c.getId());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+
+	public void editCompanyImage(int comid, String imageUrl) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("update company set contentimage=? where id=?");
+			stm.setString(1, imageUrl);
+			stm.setInt(2, comid);
+			stm.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+
+	public void approvePage(int comid, boolean approve) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("update company set isapprove=? where id=?");
+			stm.setBoolean(1, approve);
+			stm.setInt(2, comid);
+			stm.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+
+	public void markReviewed(int comid, boolean reviewed) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("update company set isreviewed=? where id=?");
+			stm.setBoolean(1, reviewed);
+			stm.setInt(2, comid);
+			stm.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+
+	public void editCompanyMap(int comid, String imageUrl) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("update company set location_map_image=? where id=?");
+			stm.setString(1, imageUrl);
+			stm.setInt(2, comid);
+			stm.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+
+	public void editCompanyHeaderImage(int comid, String imageUrl) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("update company set headerimage=? where id=?");
+			stm.setString(1, imageUrl);
+			stm.setInt(2, comid);
+			stm.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+
+	public void editCompanyDescription(int comid, String description) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("update company set description=? where id=?");
+			stm.setString(1, description);
+			stm.setInt(2, comid);
+			stm.executeUpdate();
+			clearCompanyCache(comid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+
+	private void clearCompanyCache(long comId) {
+		try {
+			JSCCacheManager.getInstace().getCache(CacheType.COMPANY).clear();
+		} catch (CacheException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public int addCompanyInfo(CompanyInfo c) throws Exception {
+		if (alreadyExits(c.getUsername()))
+			throw new Exception("Uername " + c.getUsername() + " already exist.");
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("insert into company(name,url,headerimage,description,contentimage,location_map_image,location_id,service_id,owner_id,phones, emails,addresses,providedservice) values(?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			stm.setString(1, c.getName());
+			stm.setString(2, c.getUrl());
+			stm.setString(3, c.getHeaderImage());
+			stm.setString(4, c.getDescription());
+			stm.setString(5, c.getContentImage());
+			stm.setString(6, c.getMapImage());
+			stm.setInt(7, c.getLocationId());
+			stm.setInt(8, c.getServiceTypeId());
+			stm.setInt(9, c.getOwnerId());
+			stm.setString(10, c.getPhone());
+			stm.setString(11, c.getEmail());
+			stm.setString(12, c.getAddress());
+			stm.setString(13, c.getService());
+			stm.executeUpdate();
+			TrackingBean.getInstance().trackingNewUser();
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return getId(c.getOwnerId());
+	}
+
+	public void addAdress(long pageid, Address ads) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("insert into address(page_id, location_id,phone,address,map,mail)values(?,?,?,?,?,?)");
+			stm.setLong(1, pageid);
+			stm.setInt(2, ads.getLocationId());
+			stm.setString(3, ads.getPhone());
+			stm.setString(4, ads.getAddress());
+			stm.setString(5, ads.getMap());
+			stm.setString(6, ads.getEmail());
+			stm.executeUpdate();
+			System.out.println(">>>>>>>>> Address:" + stm.executeBatch());
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+
+	}
+
+	public List<CompanyInfo> getCompanyInfo(int locationId, int serviceTypeId, String searchText) throws Exception {
+		List<CompanyInfo> companies = new ArrayList<>();
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			
+			String sql = "Select c.* from company c where c.ispublic=true and c.isapprove=true and service_id=?";
+			if (locationId > 0)
+				sql = "select distinct * FROM (select distinct c.* from company c where c.ispublic=true and c.isapprove=true and c.service_id=? and c.location_id=? union select distinct c.* from company c, address addr where c.id=addr.page_id and addr.location_id=? and c.service_id=?) AS A";
+			if (searchText != null && !searchText.isEmpty() && locationId == 0)
+				sql = sql + " and c.name like ?";
+			
+			if (searchText != null && !searchText.isEmpty() && locationId > 0)
+				sql = "select distinct * FROM (select distinct c.* from company c where c.ispublic=true and c.isapprove=true and c.service_id=? and c.location_id=? and c.name like ? union select distinct c.* from company c, address addr where  c.ispublic=true and c.isapprove=true and c.id=addr.page_id and addr.location_id=? and c.service_id=?  and c.name like ?) AS A";
+			
+			stm = con.prepareStatement(sql);
+			stm.setInt(1, serviceTypeId);
+			if (locationId > 0 && (searchText == null || searchText.isEmpty())){
+				stm.setInt(2, locationId);
+				stm.setInt(3, locationId);
+				stm.setInt(4, serviceTypeId);
+			}else if (locationId > 0 && (searchText != null && !searchText.isEmpty())){
+				stm.setInt(2, locationId);
+				stm.setString(3, "%" + searchText + "%");
+				stm.setInt(4, locationId);
+				stm.setInt(5, serviceTypeId);
+				stm.setString(6, "%" + searchText + "%");
+			}else if (searchText != null && !searchText.isEmpty() && locationId == 0){
+				stm.setString(2, "%" + searchText + "%");
+			}
+			
+			result = stm.executeQuery();
+			companies = toCompanyInfo(result);
+
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return companies;
+	}
+
+	private List<CompanyInfo> toCompanyInfo(ResultSet result) throws SQLException {
+		List<CompanyInfo> companies = new ArrayList<>();
+		while (result.next()) {
+			CompanyInfo company = new CompanyInfo();
+			company.setId(result.getInt("id"));
+			company.setDescription(result.getString("description"));
+			company.setName(result.getString("name"));
+			company.setUrl(result.getString("url"));
+			company.setHeaderImage(result.getString("headerimage"));
+			company.setContentImage(result.getString("contentimage"));
+			company.setMapImage(result.getString("location_map_image"));
+			company.setLocationId(result.getInt("location_id"));
+			company.setServiceTypeId(result.getInt("service_id"));
+			company.setIspublish(result.getBoolean("ispublic"));
+			company.setIsapproved(result.getBoolean("isapprove"));
+			company.setOwnerId(result.getInt("owner_id"));
+//			company.setUsername(result.getString("username"));
+			company.setMaxItem(result.getInt("max_item"));
+			company.setPhone(result.getString("phones"));
+			company.setAddress(result.getString("addresses"));
+			company.setEmail(result.getString("emails"));
+			company.setService(result.getString("providedservice"));
+			company.setAbout(result.getString("about"));
+			company.setCompanyRating(result.getInt("rating"));
+			companies.add(company);
+		}
+		return companies;
+	}
+
+	public List<CompanyInfo> getPages(boolean isApproved, boolean isReviewed) throws Exception {
+		List<CompanyInfo> companies = new ArrayList<>();
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select c.*,  u.username from company c, users u where u.id=c.owner_id and isapprove=? and isreviewed=?");
+			stm.setBoolean(1, isApproved);
+			stm.setBoolean(2, isReviewed);
+			result = stm.executeQuery();
+			companies = toCompanyInfo(result);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+		}
+		return companies;
+	}
+
+	public List<CompanyInfo> getAllPages() throws Exception {
+		List<CompanyInfo> companies = new ArrayList<>();
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select c.*, u.username from company c, users u where u.id=c.owner_id and c.isapprove=true");
+			result = stm.executeQuery();
+			companies = toCompanyInfo(result);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return companies;
+	}
+
+	public List<CompanyInfo> getPages() throws Exception {
+		List<CompanyInfo> companies = new ArrayList<>();
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		ResultSet result2 = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select * from company c");
+			result = stm.executeQuery();
+			while (result.next()) {
+				CompanyInfo company = new CompanyInfo();
+				company.setId(result.getInt("id"));
+				company.setName(result.getString("name"));
+				companies.add(company);
+				stm = con.prepareStatement("select * from address where page_id=?");
+				stm.setLong(1, company.getId());
+				result2 = stm.executeQuery();
+				company.setAddresses(toAddresses(result2));
+			}
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (result2 != null)
+				result2.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return companies;
+	}
+
+	public List<CompanyInfo> searchPagesByName(String name) throws Exception {
+		List<CompanyInfo> companies = new ArrayList<>();
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select c.*, u.username from company c,  users u where  u.id=c.owner_id and c.name like ? limit " + 100);
+			stm.setString(1, "%" + name + "%");
+			result = stm.executeQuery();
+			companies = toCompanyInfo(result);
+			stm = con.prepareStatement("select * from address where page_id=?");
+			for (CompanyInfo c : companies) {
+				stm.setLong(1, c.getId());
+				result = stm.executeQuery();
+				c.setAddresses(toAddresses(result));
+			}
+
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return companies;
+	}
+
+	public void publicWebsite(Integer comid, boolean ispublic) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			if (ispublic)
+				stm = con.prepareStatement("update company set ispublic=true where id=?");
+			else
+				stm = con.prepareStatement("update company set ispublic=false where id=?");
+			stm.setInt(1, comid);
+			stm.executeUpdate();
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+
+	public void approveWebsite(Integer comid, boolean approve) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			if (approve)
+				stm = con.prepareStatement("update company set isapprove=true where id=?");
+			else
+				stm = con.prepareStatement("update company set isapprove=false where id=?");
+			stm.setInt(1, comid);
+			stm.executeUpdate();
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+
+	public CompanyInfo getCompanyInfoByOwner(int ownerId) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		CompanyInfo com = new CompanyInfo();
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select c.*,  u.username from company c,  users u where u.id = c.owner_id and c.owner_id=?");
+			stm.setInt(1, ownerId);
+			result = stm.executeQuery();
+			List<CompanyInfo> coms = toCompanyInfo(result);
+			if (coms != null && coms.size() > 0) {
+				com = coms.get(0);
+				stm = con.prepareStatement("select * from address where page_id=?");
+				stm.setLong(1, com.getId());
+				result = stm.executeQuery();
+				com.setAddresses(toAddresses(result));
+			}
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return com;
+	}
+
+	private List<Address> toAddresses(ResultSet result) throws Exception {
+		List<Address> ads = new ArrayList<>();
+		while (result.next()) {
+			Address d = new Address();
+			d.setAddress(result.getString("address"));
+			d.setEmail(result.getString("mail"));
+			d.setId(result.getInt("id"));
+			d.setLocationId(result.getInt("location_id"));
+			d.setMap(result.getString("map"));
+			d.setPageId(result.getInt("page_id"));
+			d.setPhone(result.getString("phone"));
+			ads.add(d);
+		}
+		return ads;
+	}
+
+	public void updateAdress(Address ad) throws SQLException {
+		Connection con = null;
+		PreparedStatement stm = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			if(ad.getLocationId() > 0){
+				stm = con.prepareStatement("Update address set address=?,phone=?,mail=?,map=?,location_id=? where id=?");
+				stm.setString(1, ad.getAddress());
+				stm.setString(2, ad.getPhone());
+				stm.setString(3, ad.getEmail());
+				stm.setString(4, ad.getMap());
+				stm.setInt(5, ad.getLocationId());
+				stm.setInt(6, ad.getId());
+			}else{
+				stm = con.prepareStatement("Update address set address=?,phone=?,mail=?,map=? where id=?");
+				stm.setString(1, ad.getAddress());
+				stm.setString(2, ad.getPhone());
+				stm.setString(3, ad.getEmail());
+				stm.setString(4, ad.getMap());
+				stm.setInt(5, ad.getId());
+			}
+			stm.executeUpdate();
+			clearCompanyCache(ad.getPageId());
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+
+	public Address getAdress(int id) throws SQLException {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rsl = null;
+		Address ads = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("select * from address where id=?");
+			stm.setInt(1, id);
+			rsl = stm.executeQuery();
+			List<Address> adss = toAddresses(rsl);
+			if (adss.size() > 0)
+				ads = adss.get(0);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (rsl != null)
+				rsl.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+		}
+		return ads;
+	}
+
+	public void updateServices(String services, int comid) throws SQLException {
+		Connection con = null;
+		PreparedStatement stm = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Update company set providedservice=? where id=?");
+			stm.setString(1, services);
+			stm.setLong(2, comid);
+			stm.executeUpdate();
+			clearCompanyCache(comid);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+
+	public void updateContactInfo(String phones, String addresses, String emails, int comid) throws SQLException {
+		Connection con = null;
+		PreparedStatement stm = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Update company set phones=?,addresses=?,emails=? where id=?");
+			stm.setString(1, phones);
+			stm.setString(2, addresses);
+			stm.setString(3, emails);
+			stm.setLong(4, comid);
+			stm.executeUpdate();
+			clearCompanyCache(comid);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+		}
+	}
+
+	public void updateAbout(String about, int comid) throws SQLException {
+		Connection con = null;
+		PreparedStatement stm = null;
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Update company set about=? where id=?");
+			stm.setString(1, about);
+			stm.setLong(2, comid);
+			stm.executeUpdate();
+			clearCompanyCache(comid);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+
+	public void deleteCompany(String comid) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		List<String> sqls = Arrays.asList(new String[] { "DELETE FROM news where comid=?", "DELETE FROM menu_menuitem where menu_id in (select id from menu where comid=?)", "DELETE FROM menuitem where comid=?", "DELETE FROM menu where comid=?", "DELETE FROM news where comid=?", "DELETE FROM comment where comid=?", "DELETE FROM company where id=?", "DELETE FROM trk_page_visit where id=?", "DELETE FROM trk_user where id=?" });
+		CompanyInfo c = CompanyBean.getInstance().getCompanyInfo(Long.valueOf(comid));
+		con = JDBCConnection.getInstance().getConnection();
+
+		try {
+			con.setAutoCommit(false);
+			for (String sql : sqls) {
+				stm = con.prepareStatement(sql);
+				stm.setString(1, comid);
+				stm.execute();
+			}
+			stm = con.prepareStatement("DELETE FROM users where id=?");
+			stm.setInt(1, c.getOwnerId());
+			stm.execute();
+
+			try {
+				clearCompanyCache(Long.valueOf(comid));
+			} catch (Exception ee) {
+			}
+			con.commit();
+			con.setAutoCommit(true);
+		} catch (Exception e) {
+			log.error("", e);
+			con.rollback();
+			con.setAutoCommit(true);
+		} finally {
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+		}
+	}
+
+	public void deleteAddress(int id, int comId) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		con = JDBCConnection.getInstance().getConnection();
+		try {
+			String sql = "delete from address where id=?";
+			stm = con.prepareStatement(sql);
+			stm.setInt(1, id);
+			stm.executeUpdate();
+			clearCompanyCache(comId);
+		} catch (Exception e) {
+			log.error("", e);
+			con.rollback();
+			con.setAutoCommit(true);
+		} finally {
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+		}
+	}
+
+	public void updateContactInfo(CompanyInfo comInfo) throws Exception {
+		System.out.println(comInfo.getName());
+		Connection con = null;
+		PreparedStatement stm = null;
+		String sql = "UPDATE company set name=?, addresses=?,phones=?,emails=?,location_map_image=?,url=?,location_id=?,service_id=? WHERE id=?";
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement(sql);
+			stm.setString(1, comInfo.getName());
+			stm.setString(2, comInfo.getAddress());
+			stm.setString(3, comInfo.getPhone());
+			stm.setString(4, comInfo.getEmail());
+			stm.setString(5, comInfo.getMapImage());
+			stm.setString(6, comInfo.getUrl());
+			stm.setInt(7, comInfo.getLocationId());
+			stm.setInt(8, comInfo.getServiceTypeId());
+			stm.setLong(9, comInfo.getId());
+			stm.executeUpdate();
+			clearCompanyCache(comInfo.getId());
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+	}
+}

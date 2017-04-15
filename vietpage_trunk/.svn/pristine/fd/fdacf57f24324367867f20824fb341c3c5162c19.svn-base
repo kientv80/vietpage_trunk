@@ -1,0 +1,5 @@
+package com.vnsoft.server.plugin.social;
+
+public interface FaceBookPluginService extends Runnable{
+	public void postFeed(FaceBookFeed feed);
+}

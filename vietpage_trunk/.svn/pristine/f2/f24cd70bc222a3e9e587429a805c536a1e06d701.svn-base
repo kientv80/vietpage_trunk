@@ -1,0 +1,124 @@
+package com.vnsoft.server.model;
+
+import java.io.Serializable;
+
+public class Item implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7117986192738583251L;
+	Integer id;
+	private Integer menuId;
+	String name;
+	String description;
+	Double price;
+	String imagePath;
+	private boolean ismain;
+	private String menuName;
+	private long comId;
+	private boolean isDiscount;
+	private int discountPercent;
+	private Double priceAfterDiscount;
+	private String companyName;
+	private String companyUrl;
+	private String code;
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public Double getPrice() {
+		return price;
+	}
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+	public String getImagePath() {
+		return imagePath;
+	}
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+	public boolean getIsmain() {
+		return ismain;
+	}
+	public void setIsmain(boolean ismain) {
+		this.ismain = ismain;
+	}
+	public Integer getMenuId() {
+		return menuId;
+	}
+	public void setMenuId(Integer menuId) {
+		this.menuId = menuId;
+	}
+	public String getMenuName() {
+		return menuName;
+	}
+	public void setMenuName(String menuName) {
+		this.menuName = menuName;
+	}
+	public long getComId() {
+		return comId;
+	}
+	public void setComId(long comId) {
+		this.comId = comId;
+	}
+	public boolean getIsDiscount() {
+		return isDiscount;
+	}
+	public void setIsDiscount(boolean isDiscount) {
+		this.isDiscount = isDiscount;
+	}
+	public int getDiscountPercent() {
+		return discountPercent;
+	}
+	public void setDiscountPercent(int discountPercent) {
+		this.discountPercent = discountPercent;
+	}
+	public Double getPriceAfterDiscount() {
+		return priceAfterDiscount;
+	}
+	public void setPriceAfterDiscount(Double priceAfterDiscount) {
+		this.priceAfterDiscount = priceAfterDiscount;
+	}
+	public String getCompanyName() {
+		return companyName;
+	}
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+	public String getCompanyUrl() {
+		return companyUrl;
+	}
+	public void setCompanyUrl(String companyUrl) {
+		this.companyUrl = companyUrl;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	@Override
+	public String toString() {
+		String content = "";
+		content = getName()+ " " + getPrice() + "(VND):" + getDescription();
+		if(isDiscount){
+			content = content + " giảm giá " + getDiscountPercent() +" %" + " giá mới " + getPriceAfterDiscount() + "(VND)";
+		}
+		return content;
+	}
+}

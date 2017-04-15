@@ -1,0 +1,36 @@
+package com.vnsoft.server.actions;
+
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.biz.CompanyBean;
+import com.vnsoft.server.interceptor.AuthorizationInterceptor;
+
+public class AboutAction extends StandarLayout {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7978180552693037514L;
+	private String content;
+	private Logger logger = Logger.getLogger(AboutAction.class);
+	@Override
+	public String execute() {
+		try {
+			if (AuthorizationInterceptor.EDIT.equals(getAction())) {
+				CompanyBean.getInstance().updateAbout(content, Integer.valueOf(getId()));
+			} 
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("", e);
+		}
+		return super.execute();
+	}
+
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+}

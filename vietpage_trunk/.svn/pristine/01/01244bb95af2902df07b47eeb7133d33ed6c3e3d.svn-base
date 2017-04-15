@@ -1,0 +1,61 @@
+package com.vnsoft.server.plugin.social;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import org.apache.log4j.Logger;
+
+import facebook4j.Account;
+import facebook4j.Facebook;
+import facebook4j.FacebookException;
+import facebook4j.FacebookFactory;
+import facebook4j.ResponseList;
+import facebook4j.auth.AccessToken;
+
+public class FaceBookPluginServiceImpl implements FaceBookPluginService {
+	private final BlockingQueue<Object> jobs = new LinkedBlockingQueue<Object>(6000);
+	private Logger log = Logger.getLogger(FaceBookPluginServiceImpl.class);
+	Facebook facebook = new FacebookFactory().getInstance();
+
+	@Override
+	public void run() {
+		facebook.setOAuthAppId("382999278501512", "a70c6de5f0ffc6810dc475143c7d46dd");
+		Account yourPageAccount;
+		try {
+//			yourPageAccount = facebook.getAccounts().get(0);
+//			String pageAccessToken = yourPageAccount.getAccessToken();
+			facebook.setOAuthAccessToken(facebook.getOAuthAppAccessToken());
+			facebook.postStatusMessage("Chuc mot ngay tot dep");
+		} catch (FacebookException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void main(String[] args) {
+		try {
+			Facebook facebook = new FacebookFactory().getInstance();
+//			facebook.setOAuthAppId("382999278501512", "a70c6de5f0ffc6810dc475143c7d46dd");
+			facebook.setOAuthAppId("506689466132492", "f9e796802a5cfe18200705d6e6ea7423");
+			facebook.setOAuthAccessToken(facebook.getOAuthAppAccessToken());
+//			facebook.postStatusMessage("Chuc mot ngay tot dep");
+			
+			ResponseList<Account> accounts = facebook.getAccounts();
+			Account yourPageAccount = accounts.get(0);  // if index 0 is your page account.
+			String pageAccessToken = yourPageAccount.getAccessToken();
+			facebook.setOAuthAccessToken(new AccessToken(pageAccessToken, null));
+			facebook.postStatusMessage("Chuc mot ngay tot dep");
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	@Override
+	public void postFeed(FaceBookFeed feed) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

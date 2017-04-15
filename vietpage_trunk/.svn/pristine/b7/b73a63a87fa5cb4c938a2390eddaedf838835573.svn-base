@@ -1,0 +1,192 @@
+package com.vnsoft.server.actions;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.apache.tomcat.util.net.URL;
+
+import com.vnsoft.server.biz.CompanyBean;
+import com.vnsoft.server.biz.MenuBean;
+import com.vnsoft.server.biz.NewsBean;
+import com.vnsoft.server.biz.UserInterestedBean;
+import com.vnsoft.server.model.CompanyInfo;
+import com.vnsoft.server.model.Item;
+import com.vnsoft.server.model.News;
+
+public class MyPageAction extends BaseAction {
+	private static final int MAX_GET_ITEMS = 50;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6922704335078532732L;
+	private String content;
+	private List<News> news = new ArrayList<>();
+	private List<Item> items = new ArrayList<>();
+	private List<Item> newItems = new ArrayList<>();
+
+	private int locationId;
+	private int serviceTypeId;
+	private int selectedCity;
+	private String searchText;
+	private List<CompanyInfo> companies = new ArrayList<>();
+	private Logger logger = Logger.getLogger(MyPageAction.class);
+
+	public List<CompanyInfo> getCompanies() {
+		return companies;
+	}
+
+	public void setCompanies(List<CompanyInfo> companies) {
+		this.companies = companies;
+	}
+
+	@Override
+	public String execute() {
+		try {
+			URL url = new URL(getHttpServletRequest().getRequestURL().toString());
+			String pageName = url.getPath();
+			if ("/home".equals(pageName) || "/".equals(pageName)) {
+				getHttpServletRequest().setCharacterEncoding("utf-8");
+				getHttpServletResponse().setCharacterEncoding("utf-8");
+				loadSearchCategories();
+				logger.debug("MyPageAction: action=" + getAction() + " serviceTypeId=" + serviceTypeId);
+				if ("filter".equals(getAction())) {
+					news = NewsBean.getInstance().getAllNews(MAX_GET_ITEMS, serviceTypeId);
+					items = MenuBean.getInstance().getDiscountedItems(MAX_GET_ITEMS, serviceTypeId);
+					newItems = MenuBean.getInstance().getNewItems(MAX_GET_ITEMS, serviceTypeId);
+				} else if ("search".equals(getAction())) {
+					setCompanies(CompanyBean.getInstance().getCompanyInfo(locationId, serviceTypeId, searchText));
+					for (CompanyInfo com : companies) {
+						if (com.getDescription() != null && com.getDescription().length() > 400)
+							com.setDescription(com.getDescription().substring(0, 200) + " ... ");
+						if (searchText != null && !searchText.isEmpty())
+							com.setName(com.getName().replaceAll(searchText, "<b>" + searchText + "</b>"));
+					}
+				} else if (getHttpServletRequest().getParameter("serviceId") != null && isNumber(getHttpServletRequest().getParameter("serviceId"))) {
+					items = MenuBean.getInstance().getDiscountedItems(MAX_GET_ITEMS, Integer.valueOf(getHttpServletRequest().getParameter("serviceId")));
+					newItems = MenuBean.getInstance().getNewItems(MAX_GET_ITEMS, Integer.valueOf(getHttpServletRequest().getParameter("serviceId")));
+				} else {
+					String visistorId = getVisistorId();
+					Map<String, List<Integer>> scores = UserInterestedBean.getInstance().getUserInterestedScores(visistorId);
+					if ("discount".equals(getAction())) {
+						if (scores.get(UserInterestedBean.TOP3_MOST_INTERESTED_SERVICES).size() > 0) {
+							for (int sid : scores.get(UserInterestedBean.TOP3_MOST_INTERESTED_SERVICES)) {
+								items.addAll(MenuBean.getInstance().getDiscountedItems(MAX_GET_ITEMS, sid));
+							}
+						} else {
+							items.addAll(MenuBean.getInstance().getDiscountedItems(MAX_GET_ITEMS, 0));
+						}
+						trackingVisit("vietpage_discount");
+					} else if ("newItems".equals(getAction())) {
+						if (scores.get(UserInterestedBean.TOP3_MOST_INTERESTED_SERVICES).size() > 0) {
+							for (int sid : scores.get(UserInterestedBean.TOP3_MOST_INTERESTED_SERVICES)) {
+								newItems.addAll(MenuBean.getInstance().getNewItems(MAX_GET_ITEMS, sid));
+							}
+						} else {
+							newItems.addAll(MenuBean.getInstance().getNewItems(MAX_GET_ITEMS, 0));
+						}
+						trackingVisit("vietpage_newItems");
+					} else if ("news".equals(getAction())) {
+						if (scores.get(UserInterestedBean.TOP3_MOST_INTERESTED_SERVICES).size() > 0) {
+							for (int sid : scores.get(UserInterestedBean.TOP3_MOST_INTERESTED_SERVICES)) {
+								news.addAll(NewsBean.getInstance().getAllNews(MAX_GET_ITEMS, sid));
+							}
+						} else {
+							news.addAll(NewsBean.getInstance().getAllNews(MAX_GET_ITEMS, 0));
+						}
+						trackingVisit("vietpage_news");
+					} else {
+						if (scores.get(UserInterestedBean.TOP3_MOST_INTERESTED_SERVICES).size() > 0) {
+							for (int sid : scores.get(UserInterestedBean.TOP3_MOST_INTERESTED_SERVICES)) {
+								newItems.addAll(MenuBean.getInstance().getNewItems(MAX_GET_ITEMS, sid));
+							}
+						} else {
+							newItems.addAll(MenuBean.getInstance().getNewItems(MAX_GET_ITEMS, 0));
+						}
+						trackingVisit("vietpage_home");
+					}
+				}
+				shottenItemDesc(items);
+				shottenItemDesc(newItems);
+			} else {
+				System.out.println(">>>>>>>>>>>>>Redirect to :"+"/vietpage?page="+pageName.substring(1,pageName.length()));
+				getHttpServletRequest().setAttribute("page", pageName.substring(1,pageName.length()));
+				return "vietpage";
+				
+			}
+
+		} catch (Exception e) {
+			logger.error("", e);
+			e.printStackTrace();
+		}
+		if ("news".equals(getAction())) {
+			return "news";
+		}
+		return SUCCESS;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public List<News> getNews() {
+		return news;
+	}
+
+	public void setNews(List<News> news) {
+		this.news = news;
+	}
+
+	public List<Item> getItems() {
+		return items;
+	}
+
+	public void setItems(List<Item> items) {
+		this.items = items;
+	}
+
+	public int getServiceTypeId() {
+		return serviceTypeId;
+	}
+
+	public void setServiceTypeId(int serviceTypeId) {
+		this.serviceTypeId = serviceTypeId;
+	}
+
+	public List<Item> getNewItems() {
+		return newItems;
+	}
+
+	public void setNewItems(List<Item> newItems) {
+		this.newItems = newItems;
+	}
+
+	public int getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(int locationId) {
+		this.locationId = locationId;
+	}
+
+	public int getSelectedCity() {
+		return selectedCity;
+	}
+
+	public void setSelectedCity(int selectedCity) {
+		this.selectedCity = selectedCity;
+	}
+
+	public String getSearchText() {
+		return searchText;
+	}
+
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
+	}
+}

@@ -1,0 +1,49 @@
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+
+<div style="position: relative;width: 100%;overflow: hidden">
+	<div class="info" >
+		<a href="/items?comid=${companyInfo.id }" title="Menu" id="viewMenu">
+			<img src="/images/vietpage/sanpham.png" class="menu_button" id="viewMenu" style="width: 60%;height: 60%"/><br>
+			<s:text name="vietpage.page.item"></s:text>
+		</a>
+	</div>
+	<div class="info" >
+		<a href="/feed?comid=${companyInfo.id }" title="Bản Tin"  id="commentBtn" style="color: black;">
+			<img src="/images/vietpage/bantin.png" class="menu_button" id="viewMenu" style="width: 60%;height: 60%"/><br>
+			<s:text name="vietpage.page.news"></s:text>
+		</a>
+	</div>
+	
+	<div class="info">
+			<a href="#"  id="phone">
+				<img src="/images/vietpage/Phone.png" style="width: 60%;height: 60%"/><br>
+				<s:text name="vietpage.contact"></s:text><br>
+			</a>
+	</div>
+	<div class="info" >
+		<a href="#" id="map_image1">
+			<img alt="Map of the shop" src="/images/googlemap.jpg" style="width: 60%;height: 60%"><br>
+			<s:text name="vietpage.company.location"></s:text>
+		</a>
+	</div>
+
+</div>
+<div style="position: relative;width:100%; overflow: hidden; margin-bottom: 20px;text-align: center;">
+	<div class="pageAdminAction"  style="background-color:#4c66a4;">
+		<span style="display: table-cell;vertical-align: middle;height: inherit;width:inherit;padding-left:50px;">
+			<a href="/vietpage?comid=${companyInfo.id }&target=homePage" title="About us" id="aboutBtn" style="color: white;">
+				<s:text name="vietpage.register.desc"></s:text>
+			</a>
+		</span>
+	</div>
+	
+	<div class="pageAdminAction" style="background-color:#4c66a4;padding-right: 0px;float: right;color: white;">
+		<span style="display: table-cell;vertical-align: middle; height:inherit;width:inherit;padding-left:50px;">
+			<a href="/home" title="Viet Page"  style="color: white;"><s:text name="vietpage.title"></s:text></a>
+		</span>
+	</div>
+</div>

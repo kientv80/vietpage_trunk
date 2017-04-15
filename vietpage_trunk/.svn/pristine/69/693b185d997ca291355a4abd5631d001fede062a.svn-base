@@ -1,0 +1,4 @@
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<a href="/home"><font color="black"><s:text name="vietpage.title"></s:text> </font></a> | 
+<a href="/register"><font color="black"><s:text name="vietpage.register"></s:text> </font></a> | 
+<a href="#"><font color="black"><s:text name="vietpage.contact"></s:text> </font></a> 

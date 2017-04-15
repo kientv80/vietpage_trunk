@@ -1,0 +1,105 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<table width="100%">
+	<tr>
+		<td>
+			<table width="100%">
+				<tr height="30px">
+					<td width="20px" align="center"><a href="#" title="Menu"><img src="/images/TMKMenu.jpg" height="80px" width="60px" id="viewMenu" onmouseover="resize('viewMenu')" onmouseout="reloadsize('viewMenu')"/></a></td>
+					<td width="20px" align="center"><a href="#" title="Phone to call us"><img src="/images/dienthoai.png" height="80px" width="60px" id="phone"  onmouseover="resize('phone')" onmouseout="reloadsize('phone')"/></a></td>
+					<td width="20px" align="center"><a href="#" title="Our services"><img src="/images/service.jpg" height="80px" width="60px" id="serviceBtn"  onmouseover="resize('serviceBtn')" onmouseout="reloadsize('serviceBtn')"/></a></td>
+					<td width="20px" align="center"><a href="#" title="Comment" ><img src="/images/coment.png"  height="80px" width="60px" id="commentBtn"  onmouseover="resize('commentBtn')" onmouseout="reloadsize('commentBtn')"/></a></td>
+					<td width="20px" align="center"><a href="/vietpage?page=${companyInfo.username }" title="About us"><img src="/images/about_us.png"  height="80px" width="60px" id="aboutBtn"  onmouseover="resize('aboutBtn')" onmouseout="reloadsize('aboutBtn')"/></a></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<ui:tabview tabviewContentCSS="menu" tabviewContainerCSS="menucontainer_public" contentProviderClass="com.vnsoft.server.contentprovider.MenuContentProvider" data="${menuTabs}" displayTabs="${displayTabs}" id="menuContainer" customParams="width=280,height=200,btnPrefix=menu,editable=false,showView=true,callback=viewItem2"></ui:tabview>
+<ui:PopupWindow width="500" isCentered="false" showPanelButtonId="${buttons}" isVisible="false" containerId="vewItem2" panelTitle="${companyInfo.name }" isRender="true" zIndex="5" isModal="true" dragAble="true" showOkButton="true" ></ui:PopupWindow>
+
+<div id="contact_info" align="left">
+	<table style="text-align: left;">
+		<tr>
+			<td><label><s:text name="vietpage.register.phone"></s:text>:</label></td>
+			<td><c:out value="${contactInfo.phone}"></c:out></td>
+		</tr>
+		<tr>
+			<td><label><s:text name="vietpage.register.email"></s:text>:</label></td>
+			<td><c:out value="${contactInfo.email}"></c:out></td>
+		</tr>
+		<tr>
+			<td><label><s:text name="vietpage.register.address"></s:text>:</label></td>
+			<td><c:out value="${contactInfo.address}"></c:out></td>
+		</tr>
+	</table>
+</div>
+<div id="service"  style="text-align: left;">
+	<pre>
+	<c:out value="${service.content}"></c:out>
+	</pre>
+</div>
+
+<div id="commentEditer">
+<form action="comment?action=new" method="post" name="comment" id="comment">
+	<table>
+		<s:textfield key="vietpage.page.comment.name" type="text" name="postedBy"/>
+		<s:textfield key="vietpage.page.comment.mail" name="emailOfPoster"/>
+		<s:textarea key="vietpage.page.comment" rows="10" maxlength="500" cols="58" name="comment"/>
+	</table>
+	<input type="hidden" id="companyId" name="companyId">
+</form>
+</div>
+
+<ui:PopupWindow width="700" isCentered="false" showPanelButtonId="viewMenu" isVisible="false" containerId="menuContainer" panelTitle="${companyInfo.name }" isRender="true" zIndex="5" isModal="true" dragAble="false" scroll="false" showOkButton="true" showCancelButton="false"></ui:PopupWindow>
+<ui:PopupWindow width="500" isCentered="false" showPanelButtonId="phone" isVisible="false" containerId="contact_info" panelTitle="${companyInfo.name }" isRender="true" zIndex="5" isModal="true" dragAble="true" showOkButton="true" ></ui:PopupWindow>
+
+<ui:PopupWindow width="500" isCentered="false" showPanelButtonId="serviceBtn" isVisible="false" containerId="service" scrollContainerId="service" panelTitle="${companyInfo.name }" isRender="true" zIndex="5" isModal="true" dragAble="true"  scrollHeight="250" showOkButton="true" showCancelButton="false"></ui:PopupWindow>
+<%-- <ui:PopupWindow width="500" isCentered="true" showPanelButtonId="aboutBtn" isVisible="false" containerId="about" scrollContainerId="about" panelTitle="TMK About" isRender="true" zIndex="5" isModal="true" dragAble="true"  scrollHeight="250" showOkButton="true" showCancelButton="false"></ui:PopupWindow> --%>
+<ui:PopupWindow width="500" isCentered="false" showPanelButtonId="commentBtn" isVisible="false" containerId="commentEditer" scrollContainerId="commentEditer" panelTitle="${companyInfo.name }" isRender="true" zIndex="5" isModal="true" dragAble="true"  scrollHeight="250" showOkButton="true" okButtonCallBack="addComment" showCancelButton="true"></ui:PopupWindow>	
+
+<b><s:text name="vietpage.page.comment"></s:text>:</b><br>
+<div class="comments" id="comments">
+</div>
+<%-- <ui:yuidatatable --%>
+<%-- 	columns="content:Comment,postedBy:Posted By,postedDate:Posted Date" --%>
+<%-- 	containerId="comments" queryJsonDataUrl="/comment?companyId=${companyInfo.id }&action=getcomments&" --%>
+<%-- 	sortableColumns="postedBy" sortByColumns="postedBy"  tableWithCheckBox="false" --%>
+<%-- 	returnValueOfColumns="content" > --%>
+<%-- </ui:yuidatatable> --%>
+
+<table>
+	<tr><td>
+		<ui:datatable displayedColumnsAndLabels="PostedDate:Posted Date,PostedBy:Posted By,EmailOfPoster:Email,Content:Comment content" 
+		containerId="datatable" 
+		columns="PostedDate,PostedBy,EmailOfPoster,Content" 
+		returnValueOfColumns="Id" 
+		sortableColumns="'PostedBy'" 
+		data="${comments}" 
+		sortBy="PostedBy">
+	</ui:datatable>
+	</td></tr>
+</table>
+
+<div id="vewItem2">
+		<iframe src="" id="viewItemDetail2" style = "width: 100%; height: 450px; overflow: auto;"></iframe>
+</div>
+
+<script type="text/javascript">
+ 	function resize(id){
+ 		var img = document.getElementById(id);
+ 		img.width=80;
+ 		img.height=100;
+ 	}
+ 	function reloadsize(id){
+ 		var img = document.getElementById(id);
+ 		img.width=60;
+ 		img.height=80;
+ 	}
+</script>

@@ -1,0 +1,183 @@
+package com.vnsoft.server.actions;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.biz.CompanyBean;
+import com.vnsoft.server.biz.TrackingBean;
+import com.vnsoft.server.model.CompanyInfo;
+import com.vnsoft.server.model.KeyValue;
+import com.vnsoft.server.model.PageVisit;
+import com.vnsoft.server.tags.yui.ChartData;
+import com.vnsoft.server.util.DateTimeUtil;
+
+public class ReportPageVisitAction extends BaseAction {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5825724635052851290L;
+	private List<PageVisit> data;
+	private List<ChartData> chartData = new ArrayList<>();
+	private List<KeyValue> reportTime = null;
+	private List<KeyValue> pages = new ArrayList<>();
+	private String time;
+	private String pageId;
+	private String total;
+	private Logger logger = Logger.getLogger(ReportPageVisitAction.class);
+	@Override
+	public String execute() {
+		long sum =0;
+		reportTime = new ArrayList<>();
+		getReportTime().add(new KeyValue("today", "Today"));
+		getReportTime().add(new KeyValue("yesterday", "Yesterday"));
+		getReportTime().add(new KeyValue("thisweek", "This Week"));
+		getReportTime().add(new KeyValue("lastweek", "Last Week"));
+		getReportTime().add(new KeyValue("thismonth", "This Month"));
+		getReportTime().add(new KeyValue("lastmonth", "Last Month"));
+		getReportTime().add(new KeyValue("thisyear", "This Year"));
+		getReportTime().add(new KeyValue("lastyear", "Last Year"));
+		
+		try {
+			for(CompanyInfo c : CompanyBean.getInstance().getAllPages()){
+				pages.add(new KeyValue(c.getId()+"", c.getName()));
+			}
+			pages.add(new KeyValue("vietpage_home", "Viet Page"));
+			pages.add(new KeyValue("vietpage_search", "Viet Page Search"));
+			String id = "";
+			CompanyInfo com = (CompanyInfo)getHttpServletRequest().getSession().getAttribute(LoginAction.COMPANY_INFO);
+			id = getPageId();
+			if ("today".equals(getTime())) {
+				
+				setData(TrackingBean.getInstance().getPageVisitTracking(DateTimeUtil.getHoursOfToday(id+"")));
+				for (PageVisit u : data) {
+					ChartData cd = new ChartData(u.getId().substring(u.getId().lastIndexOf(" "), u.getId().length()), u.getVisitCount());
+					getChartData().add(cd);
+					sum = sum + u.getVisitCount();
+				}
+			} else if ("yesterday".equals(getTime())) {
+				
+				setData(TrackingBean.getInstance().getPageVisitTracking(DateTimeUtil.getHoursOfYesterDay(id+"")));
+				for (PageVisit u : data) {
+					System.out.println(u.getId().substring(u.getId().lastIndexOf(" "), u.getId().length()));
+					ChartData cd = new ChartData(u.getId().substring(u.getId().lastIndexOf(" "), u.getId().length()), u.getVisitCount());
+					getChartData().add(cd);
+					sum = sum + u.getVisitCount();
+				}
+			} else if ("thisweek".equals(getTime())) {
+
+				setData(TrackingBean.getInstance().getPageVisitTracking(DateTimeUtil.getDaysOfThisWeek(id+"")));
+				for (PageVisit u : data) {
+					System.out.println(u.getId());
+					ChartData cd = new ChartData(TrackingBean.yyyyMMdd2.parse(u.getId().substring(u.getId().indexOf("_")+1, u.getId().length()).replace("-", ",")), u.getVisitCount());
+					getChartData().add(cd);
+					sum = sum + u.getVisitCount();
+				}
+			} else if ("lastweek".equals(getTime())) {
+				
+				setData(TrackingBean.getInstance().getPageVisitTracking(DateTimeUtil.getDayOfLastWeek(id+"")));
+				for (PageVisit u : data) {
+					System.out.println(u.getId());
+					ChartData cd = new ChartData(TrackingBean.yyyyMMdd2.parse(u.getId().substring(u.getId().indexOf("_")+1, u.getId().length()).replace("-", ",")), u.getVisitCount());
+					getChartData().add(cd);
+					sum = sum + u.getVisitCount();
+				}
+			} else if ("thismonth".equals(getTime())) {
+				
+				setData(TrackingBean.getInstance().getPageVisitTracking(DateTimeUtil.getDayOfThisMonth(id+"")));
+				for (PageVisit u : data) {
+					System.out.println(u.getId());
+					ChartData cd = new ChartData(TrackingBean.yyyyMMdd2.parse(u.getId().substring(u.getId().indexOf("_")+1, u.getId().length()).replace("-", ",")), u.getVisitCount());
+					getChartData().add(cd);
+					sum = sum + u.getVisitCount();
+				}
+			} else if ("lastmonth".equals(getTime())) {
+				
+				setData(TrackingBean.getInstance().getPageVisitTracking(DateTimeUtil.getDayOfLastMonth(id+"")));
+				for (PageVisit u : data) {
+					ChartData cd = new ChartData(TrackingBean.yyyyMMdd2.parse(u.getId().substring(u.getId().indexOf("_")+1, u.getId().length()).replace("-", ",")), u.getVisitCount());
+					getChartData().add(cd);
+					sum = sum + u.getVisitCount();
+				}
+			} else if ("thisyear".equals(getTime())) {
+				setData(TrackingBean.getInstance().getPageVisitTracking(DateTimeUtil.getMonthsOfThisYear(id+"")));
+				for (PageVisit u : data) {
+					ChartData cd = new ChartData(TrackingBean.yyyyMM2.parse(u.getId().substring(u.getId().indexOf("_")+1, u.getId().length()).replace("-", ",")), u.getVisitCount());
+					getChartData().add(cd);
+					sum = sum + u.getVisitCount();
+				}
+			} else if ("lastyear".equals(getTime())) {
+
+			} else if ("picktime".equals(getTime())) {
+
+			}
+			setTotal(sum +"");
+		} catch (Exception ex) {
+			logger.error("", ex);
+			ex.printStackTrace();
+		}
+		return SUCCESS;
+	}
+
+
+	public List<PageVisit> getData() {
+		return data;
+	}
+
+	public void setData(List<PageVisit> data) {
+		this.data = data;
+	}
+
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+	public List<KeyValue> getReportTime() {
+		return reportTime;
+	}
+
+	public void setReportTime(List<KeyValue> reportTime) {
+		this.reportTime = reportTime;
+	}
+
+	public List<ChartData> getChartData() {
+		return chartData;
+	}
+
+	public void setChartData(List<ChartData> chartData) {
+		this.chartData = chartData;
+	}
+
+	public String getPageId() {
+		return pageId;
+	}
+
+	public void setPageId(String pageId) {
+		this.pageId = pageId;
+	}
+
+	public List<KeyValue> getPages() {
+		return pages;
+	}
+
+	public void setPages(List<KeyValue> pages) {
+		this.pages = pages;
+	}
+
+
+	public String getTotal() {
+		return total;
+	}
+
+
+	public void setTotal(String total) {
+		this.total = total;
+	}
+
+}

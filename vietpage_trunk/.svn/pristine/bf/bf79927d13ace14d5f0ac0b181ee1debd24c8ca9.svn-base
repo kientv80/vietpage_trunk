@@ -1,0 +1,24 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<div id="himage" style="width: 100%;">
+	<a href="home"><img alt="${companyInfo.name}" title="${companyInfo.name}" alt="${companyInfo.name}" src="${companyInfo.thumbHeaderImage}" width="100%" height="100%"/></a>
+</div>
+<div style="position:absolute;bottom:0px;opacity:0.5; width: 100%;height:55px;background-color: #f8f8f8; float: left;text-align: left;">
+	<b><s:text name="vietpage.company.address"></s:text>:</b>${companyInfo.address} - 
+	<b><s:text name="vietpage.company.phone"></s:text>:</b>${companyInfo.phone} - 
+	<b><s:text name="vietpage.company.web"></s:text>:</b>${companyInfo.url} - 
+	<b><s:text name="vietpage.company.location"></s:text>: </b>
+	<a href="#" id="map_image1">
+		<img alt="Map of the shop" src="/images/googlemap.jpg" height="12px" width="20px">
+	</a>
+	<br>
+	<div style="float: left;width: 20%;">
+		<ui:rating rating="${companyInfo.companyRating}"></ui:rating>
+	</div>
+</div>
+

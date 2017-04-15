@@ -1,0 +1,34 @@
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<table>
+	<tr>
+		<td style="margin-top: 10px;">
+			<img alt="" src="${companyInfo.contentImage }" style="max-width: 100%;"/>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			${companyInfo.description}
+			<br><br><br>
+			<b><s:text name="vietpage.company.name"></s:text> :</b>${companyInfo.name}<br>
+			<b><s:text name="vietpage.company.phone"></s:text>:</b>${companyInfo.phone}<br>
+			<b><s:text name="vietpage.company.address"></s:text>:</b>${companyInfo.address}<br>
+			<b><s:text name="vietpage.company.web"></s:text>:</b><a href="${companyInfo.url}">${companyInfo.url}</a><br>
+			<b><s:text name="vietpage.company.location"></s:text>:  </b>
+			<a href="#" id="map_image">
+				<img alt="Map of the shop" src="/images/googlemap.jpg" height="20px" width="20px">
+			</a>
+			<br><br>
+		</td>
+	</tr>
+	<tr>
+		<td >
+			<div class="fb-like" data-href="http://vietpage.info/vietpage?page=${pageName}" data-send="true" data-width="450" data-show-faces="true"></div>
+		</td>
+	</tr>
+</table>
+<div id="map_image_container" class="map">
+	<img alt="" src="${companyInfo.mapImage}" >
+</div>
+
+<ui:PopupWindow panelId="showMapImage" width="700" isCentered="true" showPanelButtonId="map_image" isVisible="false" containerId="map_image_container" panelTitle="Map" isRender="true" zIndex="8" isModal="true" dragAble="false" showOkButton="true" showCancelButton="false"></ui:PopupWindow>

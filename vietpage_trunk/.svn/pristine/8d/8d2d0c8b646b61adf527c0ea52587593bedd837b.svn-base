@@ -1,0 +1,40 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<div class="search" style="text-align: left;">
+	<form action="/home">
+			<div id="selectService" class="searchcontrol">
+				<b><s:text name="vietpage.item.filter"></s:text> : </b><s:select list="serviceType" listValue="value" listKey="key" name="serviceTypeId" id="selectedServiceId" labelposition="top" ></s:select>
+			</div>
+			<div id="go" class="searchcontrol">
+				<input type="submit" value="Go" class="btn btn-primary  btn-xs">
+			</div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<div class="fb-like" data-href="http://vietpage.info" data-send="true" data-width="450" data-show-faces="true"></div>
+			<s:hidden name="action" value="filter"></s:hidden>
+	</form>	
+</div>
+<div id="item_container">
+<c:if test="${items != null && items.size() > 0}">
+		<font color="#4AA4ED"><b><s:text name="vietpage.item.discount"></s:text> </b></font><br><br>
+		<ui:table contentProvider="com.vnsoft.server.contentprovider.ItemSimpleTableContentProvider" headers="Item 1, Item 2, Item 2" displayHeader="false" data="${items }"  params="width=240,height=200,editable=false"></ui:table>
+	<br><br>
+</c:if>
+<c:if test="${newItems != null && newItems.size() > 0}">
+	<font color="#4AA4ED"><b><s:text name="vietpage.item"></s:text></b></font><br>
+		<ui:table contentProvider="com.vnsoft.server.contentprovider.ItemSimpleTableContentProvider" headers="Item 1, Item 2, Item 2" displayHeader="false" data="${newItems }"  params="width=240,height=200,editable=false"></ui:table>
+</c:if>
+</div>
+<script>
+    (function($){
+        $(window).load(function(){
+            $(".mypagecontent").mCustomScrollbar({
+                horizontalScroll:false,
+                theme:"dark"
+            });
+        });
+    })(jQuery);
+</script>

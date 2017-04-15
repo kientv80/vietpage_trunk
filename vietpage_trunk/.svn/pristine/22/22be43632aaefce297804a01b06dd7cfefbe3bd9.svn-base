@@ -1,0 +1,107 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<div class="vietpage_top_banner">
+	<div class="btn-group" style="float: left;">
+	   <img title="viet page" alt="viet page" src="/images/vietpage/mobile_menu.png" style="padding: 20px 0px 0px 8px;" data-toggle="dropdown"/>
+	  <ul class="dropdown-menu" role="menu" style="width:500px;text-align: left;font-size: 35px;">
+	    <c:forEach items="${hotservices}" var="sv">
+		 		<c:if test="${sv.key== serviceTypeId}">
+					  	<li><a href="/home?serviceTypeId=${sv.key}" title="${sv.value}" style="padding:6px;">
+							${sv.value}
+						</a></li>
+		 		</c:if>
+		 		<c:if test="${sv.key!= serviceTypeId}">
+					  	<li><a href="/home?serviceTypeId=${sv.key}" title="${sv.value}" style="padding:6px;">
+							${sv.value}
+						</a></li>
+		 		</c:if>
+		 		<li class="divider"></li>
+		 </c:forEach>
+		 <li><a href="/hotnews" style="padding:6px;"><s:text name="vietpage.home.menu.news"></s:text> </a></li>
+		 <li class="divider"></li>
+		 <li><a href="/home?recentVisit=true" style="padding:6px;">Các trang xem gần đây</a></li>
+		 <li class="divider"></li>
+		 <li>
+		 	<c:if test="${isLogin == null}">
+				<a href="/login" title="Login"><s:text name="vietpage.login"></s:text> </a>
+			</c:if>
+			<c:if test="${isLogin != null}">
+				<a href="/login?action=logout" title="Logout"><s:text name="vietpage.logout"></s:text> </a>
+			</c:if>
+		</li>
+	  </ul>
+	</div>
+
+
+	<div style="position: relative; float: left; width: 30%;padding: 10px 10px 0px 0px;">
+			<a href="/home" title="Trang chính" style="padding-bottom: 4px; float: left;padding: 10px 10px 0px 60px;">
+				<img title="viet page logo" alt="viet page logo" alt="" src="/images/vietpage/logo_vietpage.png"/>
+			</a>
+	</div>
+	<div style="position: relative;float: left;width: 40%;text-align: left;padding: 90px 10px 0px 10px;vertical-align: text-bottom;">
+		<a href="/search" title="Search" style="padding: 10px 10px 0px 10px;">
+			<input type="text" width="100%" placeholder="Tìm kiếm theo dịch vụ" ><img alt="search" src="/images/vietpage/search.png">
+		</a>
+	</div>
+</div>
+<div style="position: relative;width: 100%; float: left;">
+	<div class="section" style="font-weight: normal;height: 100px;margin-bottom: 0px;">
+		<div style="position: relative;float: left;height: inherit;padding-left: 6px;">
+			<span style="display: table-cell;vertical-align: middle;height: inherit;">
+					<a href="/home" title="Tin Mới" style="padding-right: 20px;color: white;font-weight: bold;">
+						Tin Mới
+					</a>
+			</span>
+		</div>
+		 <c:forEach items="${mobileHotservices}" var="service">
+		 		<c:if test="${service.key== serviceTypeId}">
+		 			<div style="position: relative;float: left;height: inherit;">
+			 			<span style="display: table-cell;vertical-align: middle;height: inherit;">
+						  	 | <a href="/home?serviceTypeId=${service.key}" title="${service.value}" style="padding-right:20px;color: white;font-weight: bold;">
+								 ${service.value}
+							</a>
+						</span>
+					</div>
+					
+		 		</c:if>
+		 		<c:if test="${service.key!= serviceTypeId}">
+		 		<div style="position: relative;float: left;height: inherit;">
+				 		<span style="display: table-cell;vertical-align: middle;height: inherit;">
+							  	 | <a href="/home?serviceTypeId=${service.key}" title="${service.value}" style="padding-right:20px;color: white;font-weight: bold;">
+									${service.value}
+								</a>
+						</span>
+				</div>
+		 		</c:if>
+		 </c:forEach>
+	 </div>
+</div>
+<c:if test="${serviceTypeId != null}">
+	<div class="vietpage_menu">
+			<form action="/home" id = "searchForm" method="get" onsubmit="return search();">
+					<div id="selectCity" class="searchcontrol_full">
+						<s:select  list="city" listValue="value" listKey="key" name="selectedCity" id="selectedCityId"  onchange="searchByCity();"></s:select>
+					</div>
+					<div id="selectLocation" class="searchcontrol_full">
+						<s:select list="location" listValue="value" listKey="key" name="locationId" id="selectedLocationId" onchange="search();"></s:select>
+					</div>
+					<s:hidden name="action" value="search"></s:hidden>
+					<s:hidden name="serviceTypeId"></s:hidden>
+			</form>	
+	</div>
+</c:if>
+<script type="text/javascript">
+ 	function search(){
+ 		var form = document.getElementById("searchForm");
+ 		form.submit();
+ 	}
+ 	function searchByCity(){
+ 		loadLocation('limit');
+ 		var form = document.getElementById("searchForm");
+ 		form.submit();
+ 	}
+</script>

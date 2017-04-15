@@ -1,0 +1,321 @@
+function editItem(id,action) {
+	if("edit"== action){
+		var url = "/item?action=getItem&id=" + id;
+		ajaxRequest(url, 'loadItem');
+		return true;
+	}else{
+		var form = document.getElementById("deleteItemForm");
+		form.id.value = id;
+		form.submit();
+	}
+}
+function loadItem(item) {
+	globalLoadItem(item,'doEditItem')
+}
+function loadItem2(item) {
+	globalLoadItem(item,'doEditItem2')
+	return true;
+}
+function loadItem3(item){
+	globalLoadItem(item,'doEditItemSetupCategory')
+	return true;
+}
+function globalLoadItem(item,formId) {
+	var form = document.getElementById(formId);
+	form.id.value = item.id;
+	form.code.value = item.code;
+	form.name.value = item.name;
+	form.desc.value = item.description;
+	form.price.value = item.price;
+	form.discountPercent.value = item.discountPercent;
+	form.discountPrice.value = item.priceAfterDiscount;
+	form.itemImage.value = item.imagePath;
+	if (true == item.ismain)
+		form.ismain.checked = 'checked';
+	else
+		form.ismain.checked = '';
+	
+	if (true == item.isDiscount)
+		form.discount.checked = 'checked';
+	else
+		form.discount.checked = '';
+	
+	if (true == item.isCargo){
+		form.isCargo.checked = 'checked';
+	}else{
+		form.isCargo.checked = '';
+	}
+	
+	var nodes = form.childNodes;
+	for (var i = 0; i < nodes.length; i++) {
+	    if (nodes[i].tagName == "DIV") {
+	    	if(nodes[i].id=="itemOptional"){
+	    		node = nodes[i];
+	    		if(form.isCargo.checked){
+	    			nodes[i].style.display="block";
+	    		}else{
+	    			nodes[i].style.display="none";
+	    		}
+	    		break;
+	    	}
+	    }
+	}
+	
+}
+function validateItem(formId) {
+	var form = document.getElementById(formId);
+	var result = "true";
+	if(form.code.value == ""){
+		result = "false";
+	}else if(form.name.value == ""){
+		result = "false";
+	}else if(form.desc.value == ""){
+		result = "false";
+	}else if(form.isCargo.checked && form.price.value == ""){
+		result = "false";
+	}
+	return result;
+}
+function updateMenuItem() {
+	if(validateItem("doEditItem") == "true"){
+		document.getElementById('action').value = "updatemenuitem";
+		document.getElementById('doEditItem').submit();
+		return true;
+	}else{
+		showMessage("Xin nhập hết các thông tin bắt buộc","doEditItem","error");
+		return false;
+	}
+}
+function showMessage(message,formID,divId){
+	showDialog(message,"icon-error");
+}
+function clearMessage(message,formID,divId){
+	var nodes = formID.childNodes;
+	var cnt = 0;
+	var node;
+	for (var i = 0; i < nodes.length; i++) {
+	    if (nodes[i].tagName == "DIV") {
+	    	if(nodes[i].id==divId){
+	    		node = nodes[i];
+	    		node.innerHTML="";
+	    		break;
+	    	}
+	    }
+	}
+}
+function editItem2(id,action) {
+	if("edit"== action){
+		var url = "/item?action=getItem&id=" + id;
+		ajaxRequest(url, 'loadItem2');
+		return true;
+	}else{
+		var form = document.getElementById("deleteItemForm");
+		form.id.value = id;
+		form.submit();
+	}
+	
+}
+function editItem3(id,action) {
+
+	if("edit"== action){
+		var url = "/item?action=getItem&id=" + id;
+		ajaxRequest(url, 'loadItem2');
+		return true;
+	}else{
+		var form = document.getElementById("deleteItemForm");
+		form.id.value = id;
+		form.submit();
+	}
+	
+}
+function updateMenuItem2() {
+	if(validateItem("doEditItem2") == "true"){
+		document.getElementById('action').value = "updatemenuitem";
+		document.getElementById('doEditItem2').submit();
+	}else{
+		showMessage("Xin nhập hết các thông tin bắt buộc","doEditItem","error");
+		return false;
+	}
+}
+
+function addNewMenuItem() {
+	if(validateItem("addNewMenuItem") == "true"){
+		var form = document.getElementById('addNewMenuItem');
+		if(form.upload.value==''){
+			showMessage("Bạn cần chọn hình cho sản phẩm","doEditItem","error");
+			return false;
+		}else{
+			form.submit();
+		}
+	}else{
+		showMessage("Xin nhập hết các thông tin bắt buộc","doEditItem","error");
+		return false;
+	}
+
+}
+
+function addComment() {
+	showDialog("Thanks for leaving a comment for use.","icon-success");
+	document.getElementById("comment").submit();
+}
+
+function editContactInfo() {
+	document.getElementById("contactinfo").submit();
+}
+function editServiceInfo() {
+	document.getElementById("service_update").submit();
+}
+function editAboutInfo() {
+	document.getElementById("about_update").submit();
+}
+function addMenuGroup(){
+	var from = document.getElementById("createUpdateMenu");
+	from.action.value="new";
+	from.submit();
+}
+function deleteMenuGroup(){
+	var from = document.getElementById("deleteMenuFrom");
+	var from2 = document.getElementById("menuGroupForm");
+	var menus = from2.selectedMenuId;
+	from.id.value = menus.options[menus.selectedIndex].value;
+	from.submit();
+}
+
+
+
+function setupTodayMenu(selectedItems){
+	document.getElementById("selectedIds").value=selectedItems;
+	document.getElementById('setmenufortoday').submit();
+}
+
+function update3(){
+	if(validateItem("doEditItemSetupCategory")=="true"){
+		document.getElementById('action').value="updatemenuitem";
+		document.getElementById('doEditItemSetupCategory').submit();
+	}else{
+		showMessage("Xin nhập hết các thông tin bắt buộc","doEditItem","error");
+		return false;
+	}
+}
+function addMenuItem(){
+	if(validateItem("doEditItem2") == "true"){
+		var form = document.getElementById('doEditItem2');
+		if(form.upload.value==''){
+			showMessage("Bạn cần chọn hình cho sản phẩm","doEditItem","error");
+			return false;
+		}else{
+			form.submit();
+		}
+	}else{
+		showMessage("Xin nhập hết các thông tin bắt buộc","doEditItem","error");
+		return false;
+	}
+}
+
+function setupCategoryEditItem(id,action){
+	if("edit"== action){
+		var url = "/item?action=getItem&id=" + id;
+		ajaxRequest(url, 'loadItem3');
+	}else if("delete"== action){
+		var form = document.getElementById("deleteItemForm");
+		form.id.value = id;
+		form.submit();
+	}
+
+}
+function viewItem(comid,id) {
+//	var url = "/item?action=getItem&id=" + id;
+//	ajaxRequest(url, 'viewItemForm');
+	document.getElementById("viewItemDetail").src = "/viewitem?comid="+comid + "&id=" + id;
+	return true;
+}
+function viewItemForm(item) {
+	fillItemInfo(item,"viewItemForm","");
+}
+
+function viewItem2(comid,id) {
+//	var url = "/item?action=getItem&id=" + id;
+//	ajaxRequest(url, 'viewItemForm2');
+	document.getElementById("viewItemDetail2").src = "/viewitem?comid="+comid + "&id=" + id;
+	return true;
+}
+function viewItem3(comid,id) {
+//	var url = "/item?action=getItem&id=" + id;
+//	ajaxRequest(url, 'viewItemForm2');
+	document.getElementById("viewItemDetail3").src = "/viewitem?comid="+comid + "&id=" + id;
+	return true;
+}
+function viewItem4(comid,id) {
+//	var url = "/item?action=getItem&id=" + id;
+//	ajaxRequest(url, 'viewItemForm2');
+	document.getElementById("viewItemDetail4").src = "/viewitem?comid="+comid + "&id=" + id;
+	return true;
+}
+function viewItemForm2(item) {
+	fillItemInfo(item,"viewItemForm2","f2");
+	return true;
+}
+function fillItemInfo(item,formid,prefix) {
+	var form = document.getElementById(formid);
+	document.getElementById(prefix+"code").innerText = item.code;
+	document.getElementById(prefix+"name").innerText = item.name;
+	document.getElementById(prefix+"desc").innerText = item.description;
+	document.getElementById(prefix+"price").innerText = item.price + " VND";;
+	form.itemImage.src = item.imagePath;
+	document.getElementById(prefix+"discountPercent").innerText = item.discountPercent + "%";
+	document.getElementById(prefix+"discountPrice").innerText = item.priceAfterDiscount + " VND";
+	 if (true == item.isDiscount)
+		 document.getElementById(prefix+"discount").innerText = 'Yes';
+	 else
+		 document.getElementById(prefix+"discount").innerText = 'No';
+}
+
+function loadLocation(){
+	var city = document.getElementById("selectedCityId");
+	var id = city.options[city.selectedIndex].value;
+	var uri="/location?action=getlocation&id=" + id;
+	asynReloadDropdownList(uri,"selectedLocationId");
+}
+function addHotNews(){
+	var form = document.getElementById("addHotNewsForm");
+	form.submit();
+}
+function onOK(){
+	alert("onOK");
+}
+function onCancel(){
+	alert("onCancel");
+}
+function editHotNews(id,action){
+	if("edit"== action){
+		var url = "/hotnews?action=getHotNews&id=" + id;
+		ajaxRequest(url, 'loadHotNews');
+		return true;
+	}else{
+		var form = document.getElementById("deleteItemForm");
+		form.id.value = id;
+		form.submit();
+	}
+}
+function loadHotNews(hotnews){
+	var form = document.getElementById("editHotNewsForm");
+	form.link.value = hotnews.link;
+	form.title.value = hotnews.title;
+	form.content.value = hotnews.content;
+	form.thume.value = hotnews.thume;
+	form.id.value = hotnews.id;
+}
+function submitEditHotNews(){
+	alert("submit");
+	var form = document.getElementById("editHotNewsForm");
+	form.submit();
+}
+function deleteHotNews(id){
+	alert('deleteHotNews');
+	var form = document.getElementById("delHotNewsForm");
+	form.action="/managehotnews?action=deleteHotNews&id="+id;
+	form.submit();
+}
+
+
+

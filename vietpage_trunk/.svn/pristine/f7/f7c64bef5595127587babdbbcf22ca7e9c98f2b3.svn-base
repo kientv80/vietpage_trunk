@@ -1,0 +1,6 @@
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<a href="/home">Home</a> | <a href="/register">Create Page</a> | <a href="#">Contact</a> | <a href="/search">Lookup</a><br>
+<a href="home"><img alt="" src="/images/mypage.png" width="100%" height="120px "/></a>

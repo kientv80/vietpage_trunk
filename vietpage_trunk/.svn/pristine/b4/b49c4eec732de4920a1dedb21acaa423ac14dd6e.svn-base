@@ -1,0 +1,134 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<!-- Menu item -->
+<div class="example yui3-skin-sam">
+	<div id="itemTable"></div>
+</div>
+<form action="setupmenu?type=menu&action=edit&targetUrl=groupmenu" method="post" id="setmenufortoday" name="setmenufortoday">
+	<table >
+	<c:if test="${menus != null && menus.size() > 0}">
+		<tr>
+			<td >
+				<table>
+					<tr>
+						<td>
+							<table>
+								<s:select list="menus" listValue="name" listKey="id" key="vietpage.menu.group" name="selectedMenuId" id="selectedMenuId"></s:select>
+							</table>
+						</td>
+						<td>
+							<table>
+								<tr>
+									<td align="left" width="30px">
+										<a href="#" id="addMenu" class="btn btn-primary  btn-xs"><s:text name="vietpage.menu.group.add"></s:text> </a>
+									</td>
+									<td align="right"  width="30px">
+										<a href="#" id="deleteMenu" class="btn btn-danger  btn-xs"><s:text name="vietpage.delete"></s:text></a>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+
+	</c:if>
+	<c:if test="${menus == null || menus.size() == 0}">
+		<tr>
+			<td align="left" width="30px">
+				<a href="#" id="addMenu"><s:text name="vietpage.menu.group.add"></s:text> </a>
+				<ui:PopupWindow panelId="showAddMenuPannelId"  width="500" isCentered="true" showPanelButtonId="addMenu" isVisible="false" containerId="addMenuContainer" scrollContainerId="addMenuContainer" panelTitle="${companyInfo.name }" isRender="true" zIndex="8" isModal="true" dragAble="true"  scrollHeight="250" showOkButton="true" showCancelButton="true" okButtonCallBack="addMenuGroup"></ui:PopupWindow>
+			</td>
+		</tr>
+	</c:if>
+		<tr>
+			<td>
+			<div id="datatable" style="overflow: auto; height: 400px"></div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+					<br><s:text name="vietpage.menu.setup.main"></s:text>: <input type="radio" name="setupmainmenu" id="setupmainmenu"  value="editMainMenu" checked>
+					<br><s:text name="vietpage.menu.setup.group"></s:text>: <input type="radio" name="setupmainmenu" id="setupmainmenu"  value="editMenu">
+					<br><input type="submit" name="setupTodayMenu" id="setupTodayMenu" value='<s:text name="vietpage.btn.save"></s:text>' class="btn btn-primary  btn-xs">
+					<input type="hidden" id="selectedIds" name="selectedIds">
+			</td>
+		</tr>
+	</table>
+	<input type="hidden" name="id" id = "id">
+</form>
+<div id="deleteMenuContainer">
+	<form action="menu?targetUrl=groupmenu&comId=${companyInfo.id }" method="post" id="deleteMenuFrom">
+		<table>
+			<tr>
+				<td><label><s:text name="vietpage.confirm.deletmenu"></s:text></label></td>
+			</tr>
+			
+		</table>
+		<input type="hidden" name="id" id = "id">
+		<input type="hidden" name="action" id = "delete" value="delete">
+	</form>
+</div>
+<ui:PopupWindow panelId="showDeleteMenuPannelId"  width="500" isCentered="true" showPanelButtonId="deleteMenu" isVisible="false" containerId="deleteMenuContainer" scrollContainerId="deleteMenuContainer" panelTitle="${companyInfo.name }" isRender="true" zIndex="8" isModal="true" dragAble="true"  scrollHeight="250" showOkButton="true" showCancelButton="true" okButtonCallBack="deleteMenuGroup"></ui:PopupWindow>
+<div id="addMenuContainer">
+	<form action="menu?targetUrl=groupmenu&comId=${companyInfo.id }" method="post" id="createUpdateMenu">
+		<table>
+			<tr>
+				<td><label><s:text name="vietpage.menu.group"></s:text>:</label></td>
+				<td><input type="text" name="name" id="name" size="50" maxlength="50"></td>
+			</tr>
+			<tr>
+				<td><label><s:text name="vietpage.menu.group.desc"></s:text>:</label></td>
+				<td><textarea rows="5" cols="40" name="description" id="description"></textarea></td>
+			</tr>
+		</table>
+		<input type="hidden" name="id" id = "id">
+		<input type="hidden" name="action" id = "action">
+	</form>
+</div>
+<ui:PopupWindow panelId="showAddMenuPannelId"  width="500" isCentered="true" showPanelButtonId="addMenu" isVisible="false" containerId="addMenuContainer" scrollContainerId="addMenuContainer" panelTitle="${companyInfo.name }" isRender="true" zIndex="8" isModal="true" dragAble="true"  scrollHeight="250" showOkButton="true" showCancelButton="true" okButtonCallBack="addMenuGroup"></ui:PopupWindow>
+
+<ui:yuidatatable
+	columns="id:ID,name:Name,description:Description,price:Price,ismain:Is Main Menu"
+	containerId="datatable" queryJsonDataUrl="/item?action=getItems&"
+	sortableColumns="name,price" sortByColumns="name" callBackMethod="setupTodayMenu"
+	callBackButtonId="setupTodayMenu" returnValueOfColumns="id" tableWithCheckBox="true">
+</ui:yuidatatable>
+
+<script type="text/javascript">
+	function setupTodayMenu(selectedItems){
+		document.getElementById("selectedIds").value=selectedItems;
+		document.getElementById('setmenufortoday').id.value=selectedItems;
+		document.getElementById('setmenufortoday').submit();
+	}
+	function addMenuGroup(){
+		var from = document.getElementById("createUpdateMenu");
+		from.action.value="new";
+		from.submit();
+	}
+	function deleteMenuGroup(){
+		var from = document.getElementById("deleteMenuFrom");
+		var from2 = document.getElementById("setmenufortoday");
+		var menus = from2.selectedMenuId;
+		from.id.value = menus.options[menus.selectedIndex].value;
+		from.submit();
+	}
+
+</script>
+
+
+
+
+
+
+
+
+
+
+

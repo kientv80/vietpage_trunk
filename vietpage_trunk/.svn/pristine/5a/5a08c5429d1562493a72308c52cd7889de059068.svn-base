@@ -1,0 +1,6 @@
+hostname=124.158.9.55
+port=10010
+appDir=/zserver/java-projects/vietpage/webapps
+log4j=/zserver/java-projects/vietpage/log4j.properties
+dbuser=vietpage
+dbpassword=WluS6ITeN67XG1

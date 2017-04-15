@@ -1,0 +1,133 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<table style="width: 100%;">
+	<tr>
+		<td >
+			<img alt="" src="${companyInfo.contentImage }" style="width: 100%;"/>
+		</td>
+	</tr>
+	<tr>
+		<td style="width: 100%;">
+			${companyInfo.description}
+		</td>
+	</tr>
+	<tr>
+		<td style="width: 100%;">
+				<c:if test="${companyInfo.addresses.size()>0 }">
+						<table style="width: 100%;">
+							<tr>
+								<td><p class="link">Các địa chỉ khác</p></td>
+							</tr>
+						</table>
+						<table style="border: thin solid #d4d4d4; width: 100%;">
+						<tr style="border: thin solid #d4d4d4; ">
+							<th style="border: thin solid #d4d4d4; ">Địa chỉ</th>
+							<th style="border: thin solid #d4d4d4; ">Điện thoại</th>
+							<th style="border: thin solid #d4d4d4; ">Email</th>
+							<th style="border: thin solid #d4d4d4; ">Bản đồ</th>
+						</tr>
+						<c:forEach items="${companyInfo.addresses}" var="ad">
+							<tr style="border: thin solid #d4d4d4; "><td>${ad.address}</td>
+								<td style="border: thin solid #d4d4d4; ">${ad.phone}</td>
+								<td style="border: thin solid #d4d4d4; ">${ad.email}</td>
+								<td style="border: thin solid #d4d4d4; ">
+								<a href="${ad.map}"><img alt="Map of the shop" src="/images/googlemap.jpg" height="20px" width="20px"></a></td>
+							</tr>
+						</c:forEach>
+						</table>
+				</c:if>
+				
+		</td>
+	</tr>
+</table>
+
+<div class="boder panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title"><s:text name="vietpage.com.news"></s:text></h3>
+	</div>
+	<img alt="" src="/images/note.jpg" width="60px" height="60px" align="left">
+	<b><c:out value="${news.createddate}"></c:out>:</b><c:out value="${news.content}"></c:out>
+	<br><br><br>
+</div>
+
+	
+<div class="note panel panel-primary">
+	<div class="panel-heading">
+		<h3 class="panel-title"><s:text name="vietpage.com.contactinfo"></s:text></h3>
+	</div>
+<table>
+	<tr>
+		<td>
+			<b><s:text name="vietpage.company.name"></s:text> :</b>${companyInfo.name}<br>
+			<b><s:text name="vietpage.company.phone"></s:text>:</b>${companyInfo.phone}<br>
+			<b><s:text name="vietpage.company.address"></s:text>:</b>${companyInfo.address}<br>
+			<b><s:text name="vietpage.company.web"></s:text>:</b><a href="${companyInfo.url}">${companyInfo.url}</a><br>
+			<b><s:text name="vietpage.company.location"></s:text>:  </b>
+			<a href="#" id="map_image1">
+				<img alt="Map of the shop" src="/images/googlemap.jpg" height="20px" width="20px">
+			</a>
+		</td>
+	</tr>
+	<tr><td><ui:rating rating="${companyInfo.companyRating}"></ui:rating></td></tr>
+</table>
+</div>
+<c:if test="${recentComs != null && recentComs.size() > 0 }">
+<div class="same_companies panel panel-info">
+	<div class="panel-heading">
+		<h3 class="panel-title"><s:text name="vietpage.recentPages"></s:text></h3>
+	</div>
+	<div class="items" >
+		<ui:table contentProvider="com.vnsoft.server.contentprovider.PageSimpleTableContentProvider" headers="items1" displayHeader="false" data="${recentComs }"  params="clazz=company,width=100%,height=480px,editable=false,callback=m_viewItem3,showView=true,btnPrefix=discount,returnedBtnNames=discount_btns,showDesc=true,showContactInfo=true,showAssessment=false,showRanking=true"></ui:table>
+	</div>
+</div>
+</c:if>
+<div class="same_companies panel panel-info">
+	<div class="panel-heading">
+		<h3 class="panel-title"><s:text name="vietpage.samecompany"></s:text></h3>
+	</div>
+	<table style="vertical-align: middle;">
+		<c:forEach items="${otherCompanies}" var="lm_comInfo">
+			<tr>
+				<td style="vertical-align: middle;">
+					<img src="${lm_comInfo.contentImage }" width="400px" height="200px">
+				</td>
+				<td style="vertical-align: middle;">
+					<br><a href="#" onclick="window.open('/lookup?comid=${lm_comInfo.id }&webid=${lm_comInfo.id }&redirectUrl=/vietpage?comid=${lm_comInfo.id}');">${lm_comInfo.name} </a><br>
+					<b><s:text name="vietpage.company.phone"></s:text> </b>${lm_comInfo.phone}<br>
+					<b><s:text name="vietpage.company.address"></s:text> </b>${lm_comInfo.address}
+				</td>
+			</tr>
+			<tr><td colspan="2"><ui:rating rating="${lm_comInfo.companyRating}"></ui:rating></td></tr>
+		</c:forEach>
+	</table>
+</div>
+<c:if test="${suggestItems.size()>0 }">
+<div class="	 panel panel-info">
+	<div class="panel-heading">
+		<h3 class="panel-title"><s:text name="vietpage.suggest.items"></s:text></h3>
+	</div>
+	<table>
+		<s:iterator value="suggestItems" var="lm_item">
+			<tr>
+				<td>
+					<table>
+						<ui:item width="100%" height="300" item="${lm_item}" edit="false" btnPrefix="btn" showView="false" showShortDesc="true" clazz="item"></ui:item>
+					</table>
+				</td>
+			</tr>
+		</s:iterator>
+	</table>
+</div>
+</c:if>
+
+<p class="link"><a href="/serviceId=${companyInfo.serviceTypeId}"><img alt="" src="../images/vietpage/click.png">Click vào đây để xem thông tin khác trên VietPage.info</a></p>
+<br>
+<div id="map_image_container" class="map">
+	<img alt="" src="${companyInfo.mapImage}" >
+</div>
+
+<ui:PopupWindow panelId="showMapImage" width="700" isCentered="true" showPanelButtonId="map_image1" isVisible="false" containerId="map_image_container" panelTitle="Map" isRender="true" zIndex="8" isModal="true" dragAble="false" showOkButton="true" showCancelButton="false"></ui:PopupWindow>

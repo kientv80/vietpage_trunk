@@ -1,0 +1,53 @@
+package com.vnsoft.server.actions;
+
+import org.apache.log4j.Logger;
+
+import com.opensymphony.xwork2.ActionContext;
+import com.vnsoft.server.biz.MenuBean;
+import com.vnsoft.server.model.Item;
+
+
+public class HomeAction extends StandarLayout{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8067961467571110142L;
+	private Item viewItem;
+	private Logger logger = Logger.getLogger(HomeAction.class);
+	private String itemId;
+	@Override
+	public String execute() {
+		setCurrentPage(ActionContext.getContext().getName());
+		logger.info("viewItemInPage itemid1=" + getItemId() + getAction());
+		String result = super.execute();
+		if(getComId() == null || getComId() == "-1" || getComId() == "0" || !isNumber(getComId()))
+			return "nocompanyid";
+		logger.info("viewItemInPage itemid1=" + getItemId() + getAction());
+		trackingVisit(getComId());
+		if("viewItemInPage".equals(getAction())){
+			try {
+				setViewItem(MenuBean.getInstance().getItem(Integer.valueOf(getItemId())));
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+				logger.error("", e);
+			} catch (Exception e) {
+				logger.error("", e);
+			}
+		}
+		return result;
+	}
+	public String getItemId() {
+		return itemId;
+	}
+	public void setItemId(String itemId) {
+		this.itemId = itemId;
+	}
+	public Item getViewItem() {
+		return viewItem;
+	}
+	public void setViewItem(Item viewItem) {
+		this.viewItem = viewItem;
+	}
+
+}

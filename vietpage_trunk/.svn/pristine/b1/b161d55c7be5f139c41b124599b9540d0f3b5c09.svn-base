@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	version="2.0"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+	<description><![CDATA["Custom tags"]]></description>
+	<display-name>Custom Tags</display-name>
+	<tlib-version>1.0</tlib-version>
+	<short-name>ui</short-name>
+	<uri>/custom-tags</uri>
+
+	<tag>
+		<description><![CDATA[Take an item and build a item UI.]]></description>
+		<name>item</name>
+		<tag-class>com.vnsoft.server.tags.ItemTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[item]]></description>
+			<name>item</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>com.vnsoft.server.model.Item</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Width of the image and item description spuare]]></description>
+			<name>width</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Height of the item image and item description square]]></description>
+			<name>height</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Style of the item frame]]></description>
+			<name>style</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Class of the item frame]]></description>
+			<name>clazz</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[edit]]></description>
+			<name>edit</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[btnPrefix]]></description>
+			<name>btnPrefix</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[callBackMethod]]></description>
+			<name>callBackMethod</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[showView]]></description>
+			<name>showView</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[showShortDesc]]></description>
+			<name>showShortDesc</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[showContInf]]></description>
+			<name>showContInf</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[showAssessment]]></description>
+			<name>showAssessment</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+	</tag>
+
+	<tag>
+		<description><![CDATA[Take an list menu and build a menu UI.]]></description>
+		<name>menus</name>
+		<tag-class>com.vnsoft.server.tags.MenuTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[Menu]]></description>
+			<name>menus</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.List</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Width of the image and item description spuare]]></description>
+			<name>width</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Height of the item image and item description square]]></description>
+			<name>height</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[divId of the div that will contain the menu]]></description>
+			<name>divId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[btnPrefix]]></description>
+			<name>btnPrefix</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[editable]]></description>
+			<name>editable</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[editItemCallBack]]></description>
+			<name>editItemCallBack</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[showContInf]]></description>
+			<name>showContInf</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[showAssessment]]></description>
+			<name>showAssessment</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<tag>
+		<description><![CDATA[PopupWindow UI.]]></description>
+		<name>PopupWindow</name>
+		<tag-class>com.vnsoft.server.tags.yui.PopupWindowTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[Div id]]></description>
+			<name>containerId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Width of the PopupWindow]]></description>
+			<name>width</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Id of the button that will show the PopupWindow]]></description>
+			<name>showPanelButtonId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[PopupWindow Title]]></description>
+			<name>panelTitle</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[zIndex]]></description>
+			<name>zIndex</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[show PopupWindow in center]]></description>
+			<name>isCentered</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[modal]]></description>
+			<name>isModal</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[set visible as load time]]></description>
+			<name>isVisible</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[render]]></description>
+			<name>isRender</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[scroll]]></description>
+			<name>scroll</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[dragable]]></description>
+			<name>dragAble</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[scrollHeight only used when scroll is true]]></description>
+			<name>scrollHeight</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[scrollContainerId only used when scroll is true]]></description>
+			<name>scrollContainerId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[showOkButton]]></description>
+			<name>showOkButton</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[okButtonCallBack]]></description>
+			<name>okButtonCallBack</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[showCancelButton]]></description>
+			<name>showCancelButton</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[panelId]]></description>
+			<name>panelId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<tag>
+		<description><![CDATA[Data table UI]]></description>
+		<name>datatable</name>
+		<tag-class>com.vnsoft.server.tags.yui.DataTableTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[data]]></description>
+			<name>data</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.List</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[Display columns with format columns:labels;column2:label2]]></description>
+			<name>displayedColumnsAndLabels</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[columnsFormat: column:checked;column:date[format];column:input;column:list]></description>
+			<name>columnsFormat</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[columns:column1,column2,...]]></description>
+			<name>columns</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[containerId: divid]]></description>
+			<name>containerId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[sortableColumns:'column1','column2']]></description>
+			<name>sortableColumns</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[sortBy: default sort column]]></description>
+			<name>sortBy</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+				<attribute>
+			<description><![CDATA[sortBy: default sort column]]></description>
+			<name>sortBy</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[callBack: call back method]]></description>
+			<name>callBack</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[callBackButton : trigger a call]]></description>
+			<name>callBackButton</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[returnValueOfColumns : when user select a row it will return values of columns specified in this attr]]></description>
+			<name>returnValueOfColumns</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+	</tag>
+	
+	<tag>
+		<description><![CDATA[YUI Data table UI]]></description>
+		<name>yuidatatable</name>
+		<tag-class>com.vnsoft.server.tags.yui.YUIDataTableTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[format column1:Lable,column2:Lable]]></description>
+			<name>columns</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<description><![CDATA[sortableColumns]]></description>
+			<name>sortableColumns</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<description><![CDATA[returnValueOfColumns]]></description>
+			<name>returnValueOfColumns</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<description><![CDATA[containerId]]></description>
+			<name>containerId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<description><![CDATA[callBackMethod]]></description>
+			<name>callBackMethod</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<description><![CDATA[callBackButtonId]]></description>
+			<name>callBackButtonId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<description><![CDATA[queryJsonDataUrl]]></description>
+			<name>queryJsonDataUrl</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<description><![CDATA[sortByColumns]]></description>
+			<name>sortByColumns</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+				<attribute>
+			<description><![CDATA[tableWithCheckBox]]></description>
+			<name>tableWithCheckBox</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+	</tag>
+	<tag>
+		<description><![CDATA[YUI tabview]]></description>
+		<name>tabview</name>
+		<tag-class>com.vnsoft.server.tags.yui.YUITabViewTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[displayTabs format fieldName:Label,fieldName:Label]]></description>
+			<name>displayTabs</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[contentProviderClass is a full path class that will build the content of tab. This class must implement TabViewContentProvider interface]]></description>
+			<name>contentProviderClass</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<description><![CDATA[data is a map<tabname,dataobject>]]></description>
+			<name>data</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Map</type>
+		</attribute>
+		
+		<attribute>
+			<description><![CDATA[id]]></description>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[id]]></description>
+			<name>customParams</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[tabviewContainerCSS]]></description>
+			<name>tabviewContainerCSS</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[tabviewContentCSS]]></description>
+			<name>tabviewContentCSS</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<tag>
+		<description><![CDATA[YUI tabview]]></description>
+		<name>chart</name>
+		<tag-class>com.vnsoft.server.tags.yui.ChartTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[title of the chart]]></description>
+			<name>title</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[chartType: line,stepLine,spline,area,splineArea,bar,pie,doughnut,bubble,scatter,stackedColumn,stackedColumn100,stackedArea,stackedArea100,stackedBar,stackedBar100]]></description>
+			<name>chartType</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[containerId: div id that contains the chart]]></description>
+			<name>containerId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[chartData: list of ChartData]]></description>
+			<name>chartData</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.List</type>
+		</attribute>
+		<attribute>
+			<description><![CDATA[xTitle]]></description>
+			<name>xTitle</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[yTitle]]></description>
+			<name>yTitle</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+<tag>
+		<description><![CDATA[Simple Table]]></description>
+		<name>table</name>
+		<tag-class>com.vnsoft.server.tags.yui.SimpleTableTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description><![CDATA[headers coln1, col2,col3]]></description>
+			<name>headers</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[displayHeader]]></description>
+			<name>displayHeader</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<description><![CDATA[data List<Object>]]></description>
+			<name>data</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.List</type>
+		</attribute>
+		
+		<attribute>
+			<description><![CDATA[contentProvider]]></description>
+			<name>contentProvider</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<description><![CDATA[params btnPrefix=,width=,height=,callback=,editable=,showView=]]></description>
+			<name>params</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+</taglib>

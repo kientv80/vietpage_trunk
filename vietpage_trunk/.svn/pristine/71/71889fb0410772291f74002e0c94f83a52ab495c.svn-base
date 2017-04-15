@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+	<constant name="struts.devMode" value="true" />
+	<constant name="struts.multipart.maxSize" value="5000000" />
+	<package name="default" extends="struts-default,tiles-default,json-default">
+
+		<interceptors>
+         	<interceptor name="authorize_ininterceptor" class="com.vnsoft.server.interceptor.AuthorizationInterceptor" />
+         	<interceptor name="login_ininterceptor" class="com.vnsoft.server.interceptor.LoginInterceptor" />
+         	<interceptor name="admin_ininterceptor" class="com.vnsoft.server.interceptor.AdminInterceptor" />
+         	<interceptor-stack name="myInterceptorStack">
+         	    <interceptor-ref name="exception"/>
+                <interceptor-ref name="servletConfig"/>
+                <interceptor-ref name="prepare"/>
+                <interceptor-ref name="checkbox"/>
+                <interceptor-ref name="multiselect"/>
+                <interceptor-ref name="actionMappingParams"/>
+                <interceptor-ref name="fileUpload"/>
+                 <interceptor-ref name="login_ininterceptor"/>
+                <interceptor-ref name="authorize_ininterceptor"/>
+                <interceptor-ref name="params">
+                    <param name="excludeParams">dojo\..*,^struts\..*</param>
+                </interceptor-ref>
+                <interceptor-ref name="conversionError"/>
+                <interceptor-ref name="validation"/>
+         	</interceptor-stack>
+         	<interceptor-stack name="myInterceptorStackNoAuthorize">
+         	    <interceptor-ref name="exception"/>
+                <interceptor-ref name="servletConfig"/>
+                <interceptor-ref name="prepare"/>
+                <interceptor-ref name="checkbox"/>
+                <interceptor-ref name="multiselect"/>
+                <interceptor-ref name="actionMappingParams"/>
+                <interceptor-ref name="fileUpload"/>
+                 <interceptor-ref name="login_ininterceptor"/>
+                <interceptor-ref name="params">
+                    <param name="excludeParams">dojo\..*,^struts\..*</param>
+                </interceptor-ref>
+                <interceptor-ref name="conversionError"/>
+                <interceptor-ref name="validation"/>
+         	</interceptor-stack>
+         	<interceptor-stack name="adminInterceptorStack" >
+         	    <interceptor-ref name="exception"/>
+                <interceptor-ref name="servletConfig"/>
+                <interceptor-ref name="prepare"/>
+                <interceptor-ref name="checkbox"/>
+                <interceptor-ref name="multiselect"/>
+                <interceptor-ref name="actionMappingParams"/>
+                <interceptor-ref name="fileUpload"/>
+                 <interceptor-ref name="login_ininterceptor"/>
+                <interceptor-ref name="admin_ininterceptor"/>
+                <interceptor-ref name="params">
+                    <param name="excludeParams">dojo\..*,^struts\..*</param>
+                </interceptor-ref>
+                <interceptor-ref name="conversionError"/>
+         	</interceptor-stack>
+      	</interceptors>
+      			<!--         Default action -->
+        <default-action-ref name="home" />
+      	<global-results>
+            <result name="nocompanyid" type="redirect">home</result>
+            <result name="Exception">/jsp/layout/error.jsp</result>
+            <result name="SQLException">/jsp/layout/error.jsp</result>
+            <result name="NullPointerException">/jsp/layout/error.jsp</result>
+        </global-results>
+        <global-exception-mappings>
+            <exception-mapping exception="java.sql.SQLException" result="SQLException"/>
+            <exception-mapping exception="java.lang.Exception" result="Exception"/>
+            <exception-mapping exception="java.lang.NullPointerException" result="NullPointerException"/>
+        </global-exception-mappings>
+
+<!--         Actions -->
+		<action name="item" class="com.vnsoft.server.actions.ItemAction" method="execute">
+			<interceptor-ref name="myInterceptorStack"></interceptor-ref>
+			<result name="success" type="tiles">updatemenuitem</result>
+			<result name="m_success" type="tiles">updatemenuitem</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="viewitem" class="com.vnsoft.server.actions.ItemAction" method="execute">
+			<result name="success">/jsp/itemview.jsp</result>
+			<result name="m_success">/jsp/layout/mobile/m_itemview.jsp</result>
+			<param name="action">getItemObject</param>
+		</action>
+		
+		<action name="approvePage" class="com.vnsoft.server.actions.ApprovePageAction" method="execute">
+			<interceptor-ref name="adminInterceptorStack"></interceptor-ref>
+			<result name="success" type="tiles">pageAproval</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="approveFeed" class="com.vnsoft.server.actions.ApproveFeedAction" method="execute">
+			<interceptor-ref name="adminInterceptorStack"></interceptor-ref>
+			<result name="success" type="tiles">feedAdmin</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		
+		<action name="home" class="com.vnsoft.server.actions.MyPageAction" method="execute">
+			<result name="success" type="tiles">mypagelayout</result>
+			<result name="m_success" type="tiles">m_mypagelayout</result>
+			<result name="news" type="tiles">mypagenews</result>
+			<result name="vietpage" type="chain">vietpage</result>
+			<result name="m_vietpage" type="chain">vietpage</result>
+			<result name="feed" type="tiles">newfeeds</result>
+			<result name="m_feed" type="tiles">m_newfeeds</result>
+		</action>
+		<action name="news" class="com.vnsoft.server.actions.MyPageAction" method="execute">
+			<result name="success" type="tiles">mypagelayout</result>
+			<result name="m_success" type="tiles">m_mypagelayout</result>
+			<result name="news" type="tiles">mypagenews</result>
+			<result name="vietpage" type="chain">vietpage</result>
+			<result name="m_vietpage" type="chain">vietpage</result>
+			<result name="feed" type="tiles">newfeeds</result>
+			<result name="m_feed" type="tiles">m_newfeeds</result>
+		</action>
+		<action name="vietpage" class="com.vnsoft.server.actions.HomeAction" method="execute">
+			<result name="success" type="tiles">mainlayout</result>
+			<result name="items" type="tiles">items</result>
+			<result name="m_success" type="tiles">m_mainlayout</result>
+			<result name="m_items" type="tiles">m_items</result>
+		</action>
+		<action name="items" class="com.vnsoft.server.actions.HomeAction" method="execute">
+			<result name="success" type="tiles">items</result>
+			<result name="m_success" type="tiles">m_items</result>
+		</action>
+		<action name="viewitemInPage" class="com.vnsoft.server.actions.HomeAction" method="execute">
+			<result name="success" type="tiles">viewItem</result>
+			<result name="m_success" type="tiles">m_viewItem</result>
+			<param name="action">viewItemInPage</param>
+		</action>
+		
+		<action name="vietpageItem" class="com.vnsoft.server.actions.HomeAction" method="execute">
+			<param name="targetUrl">items</param>
+			<result name="success" type="tiles">mainlayout</result>
+			<result name="items" type="tiles">items</result>
+			<result name="error" type="redirectAction">register</result>
+			<result name="m_success" type="tiles">m_mainlayout</result>
+			<result name="m_items" type="tiles">items</result>
+		</action>
+		<action name="login" class="com.vnsoft.server.actions.LoginAction" method="execute">
+			<result name="success" type="chain">edit</result>
+			<result name="m_success" type="chain">edit</result>
+			<result name="admin" type="chain">approvePage</result>
+			<result type="redirectAction" name="home">vietpage</result>
+			<result name="login" type="tiles">login</result>
+			<result name="m_login" type="tiles">m_login</result>
+			
+		</action>
+		<action name="setupmenu" class="com.vnsoft.server.actions.SetupMenuAction" method="execute">
+			<interceptor-ref name="myInterceptorStack"></interceptor-ref>
+			<param name="currentPage">setupmenu</param>
+			<result name="success" type="tiles">setupmenu</result>
+			<result name="groupmenu" type="redirectAction">groupmenu</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="groupmenu" class="com.vnsoft.server.actions.SetupMenuAction" method="execute">
+			<interceptor-ref name="myInterceptorStack"></interceptor-ref>
+			<param name="currentPage">groupmenu</param>
+			<result name="success" type="tiles">groupmenu</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="menu" class="com.vnsoft.server.actions.MenuAction" method="execute">
+			<interceptor-ref name="myInterceptorStack"></interceptor-ref>
+			<result name="success" type="tiles">setupmenu</result>
+			<result name="setupmenu" type="tiles">setupmenu</result>
+			<result name="groupmenu" type="tiles">groupmenu</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="comment" class="com.vnsoft.server.actions.CommentAction" method="execute">
+<!-- 			<interceptor-ref name="myInterceptorStack"></interceptor-ref> -->
+			<result name="success" type="chain">vietpage</result>
+			<result name="load" type="tiles">comment</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="contactinfo" class="com.vnsoft.server.actions.ContactInfoAction" method="execute">
+			<interceptor-ref name="myInterceptorStack"></interceptor-ref>
+			<result name="success" type="redirectAction">edit</result>
+			
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="service_update" class="com.vnsoft.server.actions.ServiceInfoAction" method="execute">
+			<interceptor-ref name="myInterceptorStack"></interceptor-ref>
+			<result name="success" type="redirectAction">edit</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="about_update" class="com.vnsoft.server.actions.AboutAction" method="execute">
+			<interceptor-ref name="myInterceptorStack"></interceptor-ref>
+			<result name="success" type="redirectAction">edit</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		
+		<action name="managemenuitem" class="com.vnsoft.server.actions.ManageMenuItemAction" method="execute" >
+			<interceptor-ref name="myInterceptorStack"></interceptor-ref>
+			<result name="success" type="tiles">setupmenu</result>
+			<result name="input" type="tiles">setupmenu</result>
+			<result name="setupmenu" type="tiles">setupmenu</result>
+			<result name="m_success" type="tiles">m_pageAdmin</result>
+			<result name="m_input" type="tiles">m_pageAdmin</result>
+			<result name="m_setupmenu" type="tiles">m_pageAdmin</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="menuitem_newupdate" class="com.vnsoft.server.actions.ManageMenuItemAction" method="execute">
+			<interceptor-ref name="myInterceptorStack"></interceptor-ref>
+			<result name="success" type="tiles">setupmenu</result>
+			<result name="setupmenu" type="tiles">setupmenu</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="edit" class="com.vnsoft.server.actions.HomeAction" method="execute">
+			<interceptor-ref name="myInterceptorStack"></interceptor-ref>
+			<result name="success" type="tiles">editlayout</result>
+			<result name="m_success" type="tiles">m_pageAdmin</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="companyEdit" class="com.vnsoft.server.actions.CompanyAction" method="execute">
+			<interceptor-ref name="myInterceptorStack"></interceptor-ref>
+			<result name="success" type="redirectAction">edit</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="register" class="com.vnsoft.server.actions.RegisterAction" method="execute">
+			<result name="failed" type="tiles">registerlayout</result>
+			<result name="input" type="tiles">registerlayout</result>
+			<result name="success" type="chain">edit</result>
+		</action>
+		<action name="editRegisterInfo" class="com.vnsoft.server.actions.EditRegisterInfoAction" method="execute">
+			<interceptor-ref name="myInterceptorStack"></interceptor-ref>
+			<result name="success" type="tiles">editRegisterInfo</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="address" class="com.vnsoft.server.actions.AddressAction" method="execute">
+			<interceptor-ref name="myInterceptorStackNoAuthorize"></interceptor-ref>
+			<result name="success" type="tiles">editRegisterInfo</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		
+		
+		<action name="registerForm" class="com.vnsoft.server.actions.RegisterAction" method="input">
+			<result name="success" type="tiles">registerlayout</result>
+			<result name="input" type="chain">register</result>
+		</action>
+        <!-- more actions go here -->
+        <action name="search" class="com.vnsoft.server.actions.SearchAction" method="execute">
+			<result name="success" type="tiles">searchlayout</result>
+			<result name="vietpage" type="tiles">mypagelayout</result>
+			<result name="m_success" type="tiles">m_searchlayout</result>
+		</action>
+        <action name="location" class="com.vnsoft.server.actions.LocationAction" method="execute">
+			<result name="success" type="tiles">location</result>
+		</action>
+		<action name="lookup" class="com.vnsoft.server.actions.LookupRedirectAction" method="execute">
+			<result name="success" type="tiles">search</result>
+		</action>
+		<action name="access_denined" class="com.vnsoft.server.actions.AccessDeninedAction" method="execute">
+			<result name="success" type="tiles">access_denined</result>
+		</action>
+		<action name="userloginreport" class="com.vnsoft.server.actions.ReportUserAction" method="execute">
+			<interceptor-ref name="adminInterceptorStack"></interceptor-ref>
+			<result name="success" type="tiles">userloginreport</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="pageVisitReport" class="com.vnsoft.server.actions.ReportPageVisitAction" method="execute">
+			<interceptor-ref name="myInterceptorStack"></interceptor-ref>
+			<result name="success" type="tiles">pagevisitReport</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="report" class="com.vnsoft.server.actions.ReportPageVisitAction" method="execute">
+			<interceptor-ref name="myInterceptorStack"></interceptor-ref>
+			<result name="success" type="tiles">report</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="newuserreport" class="com.vnsoft.server.actions.ReportUserAction" method="execute">
+			<interceptor-ref name="adminInterceptorStack"></interceptor-ref>
+			<result name="success" type="tiles">newuserreport</result>
+			<result name="login" type="redirectAction">login</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="hotnews" class="com.vnsoft.server.actions.HotNewsAction" method="execute">
+			<result name="success" type="tiles">hotnews</result>
+			<result name="m_success" type="tiles">m_hotnews</result>
+		</action>
+		<action name="managehotnews" class="com.vnsoft.server.actions.HotNewsAction" method="execute">
+			<interceptor-ref name="adminInterceptorStack"></interceptor-ref>
+			<result name="login" type="redirectAction">login</result>
+			<result name="managehotnews" type="tiles">managehotnews</result>
+			<result name="success" type="tiles">managehotnews</result>
+			<result name="m_success" type="tiles">managehotnews</result>
+		</action>
+		
+		<action name="language" class="com.vnsoft.server.actions.ChangeLanguageAction" method="execute">
+			<interceptor-ref name="i18n"/>
+			<result name="success" type="chain">home</result>
+		</action>
+		<action name="agency" class="com.vnsoft.server.actions.AgencyAction" method="execute">
+			<result name="success" type="tiles">agencylayout</result>
+		</action>
+		
+		<action name="itemAssessment" class="com.vnsoft.server.actions.AjaxAction" method="itemAssessment">
+		</action>
+		<action name="feed" class="com.vnsoft.server.actions.FeedAction" method="execute">
+			<result name="success" type="tiles">feeds</result>
+			<result name="m_success" type="tiles">m_feeds</result>
+		</action>
+		<action name="manageFeed" class="com.vnsoft.server.actions.FeedAction" method="manage">
+			<interceptor-ref name="myInterceptorStackNoAuthorize"></interceptor-ref>
+			<result name="login" type="redirectAction">login</result>
+			<result name="success" type="tiles">managefeeds</result>
+			<result name="m_success" type="tiles">m_managefeeds</result>
+			<result name="access_denined" type="redirectAction">access_denined</result>
+		</action>
+		<action name="vietpageDetail" class="com.vnsoft.server.actions.FBPluginAction" method="execute">
+			<result name="success">/jsp/FBPlugin.jsp</result>
+		</action>
+		<action name="resizeImage" class="com.vnsoft.server.actions.ResizeImageAction" method="execute">
+			<result name="success" type="redirectAction">home</result>
+		</action>
+		
+   </package>
+	<constant name="struts.multipart.saveDir" value="D:\" />
+</struts>

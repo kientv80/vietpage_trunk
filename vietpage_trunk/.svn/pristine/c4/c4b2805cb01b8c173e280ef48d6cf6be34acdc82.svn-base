@@ -1,0 +1,100 @@
+package com.vnsoft.server.actions;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.vnsoft.server.biz.FeedBean;
+import com.vnsoft.server.model.Feed;
+import com.vnsoft.server.util.IdGeneratorHelper;
+
+public class FeedAction extends StandarLayout {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8102357965767210059L;
+	private String feed;
+	private String title;
+	private List<Feed> feeds = new ArrayList<>();
+
+	private String feedId = null;
+
+	@Override
+	public String execute() {
+		try {
+			System.out.println("feed>>>>>>>>>>>>>>>>>>>>> id" + getComId());
+			if(getFeedId() != null && isNumber(getFeedId())){
+				Feed f = FeedBean.getInstance().getFeed(Long.valueOf(getFeedId()));
+				if(f != null)
+					feeds.add(f);
+				else
+					feeds = FeedBean.getInstance().getFeeds(Long.valueOf(getComId()), 10);
+			}else{
+				feeds = FeedBean.getInstance().getFeeds(Long.valueOf(getComId()), 10);
+			}
+
+			System.out.println("Feed found=" + feeds.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		super.execute();
+		if(isMobilePhone(getHttpServletRequest())){
+			return "m_"+SUCCESS;
+		}
+		return SUCCESS;
+	}
+	public String manage() {
+		try {
+			if ("add".equals(getAction())) {
+				Feed f = new Feed();
+				f.setFeed(getFeed());
+				f.setTitle(title);
+				if (file != null && getComId() != null) {
+					f.setImage(uploadFile(getComId() + "_feed_" + IdGeneratorHelper.getGenId()+".jpg", getComId()));
+				}
+				f.setComid(Long.valueOf(getComId()));
+				FeedBean.getInstance().addFeed(f);
+			} else if ("delete".equals(getAction()) && getFeedId() != null && isNumber(getFeedId())) {
+				Feed f = FeedBean.getInstance().getFeed(Long.valueOf(getFeedId()));
+				if(f.getComid() == Long.valueOf(getComId()).longValue()){
+					FeedBean.getInstance().removeFeed(Long.valueOf(getFeedId()));
+				}else{
+					return "access_denined";
+				}
+			}
+			feeds = FeedBean.getInstance().getFeeds(Long.valueOf(getComId()), 10);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return super.execute();
+	}
+	public String getFeed() {
+		return feed;
+	}
+
+	public void setFeed(String feed) {
+		this.feed = feed;
+	}
+
+	public List<Feed> getFeeds() {
+		return feeds;
+	}
+
+	public void setFeeds(List<Feed> feeds) {
+		this.feeds = feeds;
+	}
+	public String getFeedId() {
+		return feedId;
+	}
+	public void setFeedId(String feedId) {
+		this.feedId = feedId;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+
+}

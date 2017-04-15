@@ -1,0 +1,154 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<div class="feedlatestnewscontainer">
+	<div class="feedlatestnews" >
+			<c:if test="${latestFeed.image !=null && !latestFeed.image.isEmpty()}">
+						<div class="feedlatestnewsImage">
+							<a href="/feed?comid=${latestFeed.comid }&feedId=${latestFeed.id}"  class="link-title" style="text-decoration: none;">
+									<img title="${latestFeed.title }" alt="${latestFeed.title }" src="${latestFeed.thumb1Image }" ><br>
+							</a>
+						</div>
+						<br>
+						<a href="/feed?comid=${latestFeed.comid }&feedId=${latestFeed.id}"  class="link-title" style="text-decoration: none;">
+						<b> ${latestFeed.title}</b>
+						<font size="1.5"> (${latestFeed.viewCount} lần xem)</font>
+						</a><br>
+						${latestFeed.feed}<a href="/vietpage?comid=${latestFeed.comid }">
+							<br><font size="1.5">
+							<c:if test="${latestFeed.comName !=null && !latestFeed.comName.isEmpty()}">
+									${latestFeed.comName}
+							</c:if>
+							[${latestFeed.postedDate}]
+							</font><br>
+						 Chi tiết </a>
+				</c:if>
+				<c:if test="${latestFeed.image ==null || latestFeed.image.isEmpty()}">
+					<a href="/vietpage?comid=${latestFeed.comid }"  class="link-title" style="text-decoration: none;">
+						<h1 class="title"> ${latestFeed.title}</h1><br>
+						<font size="1.5">	
+						<c:if test="${latestFeed.comName !=null && !latestFeed.comName.isEmpty()}">
+							${latestFeed.comName}:
+						</c:if>
+						${latestFeed.postedDate} (${latestFeed.viewCount} lần xem)
+						</font>
+					</a><br>${latestFeed.feed}<a href="/feed?comid=${latestFeed.comid }&feedId=${latestFeed.id}"> Chi tiết </a>
+				</c:if>
+	</div>
+	<div class="feedhightlightnews">
+		<table>
+			<s:iterator value="hightLightFeeds" var="f">
+				<tr >
+					<td class="hightlightrow">
+						<a href="/feed?comid=${f.comid }&feedId=${f.id}" class="link-title" style="text-decoration: none;">
+								<c:if test="${f.image !=null && !f.image.isEmpty()}">
+									<div style="float:left; width: 80px; max-height: 60px;overflow: hidden;">
+										<img title="${f.title }" alt="${f.title }"  src="${f.thumb2Image }" style="width: 100%;" align="left">
+									</div>
+								</c:if>
+								<font color="#000"><b> ${f.title} </b></font><br>
+								<font size="1.5">	
+								<c:if test="${f.comName !=null && !f.comName.isEmpty()}">
+									${f.comName}:
+								</c:if>
+								 ${f.postedDate} (${f.viewCount} lần xem)<br></font>
+						</a>
+					</td>
+				 </tr>
+			</s:iterator>
+		</table>
+	</div>
+	
+	<div class="feedhotnewscontainer">
+			<s:iterator value="hottestFeeds" var="f">
+					<div class="feedhotnews">
+						<a href="/feed?comid=${f.comid }&feedId=${f.id}" class="link-title" style="text-decoration: none;">
+							<c:if test="${f.image !=null && !f.image.isEmpty()}">
+								<div class="feedhotnews_image">
+									<img title="${f.title }" alt="${f.title }" src="${f.thumb2Image }" width="100%">
+								</div>
+							</c:if>	
+							${f.title}<br>
+							<font size="1.5">
+							<c:if test="${f.comName !=null && !f.comName.isEmpty()}">
+								${f.comName}:
+							</c:if>
+							${f.postedDate}(${f.viewCount} lần xem)<br>
+							</font>
+						</a>
+					 </div>
+			</s:iterator>
+	</div>
+</div>
+
+
+<c:if test="${newItems != null && newItems.size() > 0}">
+<div class="section">Thông Tin Mới</div>
+	<div class="n_itemslist">
+			<div id="ca-container" class="ca-container">
+			<div class="ca-wrapper">
+					<s:iterator value="newItems" var="m_item">
+							<div class="ca-item ca-item-2">
+								<ui:item width="100%" item="${m_item}" edit="false" clazz="item_xs" customParams="imageClass=feedhotnews_image,showCodeAndCount=false"
+									callBackMethod="viewItemInPage" btnPrefix="btn" showView="true" showShortDesc="false"></ui:item>
+							</div>
+					</s:iterator>
+			</div>
+		</div>
+	</div>
+	<br><br><br>
+</c:if>
+
+<c:if test="${discountItems != null && discountItems.size() > 0}">
+	<div class="section">Thông Tin Giảm Giá</div>
+		<div class="n_itemslist">
+				<div id="discountitem-container" class="ca-container">
+				<div class="ca-wrapper">
+					<s:iterator value="discountItems" var="disitem">
+						<div class="ca-item ca-item-2">
+								<ui:item width="100%" item="${disitem}" edit="false" clazz="item_xs" customParams="imageClass=feedhotnews_image,showCodeAndCount=false"
+									callBackMethod="viewItemInPage" btnPrefix="btn" showView="true" showShortDesc="false"></ui:item>
+						</div>
+					</s:iterator>
+				</div>
+		</div>
+	</div>
+	<br><br><br><br>
+</c:if>
+
+<c:if test="${recentFeeds != null && recentFeeds.size() > 0}">
+	<c:forEach items="${recentFeeds }" var="feeds">
+		<c:if test="${feeds.value.size()>0}">
+		<div class="section">Thông tin từ ${feeds.key }</div>
+		<c:forEach items="${feeds.value }" var="f">
+			<div style="position: relative;width: 48%;font-family: Arial;color: #333;float: left; margin: 4px; padding:4px; overflow: hidden;height: 150px;border-bottom: thin dotted #ddd;">
+				<a href="/feed?comid=${f.comid }&feedId=${f.id}" class="link-title" style="text-decoration: none;"><b>${f.title}</b></a>
+				<font size="1.5">
+					<c:if test="${f.comName !=null && !f.comName.isEmpty()}">
+						${f.comName}:
+					</c:if>
+					${f.postedDate}(${f.viewCount} lần xem)<br>
+				</font>
+				<div style="position: relative;;margin-top: 0;margin-left: 0;float: left;padding: 4px;">
+					<img alt="" src="${f.thumb2Image}" style="width: 140px;height: 100px;">
+				</div>
+				<span>${f.feed}</span>
+			</div>
+		</c:forEach>
+		</c:if>
+	</c:forEach>
+</c:if>
+
+
+<script type="text/javascript">
+	$('#ca-container').contentcarousel();
+	$('#discountitem-container').contentcarousel();
+	
+	function viewItemInPage(pageId,itemId){
+		window.location.href="/viewitemInPage?comid="+pageId+"&itemId="+itemId;
+	}
+</script>

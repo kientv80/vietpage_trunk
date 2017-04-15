@@ -1,0 +1,137 @@
+package com.vnsoft.server.actions;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.actions.StandarLayout.UPLOAD_OBJECT;
+import com.vnsoft.server.biz.HotNewsBean;
+import com.vnsoft.server.biz.ServiceTypeBean;
+import com.vnsoft.server.model.HotNews;
+import com.vnsoft.server.util.JSONHelper;
+
+
+public class HotNewsAction extends StandarLayout {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3539315454211290922L;
+	private List<HotNews> hotNews = new ArrayList<>();
+	private String link;
+	private String title;
+	private String content;
+	private String thume;
+	private String btns = "";
+	private Logger logger = Logger.getLogger(HotNewsAction.class);
+	@Override
+	public String execute() {
+		try {
+			setHotservices(ServiceTypeBean.getInstance().getHotServiceType());
+			if("add".equals(getAction())){
+				HotNews hn = new HotNews();
+				hn.setLink(getLink());
+				hn.setTitle(title);
+				hn.setContent(content);
+				String ext = "jpg";
+				Map<String,String> itemImage = uploadFile("thume_" + Calendar.getInstance().getTimeInMillis() + "." + ext, "hotnews",UPLOAD_OBJECT.OTHERS);
+				hn.setThume(itemImage.get(StandarLayout.IMAGE));
+				HotNewsBean.getInstance().createHotNews(hn);
+				setHotNews(HotNewsBean.getInstance().getHotNews());
+				return "managehotnews";
+			}else if("getHotNews".equals(getAction())){
+				HotNews hn = HotNewsBean.getInstance().getHotNews(Long.valueOf(getId()));
+				getHttpServletResponse().setContentType("application/json;charset=utf-8");
+				PrintWriter writer = getHttpServletResponse().getWriter();
+				writer.write(JSONHelper.toJSONObject(hn).toString());
+				writer.close();
+				return null;
+			}else if("editHotNews".equals(getAction())){
+				HotNews hn = new HotNews();
+				hn.setLink(link);
+				hn.setTitle(title);
+				hn.setContent(content);
+				hn.setId(Long.valueOf(getId()));
+				String imageSeperator = "/";
+				if (thume.indexOf("\\") > 0)
+					imageSeperator = "\\";
+				
+				String fileName = thume.substring(thume.lastIndexOf(imageSeperator) + 1, thume.length());
+				System.out.println("THume=" + thume);
+				System.out.println("fileName="+fileName);
+				if (file != null)
+					uploadFile(fileName, "hotnews",UPLOAD_OBJECT.OTHERS);
+				
+				HotNewsBean.getInstance().editHotNews(hn);
+			} else if("deleteHotNews".equals(getAction())){
+				if(isNumber(getId()))
+					HotNewsBean.getInstance().deleteHotNews(Long.valueOf(getId()));
+			}
+			setHotNews(HotNewsBean.getInstance().getHotNews());
+			for(HotNews hn : getHotNews()){
+				setBtns(getBtns()+"btnEditHotNews_"+hn.getId()+",");
+			}
+			if(getAction() == null || getAction().isEmpty())
+				trackingVisit("vietpage_hotnews");
+		} catch (Exception e) {
+			logger.error("", e);
+			e.printStackTrace();
+		}
+		if(isMobilePhone(getHttpServletRequest())){
+			return "m_"+SUCCESS;
+		}
+		return SUCCESS;
+	}
+
+	public List<HotNews> getHotNews() {
+		return hotNews;
+	}
+
+	public void setHotNews(List<HotNews> hotNews) {
+		this.hotNews = hotNews;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getThume() {
+		return thume;
+	}
+
+	public void setThume(String thume) {
+		this.thume = thume;
+	}
+
+	public String getBtns() {
+		return btns;
+	}
+
+	public void setBtns(String btns) {
+		this.btns = btns;
+	}
+
+}

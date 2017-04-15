@@ -1,0 +1,15 @@
+package com.vnsoft.server.plugin.social;
+
+public class ZaloLinkFeed extends ZaloLinkMessage{
+	private String message;
+	public ZaloLinkFeed(long phoneNumber, String link, String linkTitle, String linkDesc, String linkThumb) {
+		super(phoneNumber, link, linkTitle, linkDesc, linkThumb);
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+}

@@ -1,0 +1,159 @@
+package com.vnsoft.server.biz;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+public class UserInterestedBean {
+	
+	public static final String TOP3_MOST_INTERESTED_LOCATIONS = "top3MostInterestedLocations";
+	public static final String TOP3_MOST_INTERESTED_SERVICES = "top3MostInterestedServices";
+	private static UserInterestedBean instance;
+	private UserInterestedBean() {
+	}
+	public static UserInterestedBean getInstance(){
+		if(instance == null)
+			instance = new UserInterestedBean();
+		return instance;
+	}
+	public  Map<String, List<Integer>> getUserInterestedScores(String visistorId) throws Exception {
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet result = null;
+		Map<String, List<Integer>> top3InterestedScore = new HashMap<>();
+		top3InterestedScore.put(TOP3_MOST_INTERESTED_SERVICES, new ArrayList<Integer>());
+		top3InterestedScore.put(TOP3_MOST_INTERESTED_LOCATIONS, new ArrayList<Integer>());
+		List<Integer> services = new ArrayList<>();
+		List<Integer> locations = new ArrayList<>();
+		try {
+			con = JDBCConnection.getInstance().getConnection();
+			stm = con.prepareStatement("Select * from visistor_interested where visistor_id=?");
+			stm.setString(1, visistorId);
+			result = stm.executeQuery();
+			String score = "";
+			while (result.next()) {
+				score = result.getString("score");
+			}
+			if(score != null && !score.isEmpty()){
+				Map<String, Integer>  s = toScore(score);
+				Map<String,Integer> stmp = new  HashMap<>();
+				Map<String,Integer> ltmp = new  HashMap<>();
+				for(Entry<String, Integer> e : s.entrySet()){
+					if(e.getKey().startsWith("s")){
+						stmp.put(e.getKey(), e.getValue());
+					}else{//l
+						ltmp.put(e.getKey(), e.getValue());
+					}
+				}
+				Map<Integer,String> stmp1 = new  HashMap<>();
+				for(Entry<String, Integer> e : stmp.entrySet()){
+					if(services.size() <2){
+						stmp1.put(e.getValue(), e.getKey());
+					}else{
+						int removeKey = 0;
+						for(Entry<Integer,String> e2 : stmp1.entrySet()){
+							if(e.getValue().intValue() > e2.getKey().intValue()){
+								removeKey = e2.getKey().intValue();
+								break;
+							}
+						}
+						if(removeKey > 0){
+							stmp1.remove(removeKey);
+							stmp1.put(e.getValue(), e.getKey());
+						}
+					}
+				}
+				Map<Integer,String> ltmp1 = new  HashMap<>();
+				for(Entry<String, Integer> e : ltmp.entrySet()){
+					if(services.size() <2){
+						ltmp1.put(e.getValue(), e.getKey());
+					}else{
+						int removeKey = 0;
+						for(Entry<Integer,String> e2 : ltmp1.entrySet()){
+							if(e.getValue().intValue() > e2.getKey().intValue()){
+								removeKey = e2.getKey().intValue();
+								break;
+							}
+						}
+						if(removeKey > 0){
+							ltmp1.remove(removeKey);
+							ltmp1.put(e.getValue(), e.getKey());
+						}
+					}
+				}
+				for(Entry<Integer,String> k : stmp1.entrySet()){
+					services.add(Integer.valueOf(k.getValue().substring(1)));
+				}
+				for(Entry<Integer,String> k : ltmp1.entrySet()){
+					locations.add(Integer.valueOf(k.getValue().substring(1)));
+				}
+				Collections.sort(services);
+				Collections.sort(locations);
+				if(services.size() > 3){
+					top3InterestedScore.get(TOP3_MOST_INTERESTED_SERVICES).addAll(services.subList(services.size()-2, services.size()));
+				}else{
+					top3InterestedScore.get(TOP3_MOST_INTERESTED_SERVICES).addAll(services);
+				}
+				if(locations.size() > 3){
+					top3InterestedScore.get(TOP3_MOST_INTERESTED_LOCATIONS).addAll(locations.subList(locations.size()-2, locations.size()));
+				}else{
+					top3InterestedScore.get(TOP3_MOST_INTERESTED_LOCATIONS).addAll(locations);
+				}
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (result != null)
+				result.close();
+			if (stm != null)
+				stm.close();
+			if (con != null)
+				con.close();
+
+		}
+		return top3InterestedScore;
+	}
+	private Map<String, Integer> toScore(String score) {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		if(score.indexOf(":") > 0){
+			for (String s : score.split(":")) {
+				String[] tmp = s.split("=");
+				if(tmp.length == 2){
+					map.put(tmp[0], Integer.valueOf(tmp[1]));
+				}
+			}
+		}
+		return map;
+	}
+	private void put(List<Integer> lst,int value){
+		if(lst.size() <= 3){
+			lst.add(value);
+		}else{
+			Collections.sort(lst);
+			if(value > lst.get(0)){
+				lst.remove(0);
+				lst.add(value);
+			}
+		}
+	}
+	public static void main(String[] args) {
+		List<Integer> aa = new ArrayList<>();
+		aa.add(4);
+		aa.add(1);
+		for(int i : aa){
+			System.out.println(i);
+		}
+		Collections.sort(aa);
+		for(int i : aa){
+			System.out.println(i);
+		}
+	}
+}

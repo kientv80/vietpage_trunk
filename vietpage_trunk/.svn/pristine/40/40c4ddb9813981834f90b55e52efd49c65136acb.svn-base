@@ -1,0 +1,55 @@
+package com.vnsoft.server;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class AuthenticationFilter implements Filter{
+	Set<String> fiteredURLs = new HashSet<>();
+	public AuthenticationFilter() {
+		fiteredURLs.add("item");
+		fiteredURLs.add("setupmenu");
+		fiteredURLs.add("managemenuitem");
+		fiteredURLs.add("comment");
+	}
+	@Override
+	public void destroy() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse resp, FilterChain train) throws IOException, ServletException {
+		// TODO Auto-generated method stub
+		HttpServletRequest httpReq = (HttpServletRequest)request;
+		HttpServletResponse httpResp = (HttpServletResponse)resp;
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> fitler " + httpReq.getServletPath());
+/*		if(fiteredURLs.contains(httpReq.getRequestURI())){
+			if( httpReq.getSession(true).getAttribute("login") == null){
+				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> fitler login");
+				httpResp.sendRedirect("login");
+			}else{
+				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>> Next fitler ");
+				train.doFilter(request, resp);
+			}
+		}*/
+		train.doFilter(request, resp);
+		
+	}
+
+	@Override
+	public void init(FilterConfig arg0) throws ServletException {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

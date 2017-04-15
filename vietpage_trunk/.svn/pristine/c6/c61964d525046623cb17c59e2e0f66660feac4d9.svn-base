@@ -1,0 +1,81 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+
+	<c:if test="${companies != null && companies.size() > 0 && currentPage != 'search' }">
+			<ui:table contentProvider="com.vnsoft.server.contentprovider.PageSimpleTableContentProvider" headers="Item 1, Item 2" displayHeader="false" data="${companies }"  params="editable=false,callback=m_viewItem3,showView=true,btnPrefix=discount,returnedBtnNames=discount_btns,showDesc=true,showContactInfo=true,showAssessment=false,showRanking=true,imageClass=item_image"></ui:table>
+	</c:if>
+<c:if test="${debug=='true' }">
+	<input type="button" value="Check login" onclick="checkLogin();"/>
+	<input type="button" value="Post feed" onclick="postFeed();"/>
+	<input type="button" value="Ask for permission" onclick="loginViaZalo();"/>
+	
+</c:if>
+<script type="text/javascript">
+function postFeed(){
+		FB.ui(
+		      {
+		       method: 'feed',
+		       name: 'Vietpage.info post feed',
+		       caption: 'Post feed from vietpage.info',
+		       description: (
+		          'This function is not yet ready, please do not use it'
+		       ),
+		       link: 'http://vietpage.info/vietpageDetail?type=news&id=25',
+		       picture: 'http://vietpage.info/images/217/217_feed_16859969281111653.jpg'
+		      },
+		      function(response) {
+		        if (response && response.post_id) {
+		          alert('Post was published successfully.');
+		        } else {
+		          alert('Post was not published.');
+		        }
+		      }
+		    );
+	}
+	
+	function loginViaZalo(){
+		FB.login(function(response) {
+			   if (response.authResponse) {
+			     console.log('Welcome!  Fetching your information.... ');
+			     FB.api('/me', function(response) {
+			       console.log('Good to see you, ' + response.name + '.'+ 'Id=' + response.name);
+			     });
+			   } else {
+			     console.log('User cancelled login or did not fully authorize.');
+			   }
+		});
+	}
+	function checkLogin(){
+	//		FB.getLoginStatus(function(response) {
+	//			  if (response.status === 'connected') {
+	//			    // the user is logged in and has authenticated your
+	//			    // app, and response.authResponse supplies
+	//			    // the user's ID, a valid access token, a signed
+	//			    // request, and the time the access token 
+	//			    // and signed request each expire
+	//			    var uid = response.authResponse.userID;
+	//			    var accessToken = response.authResponse.accessToken;
+	//			    alert("good>"+response);
+	//			  } else if (response.status === 'not_authorized') {
+	//			    // the user is logged in to Facebook, 
+	//			    // but has not authenticated your app
+	//				  alert("not_authorized");
+	//			  } else {
+	//			    // the user isn't logged in to Facebook.
+	//				  alert("not login");
+	//			  }
+	//			 });
+		FB.api("me/likes/545910802183206", function(response) {
+		    if ( response.data.length === 1 ) { //there should only be a single value inside "data"
+		        console.log('You like it');
+		    } else {
+		        console.log("You don't like it");
+		    }
+		});
+	}
+</script>

@@ -1,0 +1,174 @@
+package com.vnsoft.server.actions;
+
+import java.util.Calendar;
+import java.util.Map;
+
+import com.vnsoft.server.actions.StandarLayout.UPLOAD_OBJECT;
+import com.vnsoft.server.biz.CompanyBean;
+import com.vnsoft.server.model.CompanyInfo;
+
+public class EditRegisterInfoAction extends StandarLayout {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3381959503466312580L;
+
+	/**
+	 * 
+	 */
+	private CompanyInfo comInfo;
+	String name;
+	String address;
+	String phone;
+	String email;
+	private String aboutCom;
+	private String comService;
+	String desc;
+	private String comid;
+	private String url;
+	private int locationId;
+	private int serviceTypeId;
+	
+	public CompanyInfo getComInfo() {
+		return comInfo;
+	}
+
+	public void setComInfo(CompanyInfo comInfo) {
+		this.comInfo = comInfo;
+	}
+
+	@Override
+	public String execute() {
+		try {
+			if ("updateRegisterInfo".equals(getAction()) && "post".equalsIgnoreCase(getHttpServletRequest().getMethod())) {
+				setComInfo((CompanyInfo) (getHttpServletRequest().getSession(true).getAttribute(LoginAction.COMPANY_INFO)));
+				CompanyInfo update = new CompanyInfo();
+				update.setName(getName());
+				update.setAddress(getAddress());
+				update.setPhone(getPhone());
+				update.setEmail(getEmail());
+				update.setUrl(getUrl());
+				if(file != null){
+					System.out.println("Upload map image");
+					Map<String,String> image = uploadFile("map_" + Calendar.getInstance().getTimeInMillis() + ".jpg", comInfo.getId()+"",UPLOAD_OBJECT.OTHERS);
+					update.setMapImage(image.get(StandarLayout.IMAGE));
+				}
+				if(getLocationId() > 0)
+					update.setLocationId(getLocationId());
+				else
+					update.setLocationId(comInfo.getLocationId());
+				
+				System.out.println("serviceTypeId=" + serviceTypeId+ "getLocationId="+ getLocationId()+"comInfo.getId()=" + comInfo.getId());
+				if(serviceTypeId > 0)
+					update.setServiceTypeId(serviceTypeId);
+				else
+					update.setServiceTypeId(comInfo.getServiceTypeId());
+				
+				update.setId(comInfo.getId());
+				CompanyBean.getInstance().updateContactInfo(update);
+				
+				getHttpServletRequest().getSession(true).setAttribute(LoginAction.COMPANY_INFO,CompanyBean.getInstance().getCompanyInfo(comInfo.getId()));
+				setComInfo((CompanyInfo) (getHttpServletRequest().getSession(true).getAttribute(LoginAction.COMPANY_INFO)));
+			}
+			super.execute();
+			loadSearchCategories();
+			setComInfo((CompanyInfo) (getHttpServletRequest().getSession(true).getAttribute(LoginAction.COMPANY_INFO)));
+			System.out.println("COm name=" + getComInfo().getName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return SUCCESS;
+	}
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+
+	public String getComid() {
+		return comid;
+	}
+
+	public void setComid(String comid) {
+		this.comid = comid;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getAboutCom() {
+		return aboutCom;
+	}
+
+	public void setAboutCom(String aboutCom) {
+		this.aboutCom = aboutCom;
+	}
+
+	public String getComService() {
+		return comService;
+	}
+
+	public void setComService(String comService) {
+		this.comService = comService;
+	}
+
+	public int getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(int locationId) {
+		this.locationId = locationId;
+	}
+
+	public int getServiceTypeId() {
+		return serviceTypeId;
+	}
+
+	public void setServiceTypeId(int serviceTypeId) {
+		this.serviceTypeId = serviceTypeId;
+	}
+
+}

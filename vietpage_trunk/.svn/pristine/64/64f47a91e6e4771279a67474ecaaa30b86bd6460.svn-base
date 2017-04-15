@@ -1,0 +1,17 @@
+
+#hostname=124.158.9.55
+#port=10010
+#appDir=/zserver/java-projects/vietpage/webapps
+#log4j=/zserver/java-projects/vietpage/log4j.properties
+#dbuser=vietpage
+#dbpassword=WluS6ITeN67XG1
+#mysqlDB=jdbc:mysql://124.158.9.55:3306/vietpage
+
+########################### DEV ON LOCAL ###########################
+hostname=localhost
+port=8080
+appDir=d:/Working/projects/vietpage_trunk/webapps
+log4j=d:/Working/projects/vietpage_trunk/log4j.properties
+dbuser=kientv
+dbpassword=123456
+mysqlDB=jdbc:mysql://localhost:3306/vietpage

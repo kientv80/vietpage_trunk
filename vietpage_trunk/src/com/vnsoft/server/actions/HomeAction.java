@@ -1,0 +1,177 @@
+package com.vnsoft.server.actions;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.opensymphony.xwork2.ActionContext;
+import com.vnsoft.server.biz.CompanyBean;
+import com.vnsoft.server.biz.MenuBean;
+import com.vnsoft.server.biz.TrackingBean;
+import com.vnsoft.server.biz.VisistorBean;
+import com.vnsoft.server.model.CompanyInfo;
+import com.vnsoft.server.model.Item;
+
+import facebook4j.Facebook;
+import facebook4j.FacebookException;
+import facebook4j.FacebookFactory;
+
+public class HomeAction extends StandarLayout {
+
+	private static final String SUGGEST_ITEMS = "suggestItems";
+	private static final String RECENT_COMS = "recentComs";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8067961467571110142L;
+	private Item item;
+	private Logger logger = Logger.getLogger(HomeAction.class);
+	private String itemId;
+	private List<Item> suggestItems = new ArrayList<>();
+	private List<CompanyInfo> recentComs = new ArrayList<>();
+	private String target;
+
+	@Override
+	public String execute() {
+
+		setCurrentPage(ActionContext.getContext().getName());
+		logger.info("viewItemInPage itemid1=" + getItemId() + getAction());
+		
+		try {
+			if (getComId() == null || getComId() == "-1" || getComId() == "0" || !isNumber(getComId()))
+				return "nocompanyid";
+
+			super.execute();
+
+			logger.info("viewItemInPage itemid1=" + getItemId() + getAction());
+			trackingVisit(getComId());
+			trackRecentVisitPages(getComId());
+
+			if ("viewItemInPage".equals(getAction()) || "viewItem".equals(getAction())) {
+				try {
+					setItem(MenuBean.getInstance().getItem(Integer.valueOf(getId())));
+					if (getItem() != null) {
+						CompanyInfo c = CompanyBean.getInstance().getCompanyInfo(getItem().getComId());
+						if (c != null) {
+							String visistorId = getVisistorId();
+							TrackingBean.getInstance().trackingUserInterested(visistorId, c.getServiceTypeId(), c.getLocationId());
+						}
+					}
+					TrackingBean.getInstance().itemViewCount(getId());
+				} catch (NumberFormatException e) {
+					logger.error("", e);
+				} catch (Exception e) {
+					logger.error("", e);
+				}
+			}
+			if (getHttpServletRequest().getSession(true).getAttribute(RECENT_COMS) == null) {
+				List<Long> recentVisitedPages = VisistorBean.getInstance().getRecentVisitPages(getHttpServletRequest(), getHttpServletResponse());
+				for (Long id : recentVisitedPages) {
+					CompanyInfo ci = CompanyBean.getInstance().getCompanyInfo(id);
+					if (ci != null)
+						getRecentComs().add(ci);
+				}
+				getHttpServletRequest().getSession(true).setAttribute(RECENT_COMS, getRecentComs());
+			} else {
+				recentComs = (List<CompanyInfo>) getHttpServletRequest().getSession(true).getAttribute(RECENT_COMS);
+			}
+
+			String visistorId = getVisistorId();
+			if (getCompanyInfo() != null && visistorId != null && !visistorId.isEmpty()) {
+				TrackingBean.getInstance().trackingUserInterested(visistorId, getCompanyInfo().getServiceTypeId(), getCompanyInfo().getLocationId());
+			}
+
+			if (getHttpServletRequest().getSession(true).getAttribute(SUGGEST_ITEMS) == null) {
+				if (visistorId != null && !visistorId.isEmpty()) {
+					Map<String, List<Integer>> scores = VisistorBean.getInstance().getUserInterestedScores(visistorId);
+					if (scores.get(VisistorBean.TOP3_MOST_INTERESTED_SERVICES).size() > 0) {
+						for (int sid : scores.get(VisistorBean.TOP3_MOST_INTERESTED_SERVICES)) {
+							List<Item> tmp = MenuBean.getInstance().getNewItems(1, sid);
+							if (getCompanyInfo() != null) {
+								for (Item i : tmp) {
+									if (i.getComId() != getCompanyInfo().getId()) {
+										suggestItems.add(i);
+									}
+								}
+							} else {
+								suggestItems.addAll(tmp);
+							}
+						}
+					}
+					if (suggestItems != null && suggestItems.size() > 0)
+						shottenItemDesc(suggestItems);
+
+					getHttpServletRequest().getSession(true).setAttribute(SUGGEST_ITEMS, suggestItems);
+
+				}
+			} else {
+				suggestItems = (List<Item>) getHttpServletRequest().getSession(true).getAttribute(SUGGEST_ITEMS);
+			}
+		} catch (Exception e) {
+			logger.error("", e);
+		}
+		String result = SUCCESS;
+		if (target != null)
+			result = target;
+		if ("viewItem".equals(getAction()))
+			result = "viewItemDetail";
+		logger.info("result=" + result);
+		if (isMobilePhone(getHttpServletRequest())) {
+			return "m_" + result;
+		} else {
+			return result;
+		}
+	}
+
+	@Override
+	protected boolean loadItem() {
+		if ("homePage".equals(getTarget()) || "viewItem".equals(getAction()))
+			return false;
+
+		return true;
+	}
+
+	public String getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(String itemId) {
+		this.itemId = itemId;
+	}
+
+	public List<Item> getSuggestItems() {
+		return suggestItems;
+	}
+
+	public void setSuggestItems(List<Item> suggestItems) {
+		this.suggestItems = suggestItems;
+	}
+
+	public Item getItem() {
+		return item;
+	}
+
+	public void setItem(Item item) {
+		this.item = item;
+	}
+
+	public List<CompanyInfo> getRecentComs() {
+		return recentComs;
+	}
+
+	public void setRecentComs(List<CompanyInfo> recentComs) {
+		this.recentComs = recentComs;
+	}
+
+	public String getTarget() {
+		return target;
+	}
+
+	public void setTarget(String target) {
+		this.target = target;
+	}
+
+}

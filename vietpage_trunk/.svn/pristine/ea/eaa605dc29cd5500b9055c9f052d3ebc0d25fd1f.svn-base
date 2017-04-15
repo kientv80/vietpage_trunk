@@ -1,0 +1,59 @@
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="ui" uri="/custom-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<div class="lookup_icon">
+	<img alt="" src="/images/vietpagesearch.png">
+</div>
+<!-- <br> -->
+<form action="/search" method="post">
+	<div class="vietpagesearch">
+			<div id="selectCity" class="searchcontrol" style="float: left;padding-left: 1px;">
+				<s:select list="city" listValue="value" listKey="key" name="selectedCity" id="selectedCityId" labelposition="top"  onchange="loadLocation();"></s:select>
+			</div>
+			<div id="selectLocation" class="searchcontrol">
+				<s:select list="location" listValue="value" listKey="key" name="locationId" id="selectedLocationId" labelposition="top" ></s:select>
+			</div>
+			<div id="selectService" class="searchcontrol">
+				<s:select list="serviceType" listValue="value" listKey="key" name="serviceTypeId" id="selectedServiceId" labelposition="top" ></s:select>
+			</div>
+			<div id="selectService" class="searchcontrol">
+				<input type="text" placeholder="Text to search" name="searchText" id="searchText" size="40" style="height: 19px;font-size: 10px;" />
+			</div>
+			<div id="go" class="searchcontrol">
+				<input type="submit" value="Go" class="btn btn-primary  btn-xs">
+			</div>
+			<div class="fb-like" data-href="http://vietpage.info/search" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>
+			<s:hidden name="action" value="search"></s:hidden>
+	</div>
+</form>
+<div class="search_result">
+		<table >
+			<s:iterator value="companies" var="com">
+					<tr>
+						<td>
+							<img src="${com.contentImage }" width="120px" height="100px">
+						 </td>
+						<td>
+							<div>
+								<a href="#" onclick="window.open('/lookup?comid=${com.id }&webid=${com.username }&redirectUrl=/vietpage?comid=${com.id}');">${com.name}</a><br>
+								${com.phone}<br>
+								${com.address}<br>
+							</div>
+						</td>
+					</tr>
+			</s:iterator>
+		</table>
+</div>
+<!-- <div class="search_ads"> -->
+<!-- </div> -->
+		<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<!-- Vietpage_home_leftads_300x250_Z3 -->
+	<ins class="adsbygoogle"
+	     style="display:inline-block;width:300px;height:250px"
+	     data-ad-client="ca-pub-1188112679279302"
+	     data-ad-slot="1754606872"></ins>
+	<script>
+	(adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+

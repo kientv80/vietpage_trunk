@@ -1,0 +1,43 @@
+thông tin DB nè
+[11/20/2013 3:03:04 PM] An Dao: PMA: http://124.158.9.54/pma/
+[11/20/2013 3:03:14 PM] An Dao: IP DB: 124.158.9.55
+https://www.facebook.com/kientrinh.van.568
+
+	
+Vietpage
+App ID: 	382999278501512
+App Secret: 	a70c6de5f0ffc6810dc475143c7d46dd(reset)
+This app is in Sandbox Mode(Only visible to Admins, Developers and Testers)
+
+
+[11/20/2013 3:03:23 PM] An Dao: DB Name: vietpage
+[11/20/2013 3:03:27 PM] An Dao: user: vietpage
+[11/20/2013 3:03:33 PM] An Dao: pass: WluS6ITeN67XG1
+
+sau đó lên DNS, trỏ domain : vietpage.info vào IP sau: 124.158.9.55
+
+svn: http://124.158.9.54:443/svn_vietpage
+user: kientv sktjapkIIlakj52O
+
+app sẽ deploy lên server: 124.158.9.55, port 10010
+
+/zserver/java-projects/vietpage
+
+svn add --force
+
+http://code.vietpage.info/webapps/log/vietpage.log
+http://code.vietpage.info/log/vietpage.log
+
+add host : 124.158.9.55 code.vietpage.info
+[11:25:19 AM] An Dao: hoac anh tao domain vo do nhe
+[11:25:23 AM] An Dao: user: kientv
+[11:25:28 AM] An Dao: pass: vietpage2014
+
+
+http://code.vietpage.info/svn/svn.php
+[4:10:00 PM] An Dao: nếu muốn build version mới: http://code.vietpage.info/svn/svn.php?rev=1005
+[4:12:48 PM] An Dao: 5p co scripts check 1 lan de build
+[4:13:01 PM] An Dao: vào phút thứ 0 - 5 - 10 - 15 ...
+
+
+insert into agency value(2, 'longnh', 'longnh', 'longnh', 'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f');

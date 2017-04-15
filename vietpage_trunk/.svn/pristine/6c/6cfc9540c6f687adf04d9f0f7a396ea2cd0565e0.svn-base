@@ -1,0 +1,103 @@
+package com.vnsoft.server.tags;
+
+import java.io.IOException;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
+
+import com.vnsoft.server.model.Item;
+import com.vnsoft.server.util.UIHelper;
+
+public class ItemTag extends TagSupport{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7899999041061968128L;
+
+	Item item;
+	String width;
+	String height;
+	private String style;
+	private String clazz;
+	private boolean edit;
+	private boolean showView;
+	private String btnPrefix;
+	private String callBackMethod;
+	private int column =1;
+	
+	public String getStyle() {
+		return style;
+	}
+	public void setStyle(String style) {
+		this.style = style;
+	}
+	public String getWidth() {
+		return width;
+	}
+	public void setWidth(String width) {
+		this.width = width;
+	}
+	public String getHeight() {
+		return height;
+	}
+	public void setHeight(String height) {
+		this.height = height;
+	}
+
+	
+	public Item getItem() {
+		return item;
+	}
+	public void setItem(Item item) {
+		this.item = item;
+	}
+	@Override
+	public int doEndTag() throws JspException {
+		try {
+			String content = UIHelper.itemToHTML(width, height, item,edit,btnPrefix,callBackMethod,showView,pageContext);
+			pageContext.getOut().print(content);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return EVAL_PAGE;
+	}
+	public String getClazz() {
+		return clazz;
+	}
+	public void setClazz(String clazz) {
+		this.clazz = clazz;
+	}
+	public boolean getEdit() {
+		return edit;
+	}
+	public void setEdit(boolean edit) {
+		this.edit = edit;
+	}
+	public String getBtnPrefix() {
+		return btnPrefix;
+	}
+	public void setBtnPrefix(String btnPrefix) {
+		this.btnPrefix = btnPrefix;
+	}
+	public String getCallBackMethod() {
+		return callBackMethod;
+	}
+	public void setCallBackMethod(String callBackMethod) {
+		this.callBackMethod = callBackMethod;
+	}
+	public boolean getShowView() {
+		return showView;
+	}
+	public void setShowView(boolean showView) {
+		this.showView = showView;
+	}
+	public int getColumn() {
+		return column;
+	}
+	public void setColumn(int column) {
+		this.column = column;
+	}
+
+
+}

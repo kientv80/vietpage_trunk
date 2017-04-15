@@ -1,0 +1,20 @@
+package com.vnsoft.server.actions;
+
+import facebook4j.Facebook;
+
+public class FBCallbackServlet extends BaseAction {
+	private static final long serialVersionUID = 6305643034487441839L;
+
+	public String execute() throws Exception {
+		try {
+			Facebook facebook = (Facebook) getHttpServletRequest().getSession().getAttribute("facebook");
+			String oauthCode = getHttpServletRequest().getParameter("code");
+			facebook.getOAuthAccessToken(oauthCode);
+			getHttpServletRequest().getSession().setAttribute("authen","true");
+			getHttpServletResponse().sendRedirect(getHttpServletRequest().getContextPath() + "/");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return SUCCESS;
+	}
+}

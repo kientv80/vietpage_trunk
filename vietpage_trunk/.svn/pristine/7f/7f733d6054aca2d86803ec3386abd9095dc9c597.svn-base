@@ -1,0 +1,27 @@
+package com.vnsoft.server.actions;
+
+import org.apache.log4j.Logger;
+
+import com.vnsoft.server.plugin.social.SocialServiceFactory;
+
+import facebook4j.Facebook;
+
+public class FBCallbackServlet extends BaseAction {
+	private static final long serialVersionUID = 6305643034487441839L;
+	Logger log = Logger.getLogger(FBCallbackServlet.class);
+	public String execute() throws Exception {
+		try {
+			log.info(">>>>>>>>>>>>>>>>> FB call back");
+			Facebook facebook = (Facebook) getHttpServletRequest().getSession().getAttribute("facebook");
+			String oauthCode = getHttpServletRequest().getParameter("code");
+			log.info(">>>>>>>> oauthCode="+oauthCode);
+			facebook.getOAuthAccessToken(oauthCode);
+			getHttpServletRequest().getSession().setAttribute("authen","true");
+			SocialServiceFactory.getFaceBookService().setFacebook(facebook);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("", e);
+		}
+		return "admin";
+	}
+}

@@ -1,0 +1,57 @@
+package com.vnsoft.server.plugin.social;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import org.apache.log4j.Logger;
+
+import facebook4j.Account;
+import facebook4j.Facebook;
+import facebook4j.FacebookException;
+import facebook4j.FacebookFactory;
+import facebook4j.auth.AccessToken;
+
+public class FaceBookPluginServiceImpl implements FaceBookPluginService {
+	private final BlockingQueue<Object> jobs = new LinkedBlockingQueue<Object>(6000);
+	private Logger log = Logger.getLogger(FaceBookPluginServiceImpl.class);
+	Facebook facebook = new FacebookFactory().getInstance();
+
+	@Override
+	public void run() {
+		facebook.setOAuthAppId("382999278501512", "a70c6de5f0ffc6810dc475143c7d46dd");
+		Account yourPageAccount;
+		try {
+			yourPageAccount = facebook.getAccounts().get(0);
+			String pageAccessToken = yourPageAccount.getAccessToken();
+			facebook.setOAuthAccessToken(new AccessToken(pageAccessToken, null));
+			facebook.postStatusMessage("Chuc mot ngay tot dep");
+		} catch (FacebookException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void main(String[] args) {
+		Facebook facebook = new FacebookFactory().getInstance();
+		facebook.setOAuthAppId("382999278501512", "a70c6de5f0ffc6810dc475143c7d46dd");
+		facebook.setOAuthPermissions("email,publish_stream");
+		Account yourPageAccount;
+		try {
+			yourPageAccount = facebook.getAccounts().get(0);
+			String pageAccessToken = yourPageAccount.getAccessToken();
+			facebook.setOAuthAccessToken(new AccessToken(pageAccessToken, null));
+			facebook.postStatusMessage("Chuc mot ngay tot dep");
+		} catch (FacebookException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void postFeed(FaceBookFeed feed) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
